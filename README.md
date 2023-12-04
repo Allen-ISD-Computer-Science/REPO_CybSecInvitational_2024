@@ -4,3 +4,4 @@ Create a responsive and interpretive environment for fellow students to explore 
 # Roles 
 - Project Manager: James Dungan, JamesMDungan [Digital Portfolio](https://codermerlin.academy/users/james-dungan/Digital%20Portfolio/index.html) 
 - Release Manager: Blake Gateley, KrabbiePatty [Digital Portfolio](https://codermerlin.academy/users/jonathan-gateley/Digital%20Portfolio/index.html)
+- Product Manager: Soohan Cho, BurntWaffleCake [Digital Portfolio](https://codermerlin.academy/users/soohan-cho/Digital%20Portfolio/index.html)
