@@ -1,0 +1,25 @@
+{
+  "name": "ahsinvitational",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Allen-High-School-Invitational/NodeServer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Allen-High-School-Invitational/NodeServer/issues"
+  },
+  "homepage": "https://github.com/Allen-High-School-Invitational/NodeServer#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "socket.io": "^4.7.2"
+  }
+}

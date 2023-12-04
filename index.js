@@ -35,12 +35,14 @@ app.use(express.static(__dirname));
 // cookie parser middleware
 app.use(cookieParser());
 
-server.listen(PORT, () => {
-  console.log("server running at http://localhost:" + String(PORT));
+app.get("/", (req, res) => {
+  console.log("printing");
+  res.sendFile(path.join(__dirname, "index.js"));
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.js"));
+app.get("/test", (req, res) => {
+  console.log("printing");
+  res.send("sproing");
 });
 
 io.on("connection", (socket) => {
@@ -54,4 +56,8 @@ io.on("connection", (socket) => {
     console.log(msg);
     io.emit("test event", "server sent this");
   });
+});
+
+server.listen(PORT, () => {
+  console.log("server running at http://localhost:" + String(PORT));
 });
