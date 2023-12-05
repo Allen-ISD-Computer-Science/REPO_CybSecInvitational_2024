@@ -30,14 +30,30 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //serving public file
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // cookie parser middleware
 app.use(cookieParser());
 
 app.get("/", (req, res) => {
-  console.log("printing");
-  res.sendFile(path.join(__dirname, "index.js"));
+  var req = req.session;
+  console.log(req);
+  if (session.userid == "username") {
+    res.sendFile(path.join(__dirname, "index.html"));
+  } else {
+    res.redirect("login");
+    console.log("printing");
+  }
+});
+
+app.get("/login", (req, res) => {
+  console.log(req.query);
+  if (req.query.teamId == "username" && req.query.password == "password") {
+    res.redirect("/");
+  } else {
+    req.session.userid = "username";
+    res.sendFile(path.join(__dirname, "public/login.html"));
+  }
 });
 
 app.get("/test", (req, res) => {
@@ -60,4 +76,24 @@ io.on("connection", (socket) => {
 
 server.listen(PORT, () => {
   console.log("server running at http://localhost:" + String(PORT));
+});
+
+//404 error
+app.use(function (req, res, next) {
+  res.status(404);
+
+  // respond with html page
+  if (req.accepts("html")) {
+    res.sendFile(path.join(__dirname, "public/404.html"));
+    return;
+  }
+
+  // respond with json
+  if (req.accepts("json")) {
+    res.json({ error: "Not found" });
+    return;
+  }
+
+  // default to plain-text. send()
+  res.type("txt").send("Not found");
 });
