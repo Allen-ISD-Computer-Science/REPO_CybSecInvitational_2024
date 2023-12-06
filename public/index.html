@@ -7,7 +7,8 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title>Dashboard - SB Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" /> -->
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
   </head>
@@ -178,18 +179,16 @@
                 DataTable Example
               </div>
               <div class="card-body">
-                <table id="datatablesSimple">
+                <table id="scoresDataTable">
                   <thead>
                     <tr>
-                      <th>Guy</th>
-                      <th>Position</th>
-                      <th>Office</th>
-                      <th>Age</th>
-                      <th>Start date</th>
-                      <th>Salary</th>
+                      <th>TeamId</th>
+                      <th>Score</th>
+                      <th>StartTime</th>
+                      <th>Division</th>
                     </tr>
                   </thead>
-                  <tfoot>
+                  <!-- <tfoot>
                     <tr>
                       <th>Name</th>
                       <th>Position</th>
@@ -198,17 +197,8 @@
                       <th>Start date</th>
                       <th>Salary</th>
                     </tr>
-                  </tfoot>
-                  <tbody>
-                    <tr>
-                      <td>Tiger Nixon</td>
-                      <td>System Architect</td>
-                      <td>Edinburgh</td>
-                      <td>61</td>
-                      <td>2011/04/25</td>
-                      <td>$320,800</td>
-                    </tr>
-                  </tbody>
+                  </tfoot> -->
+                  <tbody id="scoresDataTableBody"></tbody>
                 </table>
               </div>
             </div>
@@ -233,10 +223,51 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="assets/demo/chart-area-demo.js"></script>
     <script src="assets/demo/chart-bar-demo.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
-    <script src="js/datatables-simple-demo.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+    <!-- <script src="js/datatables-simple-demo.js"></script> -->
+    <script src="/socket.io/socket.io.js"></script>
     <script type="module">
-      function fillTable(data) {}
+      // import { DataTable } from "./simple-datatables";
+      const myTable = document.querySelector("#scoresDataTable");
+      const myTableBody = document.querySelector("#scoresDataTableBody");
+      const dataTable = new simpleDatatables.DataTable(myTable, {
+        searchable: true,
+        fixedHeight: true,
+      });
+      const rows = dataTable.rows;
+
+      function removeAllUsersFromTable() {
+        dataTable.rows.remove(Array.from(Array(dataTable.data.data.length).keys()));
+      }
+
+      function addUserToTable(user) {
+        const id = user.id;
+        const score = user.score;
+        const startTime = user.startTime;
+        const division = user.division;
+
+        dataTable.insert([
+          {
+            TeamId: id,
+            Score: user.score,
+            StartTime: new Date(startTime).toDateString(),
+            Division: division,
+          },
+        ]);
+      }
+
+      const socket = io();
+      socket.on("update score", (msg) => {
+        const values = Object.values(msg);
+        removeAllUsersFromTable();
+
+        values.forEach((user) => {
+          addUserToTable(user);
+        });
+      });
+
+      // or
 
       const response = await fetch("/userdata?ordered=score&direction=ascending")
         .then((res) => res.json())

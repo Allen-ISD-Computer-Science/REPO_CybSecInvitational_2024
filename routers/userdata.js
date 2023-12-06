@@ -6,30 +6,44 @@ var data = {
   user1: {
     id: "user1",
     score: 15,
+    startTime: Date.now(),
+    division: "gold",
   },
   bob: {
     id: "bob",
     score: 7,
+    startTime: Date.now(),
+    division: "platinum",
   },
   john: {
     id: "john",
     score: 69,
+    startTime: Date.now(),
+    division: "gold",
   },
   billy: {
     id: "billy",
     score: 70,
+    startTime: Date.now(),
+    division: "platinum",
   },
   scanlan: {
     id: "scalan",
     score: 249,
+    startTime: Date.now(),
+    division: "platinum",
   },
   luigi: {
     id: "luigi",
     score: 1,
+    startTime: Date.now(),
+    division: "silver",
   },
   sloan: {
     id: "sloan",
     score: 8,
+    startTime: Date.now(),
+    division: "gold",
   },
 };
 

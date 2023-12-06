@@ -102,4 +102,11 @@ app.use(function (req, res, next) {
   res.type("txt").send("Not found");
 });
 
-console.log(userdata.sortUsersAlphabetically(userdata.getUserData()));
+function updateScore(i) {
+  setTimeout(() => {
+    console.log("Updating Scores:", i);
+    io.emit("update score", userdata.getUserData());
+    updateScore(++i);
+  }, 5000);
+}
+updateScore(0);
