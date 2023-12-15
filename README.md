@@ -9,3 +9,4 @@ Create a responsive and interpretive environment for fellow students to explore 
 - Product Manager: Soohan Cho, BurntWaffleCake [Digital Portfolio](https://codermerlin.academy/users/soohan-cho/Digital%20Portfolio/index.html)
 - QA Analyst: Abel Semahegn, abelSemahegn [Digital Portfolio](https://codermerlin.academy/users/abel-semahegn/Digital%20Portfolio/index.html)
 - Engineer-Frontend: Aidan Morris, SirromEloc [Digital Portfolio](https://codermerlin.academy/users/aidan-morris/Digital%20Portfolio/index.html)
+- Back-End Developer: Richard Jang, o7 [Digital Portfolio](https://codermerlin.academy/users/ming-ruei-jang/Digital%20Portfolio/index.html)
