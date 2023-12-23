@@ -9,3 +9,4 @@ md5_checksum = hashlib.md5(random_str.encode()).hexdigest()
 
 # Print the desired output
 print('AHSINV{{{}}}'.format(md5_checksum))
+
