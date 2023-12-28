@@ -1,4 +1,5 @@
 {
+  "_comments": "this file is a test file for AHSInv backend, this file should not be used during actual deployment of the server",
   "user1": {
     "points": 1,
     "division": 3,
