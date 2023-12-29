@@ -1,52 +1,61 @@
-const nodeJsonDB = require("node-json-db");
-const path = require("path");
-
 var express = require("express");
-var app = express();
-app.use(express.static(path.join(__dirname, "public")));
+var session = require("express-session");
+var nodeJsonDB = require("node-json-db");
+var path = require("path");
+var bodyParser = require("body-parser");
 
 const config = require(path.join(__dirname, "config.json"));
+
+var app = express();
+
+var urlencodedParser = bodyParser.urlencoded({ extended: false });
+
+app.use(
+  session({
+    secret: config.express_session_secret,
+    resave: false, // don't save session if unmodified
+    saveUninitialized: false, // don't create session until something stored
+  })
+);
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
 
-app.get("/login", function (req, res) {
-  console.log(req.query);
-  const query = req.query;
-  if (
-    typeof query.username !== "undefined" &&
-    query.username !== "" &&
-    typeof query.password !== "undefined" &&
-    query.password !== ""
-  ) {
-    validateUser(query.username, query.password).then(function (result) {
-      if (result == true) {
-        res.redirect("/");
-      } else {
-        res.status(401).sendFile(path.join(__dirname, "public/login.html"));
-      }
-    });
+app.get("/home", function (req, res) {
+  console.log(req.session);
+  if (checkLogin(req)) {
+    res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.status(401).sendFile(path.join(__dirname, "public/login.html"));
+    res.redirect("/login");
   }
 });
 
-async function validateUser(username, password) {
-  try {
-    const user = await userdb.getData(path.join("/", username));
-    if (user.password === password) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.log(err);
-    return false;
-  }
-}
+app.get("/login", function (req, res) {
+  res.sendFile(path.join(__dirname, "public/login.html"));
+});
 
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "public/index.html"));
+app.post("/login", urlencodedParser, function (req, res) {
+  if (!req.body.username || !req.body.password) {
+    res.status(401);
+  }
+
+  validateUser(req.body.username, req.body.password, function (result, user) {
+    if (result == true) {
+      req.session.user = user;
+      res.redirect("/home");
+    } else {
+      res.status(401);
+    }
+  });
+});
+
+app.get("/logout", function (req, res) {
+  req.session.destroy(function () {
+    console.log("User logged out!");
+  });
+  res.redirect("/login");
 });
 
 var server = app.listen(Number(config.host_port), function () {
@@ -55,3 +64,26 @@ var server = app.listen(Number(config.host_port), function () {
 
   console.log("server at http://%s:%s", host, port);
 });
+
+function checkLogin(req) {
+  console.log("checking login");
+  if (req.session.user) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+async function validateUser(username, password, next) {
+  try {
+    const user = await userdb.getData(path.join("/", username));
+    if (user.password === password) {
+      next(true, user);
+    } else {
+      next(false);
+    }
+  } catch (err) {
+    console.log(err);
+    next(false);
+  }
+}
