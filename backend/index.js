@@ -22,6 +22,9 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
+var questiondb = new nodeJsonDB.JsonDB(
+  new nodeJsonDB.Config("questionsDatabase", true, true, "\\")
+);
 
 app.get("/home", function (req, res) {
   console.log(req.session);
