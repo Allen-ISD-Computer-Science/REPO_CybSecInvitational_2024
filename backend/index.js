@@ -4,7 +4,7 @@ var nodeJsonDB = require("node-json-db");
 var path = require("path");
 var bodyParser = require("body-parser");
 
-const config = require(path.join(__dirname, config.host_location, "config.json"));
+const config = require(path.join(__dirname, "config.json"));
 
 var app = express();
 
@@ -18,7 +18,7 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, config.host_location, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
@@ -29,17 +29,17 @@ var questiondb = new nodeJsonDB.JsonDB(
 app.get("/home", function (req, res) {
   console.log(req.session);
   if (checkLogin(req)) {
-    res.sendFile(path.join(__dirname, config.host_location, "public/home.html"));
+    res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.redirect("/login");
+    res.redirect(path.join(config.host_location, "login"));
   }
 });
 
 app.get("/login", function (req, res) {
   if (req.session.user) {
-    res.redirect("/home");
+    res.redirect(path.join(config.host_location, "home"));
   } else {
-    res.sendFile(path.join(__dirname, config.host_location, "public/login.html"));
+    res.sendFile(path.join(__dirname, "public/login.html"));
   }
 });
 
@@ -51,7 +51,7 @@ app.post("/login", urlencodedParser, function (req, res) {
   validateUser(req.body.username, req.body.password, function (result, user) {
     if (result == true) {
       req.session.user = user;
-      res.redirect("/home");
+      res.redirect(path.join(config.host_location, "home"));
     } else {
       res.status(401);
     }
@@ -62,7 +62,7 @@ app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
-  res.redirect("/login");
+  res.redirect(path.join(config.host_location, "login"));
 });
 
 var server = app.listen(Number(config.host_port), function () {
