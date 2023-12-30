@@ -1,0 +1,4 @@
+AHSINV{d561236ca9ee076635012293def138ee}
+
+run this command to get the answer
+hashcat -a 0 -m 0 --outfile-format=2 --outfile=result.txt Hash.txt keys.txt
