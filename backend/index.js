@@ -4,7 +4,7 @@ var nodeJsonDB = require("node-json-db");
 var path = require("path");
 var bodyParser = require("body-parser");
 
-const config = require(path.join(__dirname, "config.json"));
+const config = require(path.join(__dirname, config.host_location, "config.json"));
 
 var app = express();
 
@@ -18,7 +18,7 @@ app.use(
   })
 );
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, config.host_location, "public")));
 
 // user database holds all user data and uses json as its storage format
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
@@ -29,14 +29,18 @@ var questiondb = new nodeJsonDB.JsonDB(
 app.get("/home", function (req, res) {
   console.log(req.session);
   if (checkLogin(req)) {
-    res.sendFile(path.join(__dirname, "public/home.html"));
+    res.sendFile(path.join(__dirname, config.host_location, "public/home.html"));
   } else {
     res.redirect("/login");
   }
 });
 
 app.get("/login", function (req, res) {
-  res.sendFile(path.join(__dirname, "public/login.html"));
+  if (req.session.user) {
+    res.redirect("/home");
+  } else {
+    res.sendFile(path.join(__dirname, config.host_location, "public/login.html"));
+  }
 });
 
 app.post("/login", urlencodedParser, function (req, res) {
