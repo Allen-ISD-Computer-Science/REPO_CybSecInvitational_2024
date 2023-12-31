@@ -1,0 +1,5 @@
+Flag: AHSINV{b839adb44db26e278407bf9294f717c3}
+
+zip2john your_file.zip > hash.txt
+
+john --wordlist=wordlist.txt hash.txt
