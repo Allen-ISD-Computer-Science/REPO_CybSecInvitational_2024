@@ -8,7 +8,8 @@ const config = require(path.join(__dirname, "config.json"));
 
 var app = express();
 
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   session({
@@ -22,10 +23,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
-var questiondb = new nodeJsonDB.JsonDB(
-  new nodeJsonDB.Config("questionsDatabase", true, true, "\\")
-);
 
+// only holds descriptive elements of puzzles
+var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "\\"));
+// holds actual answers corresponding with puzzle id/name
+var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "\\"));
+
+//routing
 app.get("/home", function (req, res) {
   console.log(req.session);
   if (checkLogin(req)) {
@@ -37,13 +41,14 @@ app.get("/home", function (req, res) {
 
 app.get("/login", function (req, res) {
   if (req.session.user) {
-    res.redirect(path.join(config.host_location, "home"));
+    res.redirect("/home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
   }
 });
 
-app.post("/login", urlencodedParser, function (req, res) {
+//actions
+app.post("/login", function (req, res) {
   if (!req.body.username || !req.body.password) {
     res.status(401);
   }
@@ -51,9 +56,10 @@ app.post("/login", urlencodedParser, function (req, res) {
   validateUser(req.body.username, req.body.password, function (result, user) {
     if (result == true) {
       req.session.user = user;
-      res.redirect(path.join(config.host_location, "home"));
+      res.redirect("/home");
     } else {
-      res.status(401);
+      console.log("erroring");
+      res.status(401).redirect("/login");
     }
   });
 });
@@ -64,6 +70,35 @@ app.get("/logout", function (req, res) {
   });
   res.redirect(path.join(config.host_location, "login"));
 });
+
+app.post("/getpuzzle", function (req, res) {
+  console.log("attempting to fetch puzzle");
+  const id = req.body.id;
+  if (!id) {
+    console.log("not found");
+    res.status(400);
+    return;
+  }
+
+  fetchPuzzlesOfId(id, function (puzzle) {
+    console.log(puzzle);
+    if (!puzzle) {
+      res.status(404);
+    } else {
+      res.json(puzzle);
+    }
+  });
+});
+
+async function fetchPuzzlesOfId(id, next) {
+  try {
+    const puzzle = await puzzlesdb.getData(path.join("/", id));
+    next(puzzle);
+  } catch (err) {
+    console.log(err);
+    next(null);
+  }
+}
 
 var server = app.listen(Number(config.host_port), function () {
   var host = server.address().address;
