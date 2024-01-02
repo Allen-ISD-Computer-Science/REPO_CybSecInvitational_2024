@@ -14,9 +14,17 @@ xor_key="0101"
 if [ "$user_answer" -eq 4 ]; then
     # Decrypt the binary_flag.txt file with XOR key
     encrypted_content=$(cat binary_flag.txt | tr -d ' \t\n\r')
-    
-    # Perform XOR decryption using printf and awk
-    decrypted_content=$(printf "%s" "$encrypted_content" | awk -v xor_key="$xor_key" '{ for(i=1; i<=length; i++) printf "%c", substr($0,i,1) == substr(xor_key,i,1) ? 0 : 1 }')
+
+    # Perform XOR decryption using bash arithmetic
+    decrypted_content=""
+    for ((i=0; i<${#encrypted_content}; i++)); do
+        decrypted_content+=${encrypted_content:i:1}
+        decrypted_content=$((16#${decrypted_content} ^ 16#${xor_key}))
+        decrypted_content=$(printf "%x" "$decrypted_content")
+    done
+
+    # Convert the decrypted hex content to binary
+    decrypted_content=$(echo "ibase=16;obase=2;$decrypted_content" | bc)
 
     # Print the decrypted content
     echo "Congratulations! You've solved the puzzle. The binary flag has been decrypted:"
@@ -24,4 +32,5 @@ if [ "$user_answer" -eq 4 ]; then
 else
     echo "Incorrect answer. You get nothing."
 fi
+
 
