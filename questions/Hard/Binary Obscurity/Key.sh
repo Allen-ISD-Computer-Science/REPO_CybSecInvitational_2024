@@ -17,18 +17,15 @@ if [ "$user_answer" -eq 4 ]; then
 
     # Perform XOR decryption using bash arithmetic
     decrypted_content=""
-    for ((i=0; i<${#encrypted_content}; i++)); do
-        decrypted_content+=${encrypted_content:i:1}
-        decrypted_content=$((16#${decrypted_content} ^ 16#${xor_key}))
-        decrypted_content=$(printf "%x" "$decrypted_content")
+    for ((i=0; i<${#encrypted_content}; i+=2)); do
+        hex_byte=${encrypted_content:i:2}
+        decrypted_byte=$((16#${hex_byte} ^ 16#${xor_key}))
+        decrypted_content+=`printf "\\x%x" $decrypted_byte`
     done
-
-    # Convert the decrypted hex content to binary
-    decrypted_content=$(echo "ibase=16;obase=2;$decrypted_content" | bc)
 
     # Print the decrypted content
     echo "Congratulations! You've solved the puzzle. The binary flag has been decrypted:"
-    echo "$decrypted_content"
+    echo -n "$decrypted_content"
 else
     echo "Incorrect answer. You get nothing."
 fi
