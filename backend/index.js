@@ -22,12 +22,12 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
-var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
+var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "/"));
 
 // only holds descriptive elements of puzzles
-var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "\\"));
+var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "/"));
 // holds actual answers corresponding with puzzle id/name
-var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "\\"));
+var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "/"));
 
 //routing
 app.get("/home", function (req, res) {
@@ -91,7 +91,7 @@ app.post("/getPuzzle", function (req, res) {
 
 async function fetchPuzzlesOfId(id, next) {
   try {
-    const puzzle = await puzzlesdb.getData(path.join("/", id));
+    const puzzle = await puzzlesdb.getData("/" + String(id));
     next(puzzle);
   } catch (err) {
     console.log(err);
@@ -153,7 +153,7 @@ app.post("/submitPuzzle", function (req, res) {
 async function checkPuzzleAnswer(id, answer, next) {
   return new Promise((resolve) => {
     try {
-      const puzzleAnswer = answersdb.getData(path.join("/", id));
+      const puzzleAnswer = answersdb.getData("/" + String(id));
       if (puzzleAnswer === answer) {
         next({ exists: true, correct: true });
       } else {
@@ -184,7 +184,7 @@ function checkLogin(req) {
 
 async function validateUser(username, password, next) {
   try {
-    const user = await userdb.getData(path.join("/", username));
+    const user = await userdb.getData("/" + String(username));
     if (user.password === password) {
       next(true, user);
     } else {
@@ -198,7 +198,7 @@ async function validateUser(username, password, next) {
 
 async function findUser(username, next) {
   try {
-    const user = await userdb.getData(path.join("/", username));
+    const user = await userdb.getData("/" + String(username));
     next(user);
   } catch (err) {
     console.log(err);
