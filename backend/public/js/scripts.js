@@ -28,7 +28,7 @@ console.log(location.protocol + "//" + location.host);
 var converter = new showdown.Converter();
 
 async function fetchPuzzle() {
-  const response = await fetch(location.protocol + "//" + location.host + "/getpuzzle", {
+  const response = await fetch(location.protocol + "//" + location.host + "/getPuzzle", {
     method: "POST",
     body: JSON.stringify({ id: "templatePuzzle" }),
     headers: {
@@ -46,4 +46,14 @@ async function fetchPuzzle() {
   console.log(html);
 }
 
-fetchPuzzle();
+async function fetchAllPuzzles() {
+  const response = await fetch(location.protocol + "//" + location.host + "/getAllPuzzles", { method: "POST" });
+  console.log(response);
+  if (!response.ok) return;
+
+  const data = await response.json();
+  console.log(data);
+}
+
+// fetchPuzzle();
+fetchAllPuzzles();

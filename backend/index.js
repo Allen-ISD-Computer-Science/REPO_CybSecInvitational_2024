@@ -71,7 +71,7 @@ app.get("/logout", function (req, res) {
   res.redirect(path.join(config.host_location, "login"));
 });
 
-app.post("/getpuzzle", function (req, res) {
+app.post("/getPuzzle", function (req, res) {
   console.log("attempting to fetch puzzle");
   const id = req.body.id;
   if (!id) {
@@ -81,7 +81,6 @@ app.post("/getpuzzle", function (req, res) {
   }
 
   fetchPuzzlesOfId(id, function (puzzle) {
-    console.log(puzzle);
     if (!puzzle) {
       res.status(404);
     } else {
@@ -98,6 +97,73 @@ async function fetchPuzzlesOfId(id, next) {
     console.log(err);
     next(null);
   }
+}
+
+app.post("/getAllPuzzles", function (req, res) {
+  console.log("attempting to fetch all puzzles");
+  fetchPuzzles(function (puzzles) {
+    if (!puzzles) {
+      res.status(500);
+    } else {
+      res.json(puzzles);
+    }
+  });
+});
+
+async function fetchPuzzles(next) {
+  try {
+    const puzzles = await puzzlesdb.getData("/");
+    next(puzzles);
+  } catch (err) {
+    console.log(err);
+    next(null);
+  }
+}
+
+app.post("/submitPuzzle", function (req, res) {
+  console.log("attempting to submit puzzle");
+  if (!checkLogin(req)) {
+    res.sendStatus(400);
+  }
+
+  const userid = req.session.user;
+  const id = req.body.id;
+  const answer = req.body.answer;
+
+  if (!id || !answer) {
+    res.sendStatus(400);
+    return;
+  }
+
+  const checkResponse = checkPuzzleAnswer();
+  if (!checkResponse.exists) {
+    res.sendStatus(400);
+    return;
+  }
+
+  if (checkResponse.correct) {
+    res.send({ correct: true });
+    return;
+  } else {
+    res.send({ correct: false });
+    return;
+  }
+});
+
+async function checkPuzzleAnswer(id, answer, next) {
+  return new Promise((resolve) => {
+    try {
+      const puzzleAnswer = answersdb.getData(path.join("/", id));
+      if (puzzleAnswer === answer) {
+        next({ exists: true, correct: true });
+      } else {
+        next({ exists: true, correct: false });
+      }
+    } catch (err) {
+      console.log(err);
+      next({ exists: false, correct: false });
+    }
+  });
 }
 
 var server = app.listen(Number(config.host_port), function () {
@@ -127,5 +193,15 @@ async function validateUser(username, password, next) {
   } catch (err) {
     console.log(err);
     next(false);
+  }
+}
+
+async function findUser(username, next) {
+  try {
+    const user = await userdb.getData(path.join("/", username));
+    next(user);
+  } catch (err) {
+    console.log(err);
+    next(null);
   }
 }
