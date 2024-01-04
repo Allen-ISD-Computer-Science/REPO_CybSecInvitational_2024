@@ -1,0 +1,21 @@
+{
+  "name": "ahsinvpuzzles",
+  "version": "1.0.0",
+  "description": "backend for puzzles section of ahs invitational",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "node-json-db": "^2.3.0",
+    "nodemon": "^3.0.2",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {}
+}

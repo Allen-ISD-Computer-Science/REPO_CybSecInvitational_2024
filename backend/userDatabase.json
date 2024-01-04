@@ -1,0 +1,14 @@
+{
+  "_comments": "this file is a test file for AHSInv backend, this file should not be used during actual deployment of the server",
+  "user1": {
+    "points": 1,
+    "division": 3,
+    "username": "user1name",
+    "password": "password"
+  },
+  "user2": {
+    "points": 100,
+    "division": 1,
+    "username": "user2'sUsername"
+  }
+}

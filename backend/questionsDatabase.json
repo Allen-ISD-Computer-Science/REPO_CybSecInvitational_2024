@@ -1,0 +1,14 @@
+{
+  "templatePuzzle": {
+    "id": "templatePuzzle",
+    "description": "# Template Question\n### Template Description Header\nThis is a template question used to base question formats off of.\nLinks are embedded in cases where they are needed for external resources such as [Google](https://google.com)\nor other web related actions such as web requests.\nThis part should only serve as a description to the puzzles and not as a way to submit flags. \n",
+    "point_value": 0,
+    "difficulty": 0
+  },
+  "templatePuzzle2": {
+    "id": "templatePuzzle2",
+    "description": "# Template Question\n### Template Description Header\nThis is a template question used to base question formats off of.\nLinks are embedded in cases where they are needed for external resources such as [Google](https://google.com)\nor other web related actions such as web requests.\nThis part should only serve as a description to the puzzles and not as a way to submit flags. \n",
+    "point_value": 0,
+    "difficulty": 0
+  }
+}
