@@ -22,12 +22,12 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
-var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "\\"));
+var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "/"));
 
 // only holds descriptive elements of puzzles
-var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "\\"));
+var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "/"));
 // holds actual answers corresponding with puzzle id/name
-var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "\\"));
+var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "/"));
 
 //routing
 app.get("/home", function (req, res) {
@@ -170,7 +170,7 @@ var server = app.listen(Number(config.host_port), function () {
   var host = server.address().address;
   var port = server.address().port;
 
-  console.log("server at http://%s:%s", host, port);
+  console.log("server at http://localhost:%s/home", port);
 });
 
 function checkLogin(req) {
@@ -185,6 +185,7 @@ function checkLogin(req) {
 async function validateUser(username, password, next) {
   try {
     const user = await userdb.getData(path.join("/", username));
+    console.log(username, password, user);
     if (user.password === password) {
       next(true, user);
     } else {

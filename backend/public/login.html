@@ -1,42 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Simple Sidebar - Start Bootstrap Template</title>
-    <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="/css/styles.css" rel="stylesheet" />
-  </head>
 
-  <body>
-    <div class="container-fluid justify-content-center align-items-center bg-dark h-100 w-100">
-      <div class="card row justify-content-center align-items-center">
-        <form id="loginForm" autocomplete="off" method="post">
-          <div class="form-group">
-            <input
-              type="text"
-              class="form-control"
-              name="username"
-              placeholder="username"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <input type="password" class="form-control" name="password" required />
-          </div>
-          <button type="submit" id="sendlogin" class="btn btn-primary">login</button>
-        </form>
-      </div>
+<head>
+  <style>
+    h2{
+      color: #fff;
+    }
+  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Simple Sidebar - Start Bootstrap Template</title>
+  <!-- Favicon-->
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/css/styles.css" rel="stylesheet" />
+
+</head>
+
+<body>
+  <center>
+    <div class="cardFormat">
+    <div class="card row justify-content-center align-items-center ">
+      <h2>Login</h2>
+      <form id="loginForm" autocomplete="off" method="post">
+        <div class="form-group">
+          <input type="text" class="form-control" name="username" placeholder="Username" required />
+        </div>
+        <div class="form-group">
+          <input type="password" class="form-control" name="password" placeholder="Password" required />
+        </div>
+        <center><button type="submit" id="sendlogin" class="btn btn-primary">
+            login
+          </button></center>
+      </form>
     </div>
-  </body>
-  <script>
-    const loginForm = document.getElementById("loginForm");
-    loginForm.onsubmit = function (evt) {
-      console.log(evt);
-    };
-  </script>
+    </div>
+  </center>
+</body>
+<script>
+  const loginForm = document.getElementById("loginForm");
+  loginForm.onsubmit = function (evt) {
+    console.log(evt);
+  };
+</script>
+
 </html>
