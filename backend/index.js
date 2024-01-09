@@ -52,6 +52,13 @@ app.get("/login", function (req, res) {
   }
 });
 
+app.get("/logout", function (req, res) {
+  req.session.destroy(function () {
+    console.log("User logged out!");
+  });
+  res.redirect("/login");
+});
+
 //actions
 app.post(
   "/login",
@@ -87,106 +94,96 @@ app.post(
   })
 );
 
-app.get("/logout", function (req, res) {
-  req.session.destroy(function () {
-    console.log("User logged out!");
-  });
-  res.redirect(path.join(config.host_location, "login"));
-});
+app.post(
+  "/getPuzzle",
+  asyncHandler(async (req, res) => {
+    console.log("attempting to fetch puzzle");
 
-app.post("/getPuzzle", function (req, res) {
-  console.log("attempting to fetch puzzle");
-  const id = req.body.id;
-  if (!id) {
-    console.log("not found");
-    res.status(400);
-    return;
-  }
-
-  fetchPuzzlesOfId(id, function (puzzle) {
-    if (!puzzle) {
-      res.status(404);
-    } else {
-      res.json(puzzle);
+    const id = req.body.id;
+    if (!id) {
+      // Bad request
+      res.status(400);
+      return;
     }
-  });
-});
 
-async function fetchPuzzlesOfId(id, next) {
-  try {
-    const puzzle = await puzzlesdb.getData(":" + id);
-    next(puzzle);
-  } catch (err) {
-    console.log(err);
-    next(null);
-  }
-}
+    try {
+      const puzzle = await puzzlesdb.getData(":" + id);
+      res.json(puzzle);
+      return;
+    } catch (err) {
+      // not found
+      res.status(404);
+      return;
+    }
+  })
+);
 
 app.post(
   "/getAllPuzzles",
   asyncHandler(async (req, res) => {
     console.log("attempting to fetch all puzzles");
 
-    var puzzles = null;
     try {
-      puzzles = await puzzlesdb.getData(":");
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (!puzzles) {
-      res.status(500);
-    } else {
+      var puzzles = Object.values(await puzzlesdb.getData(":"));
+      puzzles.forEach((puzzle) => {
+        // remove description for smaller package
+        delete puzzle.description;
+      });
       res.json(puzzles);
+      return;
+    } catch (err) {
+      // failed to fetch puzzles
+      console.log(err);
+      res.status(500);
+      return;
     }
   })
 );
 
-app.post("/submitPuzzle", function (req, res) {
-  console.log("attempting to submit puzzle");
-  if (!checkLogin(req)) {
-    res.sendStatus(400);
-  }
+app.post(
+  "/submitPuzzle",
+  asyncHandler(async (req, res) => {
+    console.log("attempting to submit puzzle");
+    if (!checkLogin(req)) {
+      res.sendStatus(400);
+    }
 
-  const userid = req.session.user;
-  const id = req.body.id;
-  const answer = req.body.answer;
+    const user = req.session.user;
 
-  if (!id || !answer) {
-    res.sendStatus(400);
-    return;
-  }
+    if (!user) {
+      // user is not logged in
+      res.redirect("/login");
+      return;
+    }
 
-  const checkResponse = checkPuzzleAnswer();
-  if (!checkResponse.exists) {
-    res.sendStatus(400);
-    return;
-  }
+    const id = req.body.id;
+    const answer = req.body.answer;
 
-  if (checkResponse.correct) {
-    res.send({ correct: true });
-    return;
-  } else {
-    res.send({ correct: false });
-    return;
-  }
-});
+    if (!id || !answer) {
+      // bad request
+      res.sendStatus(400);
+      return;
+    }
 
-async function checkPuzzleAnswer(id, answer, next) {
-  return new Promise((resolve) => {
+    var puzzleAnswer = null;
+
     try {
-      const puzzleAnswer = answersdb.getData(":" + id);
-      if (puzzleAnswer === answer) {
-        next({ exists: true, correct: true });
-      } else {
-        next({ exists: true, correct: false });
-      }
+      puzzleAnswer = await answersdb.getData(":" + id);
     } catch (err) {
       console.log(err);
-      next({ exists: false, correct: false });
+      res.sendStatus(404);
+      return;
     }
-  });
-}
+
+    if (answer === puzzleAnswer) {
+      res.json({ correct: true });
+      return;
+    } else {
+      res.json({ correct: false });
+      return;
+    }
+  })
+);
 
 var server = app.listen(Number(config.host_port), function () {
   var host = server.address().address;
