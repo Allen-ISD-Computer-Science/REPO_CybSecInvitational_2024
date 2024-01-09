@@ -22,12 +22,17 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 // user database holds all user data and uses json as its storage format
-var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, "/"));
+var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, ":"));
 
 // only holds descriptive elements of puzzles
-var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, "/"));
+var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, ":"));
 // holds actual answers corresponding with puzzle id/name
-var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, "/"));
+var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, ":"));
+
+//async handling
+const asyncHandler = (func) => (req, res, next) => {
+  Promise.resolve(func(req, res, next)).catch(next);
+};
 
 //routing
 app.get("/home", function (req, res) {
@@ -48,21 +53,39 @@ app.get("/login", function (req, res) {
 });
 
 //actions
-app.post("/login", function (req, res) {
-  if (!req.body.username || !req.body.password) {
-    res.status(401);
-  }
+app.post(
+  "/login",
+  asyncHandler(async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
 
-  validateUser(req.body.username, req.body.password, function (result, user) {
-    if (result == true) {
+    if (!username || !password) {
+      res.status(401);
+      return;
+    }
+
+    var user = null;
+    try {
+      user = await userdb.getData(":" + username);
+    } catch (err) {
+      if (err.id == 5) {
+        console.log("User not found");
+      }
+      res.status(404);
+      return;
+    }
+
+    if (user.password === password) {
       req.session.user = user;
       res.redirect("/home");
+      return;
     } else {
-      console.log("erroring");
+      console.log("invalid login credentials");
       res.status(401).redirect("/login");
+      return;
     }
-  });
-});
+  })
+);
 
 app.get("/logout", function (req, res) {
   req.session.destroy(function () {
@@ -91,7 +114,7 @@ app.post("/getPuzzle", function (req, res) {
 
 async function fetchPuzzlesOfId(id, next) {
   try {
-    const puzzle = await puzzlesdb.getData(path.join("/", id));
+    const puzzle = await puzzlesdb.getData(":" + id);
     next(puzzle);
   } catch (err) {
     console.log(err);
@@ -99,26 +122,25 @@ async function fetchPuzzlesOfId(id, next) {
   }
 }
 
-app.post("/getAllPuzzles", function (req, res) {
-  console.log("attempting to fetch all puzzles");
-  fetchPuzzles(function (puzzles) {
+app.post(
+  "/getAllPuzzles",
+  asyncHandler(async (req, res) => {
+    console.log("attempting to fetch all puzzles");
+
+    var puzzles = null;
+    try {
+      puzzles = await puzzlesdb.getData(":");
+    } catch (err) {
+      console.log(err);
+    }
+
     if (!puzzles) {
       res.status(500);
     } else {
       res.json(puzzles);
     }
-  });
-});
-
-async function fetchPuzzles(next) {
-  try {
-    const puzzles = await puzzlesdb.getData("/");
-    next(puzzles);
-  } catch (err) {
-    console.log(err);
-    next(null);
-  }
-}
+  })
+);
 
 app.post("/submitPuzzle", function (req, res) {
   console.log("attempting to submit puzzle");
@@ -153,7 +175,7 @@ app.post("/submitPuzzle", function (req, res) {
 async function checkPuzzleAnswer(id, answer, next) {
   return new Promise((resolve) => {
     try {
-      const puzzleAnswer = answersdb.getData(path.join("/", id));
+      const puzzleAnswer = answersdb.getData(":" + id);
       if (puzzleAnswer === answer) {
         next({ exists: true, correct: true });
       } else {
@@ -182,24 +204,9 @@ function checkLogin(req) {
   }
 }
 
-async function validateUser(username, password, next) {
-  try {
-    const user = await userdb.getData(path.join("/", username));
-    console.log(username, password, user);
-    if (user.password === password) {
-      next(true, user);
-    } else {
-      next(false);
-    }
-  } catch (err) {
-    console.log(err);
-    next(false);
-  }
-}
-
 async function findUser(username, next) {
   try {
-    const user = await userdb.getData(path.join("/", username));
+    const user = await userdb.getData(":" + username);
     next(user);
   } catch (err) {
     console.log(err);

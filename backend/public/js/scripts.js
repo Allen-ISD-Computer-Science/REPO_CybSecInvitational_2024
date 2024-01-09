@@ -46,13 +46,25 @@ async function fetchPuzzle() {
   console.log(html);
 }
 
+const card = document.getElementById("puzzleCard");
+var converter = new showdown.Converter();
 async function fetchAllPuzzles() {
   const response = await fetch(location.protocol + "//" + location.host + "/getAllPuzzles", { method: "POST" });
-  console.log(response);
+  // console.log(response);
   if (!response.ok) return;
 
   const data = await response.json();
-  console.log(data);
+  const puzzles = Object.values(data);
+
+  puzzles.forEach((puzzle) => {
+    const cardBody = card.getElementsByClassName("card-body");
+
+    console.log(cardBody);
+    const cardText = cardBody[0].getElementsByClassName("card-text");
+    console.log(cardText);
+    cardText[0].innerHTML = converter.makeHtml(puzzle.description);
+    // console.log();
+  });
 }
 
 // fetchPuzzle();

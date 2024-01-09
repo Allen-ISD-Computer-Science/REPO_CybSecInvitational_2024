@@ -1,50 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>AHS Invitational - Login</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="/css/styles.css" rel="stylesheet" />
+  </head>
 
-<head>
   <style>
-    h2{
-      color: #fff;
+    /* background temporarily not enabled */
+    .background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      /* background-color: red; */
+
+      /* background: url("https://assets.materialup.com/uploads/b4df832c-4930-4882-8049-8f59ad93f4f9/preview.gif"); */
+      /* filter: blur(px); */
+
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
-
   </style>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-  <meta name="description" content="" />
-  <meta name="author" content="" />
-  <title>Simple Sidebar - Start Bootstrap Template</title>
-  <!-- Favicon-->
-  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-  <!-- Core theme CSS (includes Bootstrap)-->
-  <link href="/css/styles.css" rel="stylesheet" />
 
-</head>
-
-<body>
-  <center>
-    <div class="cardFormat">
-    <div class="card row justify-content-center align-items-center card-padding">
-      <h2>Login</h2>
-      <form id="loginForm" autocomplete="off" method="post">
-        <div class="form-group">
-          <input type="text" class="form-control" name="username" placeholder="Username" required />
+  <body>
+    <div class="background"></div>
+    <div>
+      <div class="cardFormat">
+        <div class="card row justify-content-center align-items-center card-padding gap-2 p-5 rounded-5 text-center">
+          <h2 class="text-light">Login</h2>
+          <form id="loginForm" autocomplete="off" method="post" class="d-flex flex-column gap-2">
+            <div class="form-group">
+              <input type="text" class="form-control" name="username" placeholder="Username" required />
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" name="password" placeholder="Password" required />
+            </div>
+            <div>
+              <button type="submit" id="sendlogin" class="btn btn-primary text-dark w-25">login</button>
+            </div>
+          </form>
         </div>
-        <div class="form-group">
-          <input type="password" class="form-control" name="password" placeholder="Password" required />
-        </div>
-        <center><button type="submit" id="sendlogin" class="btn btn-primary">
-            login
-          </button></center>
-      </form>
+      </div>
     </div>
-    </div>
-  </center>
-</body>
-<script>
-  const loginForm = document.getElementById("loginForm");
-  loginForm.onsubmit = function (evt) {
-    console.log(evt);
-  };
-</script>
-
+  </body>
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    loginForm.onsubmit = function (evt) {
+      console.log(evt);
+    };
+  </script>
 </html>
