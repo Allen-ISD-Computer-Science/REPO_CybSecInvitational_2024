@@ -34,7 +34,7 @@ const asyncHandler = (func) => (req, res, next) => {
 app.get("/home", function (req, res) {
   console.log(req.session);
   // check login
-  if (req.session.user) {
+  if (req.session.userid) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
     res.redirect("/login");
@@ -46,7 +46,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/login", function (req, res) {
-  if (req.session.user) {
+  if (req.session.userid) {
     res.redirect("/home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
@@ -54,6 +54,7 @@ app.get("/login", function (req, res) {
 });
 
 //actions
+//logout
 app.post("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
@@ -61,6 +62,7 @@ app.post("/logout", function (req, res) {
   res.redirect("/login");
 });
 
+//login
 app.post(
   "/login",
   asyncHandler(async (req, res) => {
@@ -68,7 +70,7 @@ app.post(
     const password = req.body.password;
 
     if (!username || !password) {
-      res.status(401);
+      res.sendStatus(401);
       return;
     }
 
@@ -79,12 +81,12 @@ app.post(
       if (err.id == 5) {
         console.log("User not found");
       }
-      res.status(404);
+      res.sendStatus(404);
       return;
     }
 
     if (user.password === password) {
-      req.session.user = user;
+      req.session.userid = user.username;
       res.redirect("/home");
       return;
     } else {
@@ -95,13 +97,14 @@ app.post(
   })
 );
 
+//puzzle interactions
 app.get(
   "/getPuzzle",
   asyncHandler(async (req, res) => {
     const id = req.query.id;
     if (!id) {
       // Bad request
-      res.status(400);
+      res.sendStatus(400);
       return;
     }
 
@@ -114,7 +117,7 @@ app.get(
     } catch (err) {
       console.log(err);
       // not found
-      res.status(404);
+      res.sendStatus(404);
       return;
     }
   })
@@ -136,7 +139,7 @@ app.get(
     } catch (err) {
       // failed to fetch puzzles
       console.log(err);
-      res.status(500);
+      res.sendStatus(500);
       return;
     }
   })
@@ -146,18 +149,12 @@ app.post(
   "/submitPuzzle",
   asyncHandler(async (req, res) => {
     console.log("attempting to submit puzzle");
-    if (!req.session.user) {
+
+    if (!req.session.userid) {
       res.sendStatus(400);
     }
 
-    const user = req.session.user;
-
-    if (!user) {
-      // user is not logged in
-      res.redirect("/login");
-      return;
-    }
-
+    const userid = req.session.userid;
     const id = req.body.id;
     const answer = req.body.answer;
 
@@ -184,23 +181,65 @@ app.post(
 
     var userData = null;
     try {
-      userData = await userdb.getData(":" + user.username);
+      userData = await userdb.getData(":" + userid);
     } catch (err) {
-      console.log("failed to find user of username: " + user.username);
+      console.log("failed to find user of username: " + userid);
       res.sendStatus(500);
       return;
     }
     console.log(userData);
 
     if (answer === puzzle.answer) {
-      console.log(answer);
+      const alreadyCompleted = userData.completed_puzzles[puzzle.id];
+      if (!alreadyCompleted) {
+        // update completed puzzles
+        userData.completed_puzzles[puzzle.id] = true;
+        userdb.push(`:${userData.username}:completed_puzzles`, userData.completed_puzzles);
+
+        // update points
+        userdb.push(`:${userData.username}:points`, userData.points + puzzle.point_value);
+      }
       res.json({ correct: true });
-      userdb.push(`:${userData.username}:points`, userData.points + puzzle.point_value);
       return;
     } else {
       res.json({ correct: false });
       return;
     }
+  })
+);
+
+//user interactions
+app.get(
+  "/getUser",
+  asyncHandler(async (req, res) => {
+    const userid = req.session.userid;
+    if (!userid) {
+      res.sendStatus(400);
+      return;
+    }
+
+    var user = await userdb.getData(":" + userid);
+    delete user.password;
+
+    console.log(user);
+    res.json(user);
+  })
+);
+
+app.get(
+  "/getAllUsers",
+  asyncHandler(async (req, res) => {
+    const users = await userdb.getData(":");
+    console.log(users);
+    var UserArray = Object.values(users);
+    console.log(UserArray);
+
+    UserArray.forEach((user) => {
+      delete user.password;
+      delete user.completed_puzzles;
+    });
+
+    res.json(UserArray);
   })
 );
 

@@ -40,8 +40,8 @@ async function submitPuzzle(id, answer) {
     return;
   }
 
-  const json = await response.json();
-  console.log(json);
+  const puzzle = await response.json();
+  console.log(puzzle);
 }
 
 async function fetchPuzzle() {
@@ -66,7 +66,7 @@ async function fetchPuzzle() {
 const card = document.getElementById("puzzleCard");
 var converter = new showdown.Converter();
 async function fetchAllPuzzles() {
-  const response = await fetch(location.protocol + "//" + location.host + "/getAllPuzzles", { method: "POST" });
+  const response = await fetch(location.protocol + "//" + location.host + "/getAllPuzzles", { method: "GET" });
   // console.log(response);
   if (!response.ok) return;
 
@@ -75,6 +75,38 @@ async function fetchAllPuzzles() {
   console.log(puzzles);
 }
 
-// fetchPuzzle();
-fetchAllPuzzles();
-submitPuzzle("templatePuzzle", "AHSINV{thisisnottherightanswer}");
+async function fetchUser() {
+  const response = await fetch(location.protocol + "//" + location.host + "/getUser", { method: "GET" });
+  // console.log(response);
+  if (!response.ok) return;
+
+  const data = await response.json();
+  console.log(data);
+}
+
+async function fetchAllUsers() {
+  const response = await fetch(location.protocol + "//" + location.host + "/getAllUsers", { method: "GET" });
+  // console.log(response);
+  if (!response.ok) return;
+
+  const data = await response.json();
+  console.log(data);
+}
+
+// async function fetchUser() {
+//   const response = await fetch(location.protocol + "//" + location.host + "/getAllPuzzles", { method: "POST" });
+//   // console.log(response);
+//   if (!response.ok) return;
+
+//   const data = await response.json();
+//   const object = Object.values(data);
+//   console.log(object);
+// }
+
+// fetchUser;
+
+// // fetchPuzzle();
+// fetchAllPuzzles();
+// submitPuzzle("templatePuzzle", "AHSINV{templateQuestionFlag}");
+// fetchUser();
+fetchAllUsers();

@@ -1,14 +1,18 @@
 {
-    "_comments": "this file is a test file for AHSInv backend, this file should not be used during actual deployment of the server",
     "user1": {
-        "points": 11,
+        "points": 10,
         "division": 3,
         "username": "user1",
-        "password": "password"
+        "password": "password",
+        "completed_puzzles": {
+            "templatePuzzle": true
+        }
     },
     "user2": {
         "points": 100,
         "division": 1,
-        "username": "user2"
+        "username": "user2",
+        "password": "supersecurepassword",
+        "completed_puzzles": {}
     }
 }
