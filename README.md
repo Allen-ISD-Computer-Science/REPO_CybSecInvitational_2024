@@ -21,5 +21,5 @@ Create a responsive and interpretive environment for fellow students to explore 
   - External Parties Coordinator
 - UI/UX Designer: Onik Hoque, onikh [Digital Portfolio](https://codermerlin.academy/users/onik-hoque/Digital%20Portfolio/index.html)
   - Sponsor Coordinator
-- DBA, Asst. Chair: Faraz Piracha, FarazPir [Digital Portfolio](https://codermerlin.academy/users/faraz-piracha/Digital%20Portfolio/index.html) 
+- DBA: Faraz Piracha, FarazPir [Digital Portfolio](https://codermerlin.academy/users/faraz-piracha/Digital%20Portfolio/index.html) 
   - Assistance
