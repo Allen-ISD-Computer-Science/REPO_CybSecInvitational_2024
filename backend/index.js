@@ -21,13 +21,9 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// user database holds all user data and uses json as its storage format
+//Databases (json format)
 var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, ":"));
-
-// only holds descriptive elements of puzzles
 var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, ":"));
-// holds actual answers corresponding with puzzle id/name
-var answersdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsAnswersDatabase", true, true, ":"));
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -37,11 +33,16 @@ const asyncHandler = (func) => (req, res, next) => {
 //routing
 app.get("/home", function (req, res) {
   console.log(req.session);
-  if (checkLogin(req)) {
+  // check login
+  if (req.session.user) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.redirect(path.join(config.host_location, "login"));
+    res.redirect("/login");
   }
+});
+
+app.get("/", function (req, res) {
+  res.redirect("/login");
 });
 
 app.get("/login", function (req, res) {
@@ -52,14 +53,14 @@ app.get("/login", function (req, res) {
   }
 });
 
-app.get("/logout", function (req, res) {
+//actions
+app.post("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
   res.redirect("/login");
 });
 
-//actions
 app.post(
   "/login",
   asyncHandler(async (req, res) => {
@@ -94,12 +95,10 @@ app.post(
   })
 );
 
-app.post(
+app.get(
   "/getPuzzle",
   asyncHandler(async (req, res) => {
-    console.log("attempting to fetch puzzle");
-
-    const id = req.body.id;
+    const id = req.query.id;
     if (!id) {
       // Bad request
       res.status(400);
@@ -108,9 +107,12 @@ app.post(
 
     try {
       const puzzle = await puzzlesdb.getData(":" + id);
+      delete puzzle.answer; // we dont want users to be able to see the answers!
+
       res.json(puzzle);
       return;
     } catch (err) {
+      console.log(err);
       // not found
       res.status(404);
       return;
@@ -118,7 +120,7 @@ app.post(
   })
 );
 
-app.post(
+app.get(
   "/getAllPuzzles",
   asyncHandler(async (req, res) => {
     console.log("attempting to fetch all puzzles");
@@ -126,8 +128,8 @@ app.post(
     try {
       var puzzles = Object.values(await puzzlesdb.getData(":"));
       puzzles.forEach((puzzle) => {
-        // remove description for smaller package
-        delete puzzle.description;
+        delete puzzle.description; // remove description for smaller package size
+        delete puzzle.answer; // we dont want users to be able to see the answers!
       });
       res.json(puzzles);
       return;
@@ -144,7 +146,7 @@ app.post(
   "/submitPuzzle",
   asyncHandler(async (req, res) => {
     console.log("attempting to submit puzzle");
-    if (!checkLogin(req)) {
+    if (!req.session.user) {
       res.sendStatus(400);
     }
 
@@ -165,18 +167,35 @@ app.post(
       return;
     }
 
-    var puzzleAnswer = null;
-
+    var puzzle = null;
     try {
-      puzzleAnswer = await answersdb.getData(":" + id);
+      puzzle = await puzzlesdb.getData(":" + id);
     } catch (err) {
       console.log(err);
       res.sendStatus(404);
       return;
     }
 
-    if (answer === puzzleAnswer) {
+    if (!puzzle.answer) {
+      console.log("puzzle is missing answer");
+      res.sendStatus(500);
+      return;
+    }
+
+    var userData = null;
+    try {
+      userData = await userdb.getData(":" + user.username);
+    } catch (err) {
+      console.log("failed to find user of username: " + user.username);
+      res.sendStatus(500);
+      return;
+    }
+    console.log(userData);
+
+    if (answer === puzzle.answer) {
+      console.log(answer);
       res.json({ correct: true });
+      userdb.push(`:${userData.username}:points`, userData.points + puzzle.point_value);
       return;
     } else {
       res.json({ correct: false });
@@ -191,22 +210,3 @@ var server = app.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
-
-function checkLogin(req) {
-  console.log("checking login");
-  if (req.session.user) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-async function findUser(username, next) {
-  try {
-    const user = await userdb.getData(":" + username);
-    next(user);
-  } catch (err) {
-    console.log(err);
-    next(null);
-  }
-}
