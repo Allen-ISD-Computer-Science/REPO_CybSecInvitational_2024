@@ -1,0 +1,15 @@
+.infoBlock {
+    max-width: 1200px;
+    border: 1px solid blue;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+}
+
+.infoHeader {
+    padding-left: 10px;
+    padding-top: 5px;
+    padding-bottom: 10px;
+}
+
+
