@@ -23,3 +23,4 @@ Create a responsive and interpretive environment for fellow students to explore 
   - Sponsor Coordinator
 - DBA: Faraz Piracha, FarazPir [Digital Portfolio](https://codermerlin.academy/users/faraz-piracha/Digital%20Portfolio/index.html) 
   - Assistance
+- QA Analyst: Marisa Patel, marisapatel5 [Digital Portfolio](https://codermerlin.academy/users/marisa-patel/Digital%20Portfolio/index.html) 
