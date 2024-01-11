@@ -1,10 +1,47 @@
 var express = require("express");
 var session = require("express-session");
-var nodeJsonDB = require("node-json-db");
 var path = require("path");
 var bodyParser = require("body-parser");
 
 const config = require(path.join(__dirname, "config.json"));
+
+const mongo_username = encodeURIComponent(config.mongodb_username);
+const mongo_password = encodeURIComponent(config.mongodb_password);
+
+const { MongoClient, ServerApiVersion } = require("mongodb");
+const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+}
+run().catch(console.dir);
+
+const Database = client.db("PuzzleSection");
+
+async function fetchUser(query) {
+  const result = await client.db("PuzzleSection").collection("Users").findOne(query);
+  console.log(result);
+}
+
+fetchUser({ username: "username" });
 
 var app = express();
 
@@ -21,9 +58,18 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
+async function listDatabases() {
+  const dbList = await client.db().admin().listDatabases();
+  console.log("Databases");
+  dbList.databases.forEach((db) => {
+    console.log(db.name);
+  });
+}
+listDatabases();
+
 //Databases (json format)
-var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, true, ":"));
-var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, true, ":"));
+// var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, false, ":"));
+// var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, false, ":"));
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -55,7 +101,7 @@ app.get("/login", function (req, res) {
 
 //actions
 //logout
-app.post("/logout", function (req, res) {
+app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
@@ -69,6 +115,8 @@ app.post(
     const username = req.body.username;
     const password = req.body.password;
 
+    console.log(username, password);
+
     if (!username || !password) {
       res.sendStatus(401);
       return;
@@ -77,6 +125,7 @@ app.post(
     var user = null;
     try {
       user = await userdb.getData(":" + username);
+      console.log(user);
     } catch (err) {
       if (err.id == 5) {
         console.log("User not found");
@@ -134,6 +183,7 @@ app.get(
         delete puzzle.description; // remove description for smaller package size
         delete puzzle.answer; // we dont want users to be able to see the answers!
       });
+
       res.json(puzzles);
       return;
     } catch (err) {
@@ -239,6 +289,7 @@ app.get(
       delete user.completed_puzzles;
     });
 
+    console.log(await userdb.getData(":"));
     res.json(UserArray);
   })
 );
