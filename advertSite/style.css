@@ -6,6 +6,25 @@
   overflow: hidden;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+.Title{
+  display: flex;
+  justify-content: center;
+}
+.Thumbnail{
+  height: 50%;
+  width: 50%;
+}
+main{
+  
+  padding-left: 15%;
+  padding-right: 15%;
+}
+.button{
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  border-radius: 8px;
+  height: 15vh;
+  width: 45vh;
+}
 
 .headshot img {
   width: 100%;
