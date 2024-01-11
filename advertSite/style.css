@@ -1,0 +1,50 @@
+.headshot {
+  width: 200px;
+  height: 200px;
+  margin: 10px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.headshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+body {
+  margin: 0;
+  padding: 0;
+
+}
+.grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-left: 25%;
+  padding-right: 25%;
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.headshot {
+  width: 200px;
+  margin: 10px;
+  text-align: center;
+}
+
+.headshot img {
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.name-role {
+  margin-top: 10px;
+}
