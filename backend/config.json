@@ -1,8 +1,0 @@
-{
-  "host_port": "11278",
-  "express_session_secret": "secret-key-for-express-session-handling",
-  "host_location": "",
-
-  "mongodb_password": "Axkpx2NnTtgF70ul",
-  "mongodb_username": "AHSInv_SoohanCho"
-}
