@@ -34,11 +34,16 @@ async function run() {
 }
 run().catch(console.dir);
 
-const Database = client.db("PuzzleSection");
-
 async function fetchUser(query) {
-  const result = await client.db("PuzzleSection").collection("Users").findOne(query);
-  console.log(result);
+  const result = await client.db("PuzzlesSection").collection("Users").find(query).project({ username: 1, password: 1, points: 1 });
+
+  console.log(await result.next());
+  await result.close();
+  // const result2 = await client
+  //   .db("PuzzlesSection")
+  //   .collection("Users")
+  //   .updateOne({ id: result._id }, { points: result.points + 10 });
+  // console.log(result);
 }
 
 fetchUser({ username: "username" });
