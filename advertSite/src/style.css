@@ -2,17 +2,18 @@
 @tailwind components;
 @tailwind utilities
 
-.headshot {
-  width: 200px;
-  height: 200px;
-  margin: 10px;
-  border-radius: 50%;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+
+header{
+  height: 100vh;
 }
 .Title{
   display: flex;
   justify-content: center;
+}
+header img{
+  display: block;
+  margin: auto;
 }
 .Thumbnail{
   height: 50%;
@@ -30,14 +31,11 @@ main{
   width: 45vh;
 }
 
-.headshot img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+
 body {
   margin: 0;
   padding: 0;
+  background: linear-gradient(360deg, #FFF 36%, #FFF59C 54.44%, #FFF59C 56.83%, #FFC978 64.12%, #8F8FFF 68.89%, #6F6FCC 76%, #23235F 89.58%, #08081E 99.99%, rgba(11, 11, 36, 0.09) 100%);
 
 }
 .grid{
@@ -55,18 +53,7 @@ body {
   align-items: flex-start;
 }
 
-.headshot {
-  width: 200px;
-  margin: 10px;
-  text-align: center;
-}
 
-.headshot img {
-  width: 100%;
-  height: auto;
-  border-radius: 50%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
 
 .name-role {
   margin-top: 10px;
