@@ -54,11 +54,13 @@ async function setPointsOfUser(username, amount) {
 }
 
 async function onPuzzleCorrect(username, amount, id) {
+  console.log(username, amount, id);
+
   try {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .updateOne({ username: username }, { $inc: { points: amount }, $set: { id: true } });
+      .updateOne({ username: username }, { $inc: { points: amount }, $set: { completed_puzzles: { [id]: true } } });
     return result;
   } catch (err) {
     console.log(err);
@@ -147,6 +149,10 @@ app.get("/login", function (req, res) {
   }
 });
 
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "public/404.html"));
+});
+
 //actions
 //logout
 app.get("/logout", function (req, res) {
@@ -160,11 +166,14 @@ app.get("/logout", function (req, res) {
 app.post(
   "/login",
   asyncHandler(async (req, res) => {
+    console.log("attempting login ");
+
     const username = req.body.username;
     const password = req.body.password;
 
+    console.log(username, password);
     if (!username || !password) {
-      res.sendStatus(401);
+      res.sendStatus(400);
       return;
     }
 
@@ -180,7 +189,7 @@ app.post(
       return;
     } else {
       console.log("invalid login credentials");
-      res.status(401).redirect("/login");
+      res.sendStatus(401);
       return;
     }
   })
@@ -211,15 +220,13 @@ app.get(
 );
 
 app.get(
-  "/getAllPuzzles",
+  "/getMultiplePuzzles",
   asyncHandler(async (req, res) => {
     const dbquery = req.query.query;
     const sort = req.query.sort;
     const projection = req.query.projection;
     const count = req.query.count;
     const skip = req.query.skip;
-
-    console.log("attempting to fetch all puzzles");
 
     const puzzles = fetchPuzzles(dbquery, sort, projection, count, skip);
     if (puzzles) {
@@ -239,6 +246,8 @@ app.post(
     const id = req.body.id;
     const answer = req.body.answer;
 
+    console.log(userid, id, answer);
+
     if (!id || !answer || !userid) {
       res.sendStatus(400);
       return;
@@ -250,6 +259,7 @@ app.post(
     }
 
     const puzzle = await fetchPuzzle(id);
+    console.log(puzzle);
     if (!puzzle) {
       res.sendStatus(404);
       return;
@@ -266,7 +276,7 @@ app.post(
       return;
     } else {
       if (puzzle.answer === answer) {
-        const result = onPuzzleCorrect(userid, puzzle.points, puzzle.id);
+        const result = onPuzzleCorrect(userid, puzzle.point_value, puzzle.id);
         if (!result) {
           res.sendStatus(500);
           return;
@@ -274,7 +284,7 @@ app.post(
         res.json({ correct: true });
         return;
       } else {
-        res.json({ corret: false });
+        res.json({ correct: false });
         return;
       }
     }
