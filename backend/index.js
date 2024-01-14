@@ -130,7 +130,7 @@ const asyncHandler = (func) => (req, res, next) => {
 app.get("/home", function (req, res) {
   console.log(req.session);
   // check login
-  if (req.session.userid) {
+  if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
     res.redirect("/login");
@@ -142,19 +142,13 @@ app.get("/", function (req, res) {
 });
 
 app.get("/login", function (req, res) {
-  if (req.session.userid) {
+  if (req.session.username) {
     res.redirect("/home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
   }
 });
 
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "public/404.html"));
-});
-
-//actions
-//logout
 app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
@@ -162,6 +156,11 @@ app.get("/logout", function (req, res) {
   res.redirect("/login");
 });
 
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "public/404.html"));
+});
+
+//actions
 //login
 app.post(
   "/login",
@@ -184,7 +183,7 @@ app.post(
     }
 
     if (user.password === password) {
-      req.session.userid = user.username;
+      req.session.username = user.username;
       res.redirect("/home");
       return;
     } else {
@@ -242,18 +241,18 @@ app.get(
 app.post(
   "/submitPuzzle",
   asyncHandler(async (req, res) => {
-    const userid = req.session.userid;
+    const username = req.session.username;
     const id = req.body.id;
     const answer = req.body.answer;
 
-    console.log(userid, id, answer);
+    console.log(username, id, answer);
 
-    if (!id || !answer || !userid) {
+    if (!id || !answer || !username) {
       res.sendStatus(400);
       return;
     }
 
-    const userData = await fetchUser(userid);
+    const userData = await fetchUser(username);
     if (!userData) {
       res.sendStatus(400);
     }
@@ -271,12 +270,12 @@ app.post(
       return;
     }
 
-    if (userData.completed_puzzles[puzzle.id]) {
+    if (userData.completed_puzzles[puzzle.name]) {
       res.json({ alreadyCompleted: true });
       return;
     } else {
       if (puzzle.answer === answer) {
-        const result = onPuzzleCorrect(userid, puzzle.point_value, puzzle.id);
+        const result = onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
         if (!result) {
           res.sendStatus(500);
           return;
@@ -295,13 +294,13 @@ app.post(
 app.get(
   "/getUser",
   asyncHandler(async (req, res) => {
-    const userid = req.session.userid;
-    if (!userid) {
+    const username = req.session.username;
+    if (!username) {
       res.sendStatus(400);
       return;
     }
 
-    var user = await fetchUser(userid);
+    var user = await fetchUser(username);
     delete user.password;
     delete user._id;
     res.json(user);
