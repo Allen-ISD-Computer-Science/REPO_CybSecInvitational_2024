@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>AHS Invitational - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
+          <div class="sidebar-brand-icon">
+            <img src="./img/logo.png" alt="Logo" width="100%" height="100%" />
+          </div>
+          <div class="sidebar-brand-text mx-3">AHS Invitational</div>
+        </a>
+
+        <!-- Logout -->
+        <hr class="sidebar-divider" />
+        <a href="/logout" class="mr-3 ml-3 mt-0 mb-3 d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-sign-out-alt fa-sm text-white-50"></i> Logout </a>
+        <hr class="sidebar-divider" />
+        <!--Logout end-->
+
+        <div class="sidebar-heading">Main</div>
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/home">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a
+          >
+        </li>
+
+        <!-- Nav Item - Scoreboard -->
+        <li class="nav-item">
+          <a class="nav-link pt-0" href="/scoreboard">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>Scoreboard</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Puzzle Round -->
+        <div class="sidebar-heading">Puzzle Round</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/puzzles">
+            <i class="fas fa-fw fa-puzzle-piece"></i>
+            <span>Puzzles</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Scenario Round -->
+        <div class="sidebar-heading">Scenario Round</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/home">
+            <i class="fas fa-fw fa-signal"></i>
+            <span>Status</span></a
+          >
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block" />
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+      </ul>
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow pr-0">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Topbar Search -->
+            <div class="w-25 mr-5">
+              <h6 class="text-nowrap">Time Remaining</h6>
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="w-25 mr-5">
+              <h6 class="text-nowrap">Battle Round Time Remaining</h6>
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+              <!-- <div class="topbar-divider d-none d-sm-block"></div> -->
+              <li class="nav-item">
+                <div class="nav-link">
+                  <span class="mr-2 d-none d-lg-inline align-middle text-dark">Points: 100</span>
+                  <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
+                </div>
+              </li>
+              <div class="d-none d-lg-block vr bg-gray-300" style="width: 0.1rem"></div>
+              <li class="nav-item">
+                <div class="nav-link">
+                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small">213608ca-0bfc-42d8-b5f9-604575348305</span>
+                  <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
+                </div>
+              </li>
+            </ul>
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <div class="container d-flex justify-content-center" style="gap: 1rem">
+              <!--Category Dropdown-->
+              <div class="input-group mr-auto">
+                <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+              </div>
+
+              <div class="dropdown open">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</button>
+                <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                  <button class="dropdown-item" href="#">Action</button>
+                  <button class="dropdown-item disabled" href="#">Disabled action</button>
+                </div>
+              </div>
+              <!--Category Dropdown End-->
+
+              <!--Difficulty Dropdown-->
+              <div class="dropdown open">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="difficultyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Difficulty</button>
+                <div class="dropdown-menu" aria-labelledby="difficultyDropdown">
+                  <button class="dropdown-item" href="#">Action</button>
+                  <button class="dropdown-item disabled" href="#">Disabled action</button>
+                </div>
+              </div>
+              <!--Difficulty Dropdown End-->
+            </div>
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Puzzles</h1>
+            </div>
+
+            <div class=""></div>
+
+            <!--Row 1-->
+            <div class="row">
+              <!-- Puzzle Easy -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card bg-gray-200 border-left-success shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Easy</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Easy -->
+
+              <!-- Puzzle Medium -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-warning shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Medium</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Medium -->
+
+              <!-- Puzzle Hard -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-danger shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Hard</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Hard -->
+
+              <!-- Puzzle Master -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-dark shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Master</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Master -->
+            </div>
+            <!--Row 1 End-->
+
+            <!--Row 1-->
+            <div class="row">
+              <!-- Puzzle Easy -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-success shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Easy</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Easy -->
+
+              <!-- Puzzle Medium -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-warning shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Medium</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Medium -->
+
+              <!-- Puzzle Hard -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-danger shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Hard</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Hard -->
+
+              <!-- Puzzle Master -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-dark shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Master</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Master -->
+            </div>
+            <!--Row 1 End-->
+
+            <!--Row 1-->
+            <div class="row">
+              <!-- Puzzle Easy -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-success shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Easy</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Easy -->
+
+              <!-- Puzzle Medium -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-warning shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Medium</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Medium -->
+
+              <!-- Puzzle Hard -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-danger shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Hard</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Hard -->
+
+              <!-- Puzzle Master -->
+              <div class="col-xl-3 col-md-6 mb-4">
+                <div type="button" class="card border-left-dark shadow h-100 py-2 w-100" data-toggle="modal" data-target="#puzzleModal">
+                  <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">Master</div>
+                        <div class="text-s font-weight-bold">Template Puzzle Category</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">Template Puzzle Name<br />100 Points</div>
+                      </div>
+                      <div class="col-auto">
+                        <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- End Puzzle Master -->
+            </div>
+            <!--Row 1 End-->
+
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                  <a class="page-link" href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item">
+                  <a class="page-link" href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+          <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; AHS Invitational 2024</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#puzzleModal">Launch demo modal</button>
+    <!-- Puzzle Modal-->
+    <div class="modal fade" id="puzzleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" style="max-width: 1000px" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">PuzzleHeader</h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            PuzzleBody<br />
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eget felis bibendum, consectetur libero in, eleifend odio. Pellentesque quis turpis non erat placerat dictum ac sed sem.
+            Mauris posuere justo at elit rutrum, quis vulputate velit imperdiet. Vivamus et feugiat nibh, vel convallis nibh. Mauris eu viverra risus. Aenean id pretium risus. Suspendisse eget
+            bibendum ex, ac sodales augue.
+          </div>
+          <div class="modal-footer">
+            <form class="align-self-center d-flex w-100">
+              <div class="form-group m-0">
+                <input type="text" name="" id="" class="form-control" placeholder="Flag" aria-describedby="helpId" />
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-left: auto">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom scripts for all pages-->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="js/demo/chart-area-demo.js"></script>
+    <script src="js/demo/chart-pie-demo.js"></script>
+    <!-- <script src="js/scripts.js"></script> -->
+  </body>
+</html>

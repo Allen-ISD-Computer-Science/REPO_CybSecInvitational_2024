@@ -128,8 +128,6 @@ const asyncHandler = (func) => (req, res, next) => {
 
 //routing
 app.get("/home", function (req, res) {
-  console.log(req.session);
-  // check login
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
@@ -154,6 +152,14 @@ app.get("/logout", function (req, res) {
     console.log("User logged out!");
   });
   res.redirect("/login");
+});
+
+app.get("/puzzles", function (req, res) {
+  if (!req.session.username) {
+    res.redirect("/login");
+  } else {
+    res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  }
 });
 
 app.get("*", function (req, res) {
