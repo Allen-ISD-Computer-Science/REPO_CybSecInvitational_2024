@@ -17,6 +17,22 @@ async function submitPuzzle(id, answer) {
   console.log(puzzle);
 }
 
+async function fetchPuzzle(id) {
+  const response = await fetch(location.protocol + "//" + location.host + "/getMultiplePuzzles", {
+    method: "POST",
+    body: JSON.stringify({ id: id }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+}
+
 async function queryPuzzles(category, difficulty, skip) {
   console.log(difficulty);
   const body = {
@@ -188,3 +204,12 @@ generatePage(null, null, 0).then((res) => (pageHolder.innerHTML = res));
 
 const puzzleModalHeader = document.getElementById("puzzle-header");
 const puzzleModalBody = document.getElementById("puzzle-body");
+
+async function generatePuzzleModal(id) {
+  const puzzle = fetchPuzzle(id);
+
+  puzzleModalHeader = puzzle.name;
+  puzzleModalBody.innerHTML = puzzle.description;
+}
+
+generatePuzzleModal(" ");
