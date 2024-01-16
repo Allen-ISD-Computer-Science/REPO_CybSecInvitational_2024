@@ -259,8 +259,6 @@ app.post(
     const id = req.body.id;
     const answer = req.body.answer;
 
-    console.log(username, id, answer);
-
     if (!id || !answer || !username) {
       res.sendStatus(400);
       return;
