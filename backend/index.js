@@ -37,6 +37,11 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  req.url = "/vapor/soohan-cho" + req.url;
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 //database functions
@@ -341,7 +346,7 @@ app.post(
   })
 );
 
-var server = app.listen(Number(config.host_port), function () {
+var server = app.listen(Number(config.host_port), "https://www.codermerlin.academy/vapor/soohan-cho/", function () {
   var host = server.address().address;
   var port = server.address().port;
 
