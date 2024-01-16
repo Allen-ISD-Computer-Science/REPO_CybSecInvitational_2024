@@ -17,14 +17,48 @@ async function submitPuzzle(id, answer) {
   console.log(puzzle);
 }
 
+async function queryPuzzles(category, difficulty, skip) {
+  console.log(difficulty);
+  const body = {
+    query: { category: category, difficulty: difficulty },
+    sort: { name: 1 },
+    projection: {},
+    count: 12,
+    skip: skip,
+  };
+
+  if (!category) {
+    delete body.query.category;
+  }
+  if (difficulty !== 0 && !difficulty) {
+    delete body.query.difficulty;
+  }
+
+  console.log(body);
+
+  const response = await fetch(location.protocol + "//" + location.host + "/getMultiplePuzzles", {
+    method: "POST",
+    body: JSON.stringify(body),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  if (!response.ok) {
+    console.log("failed to fetch puzzles");
+    return;
+  }
+
+  const data = await response.json();
+  return data;
+}
+
 function generateCard(puzzle) {
   console.log(puzzle);
   const name = puzzle.name;
   const point_value = puzzle.point_value;
   const difficulty = puzzle.difficulty;
   const category = puzzle.category;
-
-  console.log(difficulty);
 
   var diffColor = "";
   var diffString = "";
@@ -71,8 +105,12 @@ function generateCard(puzzle) {
               `;
 }
 
-async function generatePage() {
-  const puzzles = await queryPuzzles("WebExploitation", null, 0);
+async function generatePage(category, difficulty, pageNum) {
+  const puzzles = await queryPuzzles(category, difficulty, Math.floor(pageNum) * 12);
+  console.log(puzzles);
+  if (!puzzles || puzzles.length <= 0) {
+    return `<div class="container text-center text-lg pt-5 pb-5">No Puzzles Found <i class="fas fa-frown"></i></div>`;
+  }
 
   var page = "";
 
@@ -95,40 +133,58 @@ async function generatePage() {
 
   return page;
 }
-const pageHolder = document.getElementById("puzzlePage");
-generatePage().then((res) => (pageHolder.innerHTML = res));
 
-async function queryPuzzles(category, difficulty, skip) {
-  const body = {
-    query: { category: category, difficulty: difficulty },
-    sort: { name: 1 },
-    projection: {},
-    count: 12,
-    skip: skip,
+var puzzleCategory = null;
+var puzzleDifficulty = null;
+var pageNum = 0;
+
+const categoryDropdown = document.getElementById("category-dropdown");
+const categoryOptions = document.getElementsByClassName("puzzle-category-option");
+for (let element of categoryOptions) {
+  element.onclick = function () {
+    puzzleCategory = element.dataset.option;
+    categoryDropdown.textContent = element.textContent;
   };
-
-  if (!category) {
-    delete body.query.category;
-  }
-  if (!difficulty) {
-    delete body.query.difficulty;
-  }
-
-  console.log(body);
-
-  const response = await fetch(location.protocol + "//" + location.host + "/getMultiplePuzzles", {
-    method: "POST",
-    body: JSON.stringify(body),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  });
-
-  if (!response.ok) {
-    console.log("failed to fetch puzzles");
-    return;
-  }
-
-  const data = await response.json();
-  return data;
 }
+
+const difficultyDropdown = document.getElementById("difficulty-dropdown");
+const difficultyOptions = document.getElementsByClassName("puzzle-difficulty-option");
+for (let element of difficultyOptions) {
+  element.onclick = function () {
+    difficultyDropdown.textContent = element.textContent;
+
+    switch (element.dataset.option) {
+      case "Easy":
+        puzzleDifficulty = 0;
+        break;
+      case "Medium":
+        puzzleDifficulty = 1;
+        break;
+      case "Hard":
+        puzzleDifficulty = 2;
+        break;
+      case "Master":
+        puzzleDifficulty = 3;
+        break;
+      default:
+        puzzleDifficulty = null;
+        console.log("Invalid difficulty option");
+        break;
+    }
+  };
+}
+
+const searchButton = document.getElementById("puzzle-search");
+const pageHolder = document.getElementById("puzzlePage");
+searchButton.onclick = function () {
+  console.log("clicked");
+
+  console.log(puzzleCategory, puzzleDifficulty);
+  generatePage(puzzleCategory, puzzleDifficulty, pageNum).then((res) => {
+    pageHolder.innerHTML = res;
+  });
+};
+generatePage(null, null, 0).then((res) => (pageHolder.innerHTML = res));
+
+const puzzleModalHeader = document.getElementById("puzzle-header");
+const puzzleModalBody = document.getElementById("puzzle-body");

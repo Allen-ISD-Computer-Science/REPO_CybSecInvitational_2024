@@ -144,24 +144,34 @@
               <!--Category Dropdown-->
               <div class="input-group mr-auto">
                 <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+                <button type="button" class="btn btn-outline-primary" id="puzzle-search" data-mdb-ripple-init>search</button>
               </div>
 
               <div class="dropdown open">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="categoryDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</button>
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="category-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category</button>
                 <div class="dropdown-menu" aria-labelledby="categoryDropdown">
-                  <button class="dropdown-item" href="#">Action</button>
-                  <button class="dropdown-item disabled" href="#">Disabled action</button>
+                  <a class="dropdown-item puzzle-category-option">Any</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="BashBasics">Bash Basics</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="GeneralSkills">General Skills</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="Cryptography">Cryptography</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="AdvancedToolbox">Advanced Toolbox</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="WebExploitation">Web Exploitation</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="SystemAnalysis">System Analysis</a>
+                  <a class="dropdown-item puzzle-category-option" data-option="Template">Template</a>
                 </div>
               </div>
               <!--Category Dropdown End-->
 
               <!--Difficulty Dropdown-->
               <div class="dropdown open">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="difficultyDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Difficulty</button>
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="difficulty-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Difficulty</button>
                 <div class="dropdown-menu" aria-labelledby="difficultyDropdown">
-                  <button class="dropdown-item" href="#">Action</button>
-                  <button class="dropdown-item disabled" href="#">Disabled action</button>
+                  <a class="dropdown-item puzzle-difficulty-option">Any</a>
+                  <a class="dropdown-item puzzle-difficulty-option" data-option="Easy">Easy</a>
+                  <a class="dropdown-item puzzle-difficulty-option" data-option="Medium">Medium</a>
+                  <a class="dropdown-item puzzle-difficulty-option" data-option="Hard">Hard</a>
+                  <a class="dropdown-item puzzle-difficulty-option" data-option="Master">Master</a>
+                  <!-- <button class="dropdown-item disabled">Disabled action</button> -->
                 </div>
               </div>
               <!--Difficulty Dropdown End-->

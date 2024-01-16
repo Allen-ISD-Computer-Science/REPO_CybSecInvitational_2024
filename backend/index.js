@@ -112,8 +112,8 @@ async function fetchPuzzle(name) {
 }
 
 async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
-  console.log(query, sort, projection, count, skip);
-  console.log(sort);
+  // console.log(query, sort, projection, count, skip);
+  // console.log(sort);
 
   try {
     const cursor = await client.db("PuzzlesSection").collection("Puzzles").find(query).project(projection).skip(skip).sort(sort).limit(count);
@@ -204,10 +204,10 @@ app.post(
 );
 
 //puzzle interactions
-app.get(
+app.post(
   "/getPuzzle",
   asyncHandler(async (req, res) => {
-    const id = req.query.id;
+    const id = req.body.id;
     if (!id) {
       // Bad request
       res.sendStatus(400);
@@ -237,6 +237,8 @@ app.post(
     const projection = req.body.projection;
     const count = req.body.count;
     const skip = req.body.skip;
+
+    console.log(dbquery);
 
     const puzzles = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
 
@@ -303,7 +305,7 @@ app.post(
 );
 
 //user interactions
-app.get(
+app.post(
   "/getUser",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
@@ -319,14 +321,14 @@ app.get(
   })
 );
 
-app.get(
+app.post(
   "/getUsers",
   asyncHandler(async (req, res) => {
-    const dbquery = req.query.query;
-    const sort = req.query.sort;
-    const projection = req.query.projection;
-    const count = req.query.count;
-    const skip = req.query.skip;
+    const dbquery = req.body.query;
+    const sort = req.body.sort;
+    const projection = req.body.projection;
+    const count = req.body.count;
+    const skip = req.body.skip;
 
     const users = await fetchUsers(dbquery, sort, projection, count, skip);
 
