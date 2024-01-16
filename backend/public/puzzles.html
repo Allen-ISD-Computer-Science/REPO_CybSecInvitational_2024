@@ -185,7 +185,7 @@
             <!-- Puzzle Holder -->
             <div id="puzzlePage">
               <div class="container-fluid d-flex justify-content-center p-5">
-                <img src="img/Eclipse-1s-200px(1).svg" />
+                <img src="img/sharp_reloading.svg" />
               </div>
             </div>
             <!-- End of Puzzle Holder -->
@@ -234,26 +234,27 @@
 
     <button type="button" class="btn btn-primary d-none" data-toggle="modal" data-target="#puzzleModal">Launch demo modal</button>
     <!-- Puzzle Modal-->
-    <div class="modal fade" id="puzzleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="puzzleModal" tabindex="-1" role="dialog" aria-labelledby="puzzle-header" aria-hidden="true">
       <div class="modal-dialog" style="max-width: 1000px" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">PuzzleHeader</h5>
+            <h5 class="modal-title" id="puzzle-header">
+              <img style="width: 3rem; height: 3rem" src="img/sharp_reloading.svg" />
+            </h5>
             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <div class="modal-body">
-            PuzzleBody<br />
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin eget felis bibendum, consectetur libero in, eleifend odio. Pellentesque quis turpis non erat placerat dictum ac sed sem. Mauris posuere justo at elit rutrum, quis vulputate velit imperdiet. Vivamus et feugiat nibh, vel convallis nibh. Mauris eu viverra risus. Aenean id
-            pretium risus. Suspendisse eget bibendum ex, ac sodales augue.
+          <div id="puzzle-body" class="modal-body">
+            <img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />
           </div>
           <div class="modal-footer">
             <form class="align-self-center d-flex w-100">
-              <div class="form-group m-0">
-                <input type="text" name="" id="" class="form-control" placeholder="Flag" aria-describedby="helpId" />
+              <div class="form-group m-0 w-50">
+                <input type="text" id="puzzle-submit-input" class="form-control" placeholder="Flag" aria-describedby="helpId" />
               </div>
-              <button type="submit" class="btn btn-primary" style="margin-left: auto">Submit</button>
+              <div class="d-flex h-auto ml-3" id="puzzle-submit-alert-holder"></div>
+              <button id="puzzle-submit-button" class="btn btn-primary" style="margin-left: auto">Submit</button>
             </form>
           </div>
         </div>
