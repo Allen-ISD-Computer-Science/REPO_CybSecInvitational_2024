@@ -129,6 +129,27 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
   }
 }
 
+//game state
+var scoreboard = {};
+var paused = false;
+
+async function updateScoreboard() {
+  const cursor = await client.db("PuzzlesSection").collection("Users").find({}).project({ password: 0, _id: 0 });
+  scoreboard = await cursor.toArray();
+  setTimeout(updateScoreboard, scoreboard_update_interval * 1000);
+}
+
+function pauseScoreboardUpdates() {
+  if (paused) return;
+  paused = true;
+}
+
+function startScoreboardUpdates() {
+  if (!paused) return;
+  paused = true;
+  updateScoreboard();
+}
+
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
   Promise.resolve(func(req, res, next)).catch(next);
@@ -246,9 +267,8 @@ app.post(
     console.log(dbquery);
 
     const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
-    const puzzles = cursor.toArray();
-    const documentCount = cursor.count();
-    console.log(puzzles, documentCount);
+    const puzzles = await cursor.toArray();
+    console.log(puzzles);
 
     if (puzzles) {
       res.json(puzzles);
@@ -320,12 +340,30 @@ app.post(
       return;
     }
 
-    var user = await fetchUser(username);
-    delete user.password;
-    delete user._id;
+    const user = scoreboard[username];
+    if (!username) {
+      res.sendStatus(404);
+    }
+
     res.json(user);
   })
 );
+
+// app.post(
+//   "/getUser",
+//   asyncHandler(async (req, res) => {
+//     const username = req.session.username;
+//     if (!username) {
+//       res.sendStatus(400);
+//       return;
+//     }
+
+//     var user = await fetchUser(username);
+//     delete user.password;
+//     delete user._id;
+//     res.json(user);
+//   })
+// );
 
 app.post(
   "/getUsers",
@@ -361,19 +399,31 @@ async function getAllUsers() {
   }
 }
 
-function emitEvent() {
-  const data = { users: ["user1", "user2", "user3"], points: 100 };
+app.get(
+  "/scoreboard",
+  asyncHandler(async (req, res) => {
+    const dbquery = req.body.query;
+    const sort = req.body.sort;
+    const projection = req.body.projection;
+    const count = req.body.count;
+    const skip = req.body.skip;
 
-  io.emit("event1", data);
-  setTimeout(emitEvent, 10000);
-}
-emitEvent();
+    const users = await fetchUsers(dbquery, sort, projection, count, skip);
+
+    users.forEach((user) => {
+      delete user._id;
+      delete user.password;
+      delete user.completed_puzzles;
+    });
+    res.json(UserArray);
+  })
+);
 
 const scoreboardUpdateEvent = "scoreboard_update";
 async function updateScoreboard() {
   const users = await getAllUsers();
   if (!users) {
-    io.emit(scoreboardUpdateEvent, { error: true });
+    io.emit(scoreboardUpdateEvent, { error: 500 });
     return;
   } else {
     io.emit(scoreboardUpdateEvent, users);
