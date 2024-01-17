@@ -1,0 +1,12 @@
+{
+  "_comment": "delete this field and add appropriate values",
+  "express_session_secret": "",
+  "host_port": 0,
+
+  "mongodb_username": "",
+  "mongodb_password": "",
+  "mongodb_database_name": "",
+
+  "user_update_interval": 0,
+  "scoreboard_update_interval": 0
+}

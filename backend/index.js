@@ -1,9 +1,15 @@
-var express = require("express");
-var session = require("express-session");
-var path = require("path");
-var bodyParser = require("body-parser");
+const express = require("express");
+const { createServer } = require("http");
+const session = require("express-session");
+const { Server } = require("socket.io");
+const path = require("path");
+const bodyParser = require("body-parser");
 
 const config = require(path.join(__dirname, "config.json"));
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
 
 const mongo_username = encodeURIComponent(config.mongodb_username);
 const mongo_password = encodeURIComponent(config.mongodb_password);
@@ -24,8 +30,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-var app = express();
-
+//middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -117,7 +122,7 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
 
   try {
     const cursor = await client.db("PuzzlesSection").collection("Puzzles").find(query).project(projection).skip(skip).sort(sort).limit(count);
-    return cursor.toArray();
+    return cursor;
   } catch (err) {
     console.log(err);
     return null;
@@ -240,7 +245,10 @@ app.post(
 
     console.log(dbquery);
 
-    const puzzles = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
+    const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
+    const puzzles = cursor.toArray();
+    const documentCount = cursor.count();
+    console.log(puzzles, documentCount);
 
     if (puzzles) {
       res.json(puzzles);
@@ -338,8 +346,42 @@ app.post(
     res.json(UserArray);
   })
 );
+//socket handling
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
 
-var server = app.listen(Number(config.host_port), function () {
+async function getAllUsers() {
+  try {
+    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ password: 0, completed_puzzles: 0 });
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+function emitEvent() {
+  const data = { users: ["user1", "user2", "user3"], points: 100 };
+
+  io.emit("event1", data);
+  setTimeout(emitEvent, 10000);
+}
+emitEvent();
+
+const scoreboardUpdateEvent = "scoreboard_update";
+async function updateScoreboard() {
+  const users = await getAllUsers();
+  if (!users) {
+    io.emit(scoreboardUpdateEvent, { error: true });
+    return;
+  } else {
+    io.emit(scoreboardUpdateEvent, users);
+    return;
+  }
+}
+
+server.listen(Number(config.host_port), function () {
   var host = server.address().address;
   var port = server.address().port;
 
