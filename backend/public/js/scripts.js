@@ -14,7 +14,9 @@ async function fetchPuzzle(id) {
   return response.json();
 }
 
+const puzzleSearchInput = document.getElementById("puzzle-search-input");
 async function queryPuzzles(category, difficulty, skip) {
+  console.log(skip);
   const body = {
     query: { category: category, difficulty: difficulty },
     sort: { name: 1 },
@@ -22,6 +24,10 @@ async function queryPuzzles(category, difficulty, skip) {
     count: 12,
     skip: skip,
   };
+
+  if (puzzleSearchInput.value) {
+    body.query.name = puzzleSearchInput.value;
+  }
 
   if (!category) {
     delete body.query.category;
@@ -46,6 +52,24 @@ async function queryPuzzles(category, difficulty, skip) {
   const data = await response.json();
   return data;
 }
+
+const currentPageLabel = document.getElementById("current-page");
+const prevPageButton = document.getElementById("previous-page-button");
+const nextPageButton = document.getElementById("next-page-button");
+
+var pageDebounce = false;
+prevPageButton.onclick = function (evt) {
+  evt.preventDefault();
+  pageNum -= 1;
+  pageNum = Math.max(0, pageNum);
+  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
+};
+nextPageButton.onclick = function (evt) {
+  evt.preventDefault();
+  pageNum += 1;
+  pageNum = Math.min(pageNum, pageNum); //add some way to get max # of pages
+  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
+};
 
 function generateCard(puzzle) {
   const name = puzzle.name;
@@ -99,6 +123,7 @@ function generateCard(puzzle) {
 }
 const pageHolder = document.getElementById("puzzlePage");
 async function generatePage(category, difficulty, pageNum) {
+  currentPageLabel.innerHTML = String(pageNum + 1);
   pageHolder.innerHTML = `<div class="container-fluid d-flex justify-content-center p-5">
               <img src="img/sharp_reloading.svg" />
             </div>`;
@@ -152,6 +177,10 @@ for (let element of categoryOptions) {
   };
 }
 
+function navigateToPage() {
+  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
+}
+
 const difficultyDropdown = document.getElementById("difficulty-dropdown");
 const difficultyOptions = document.getElementsByClassName("puzzle-difficulty-option");
 for (let element of difficultyOptions) {
@@ -185,6 +214,7 @@ searchButton.onclick = function () {
   if (searchDebounce) return;
 
   searchDebounce = true;
+  pageNum = 0;
   generatePage(puzzleCategory, puzzleDifficulty, pageNum);
   setTimeout(() => {
     searchDebounce = false;
@@ -192,10 +222,15 @@ searchButton.onclick = function () {
 };
 generatePage(null, null, 0);
 
+const puzzleAlert = document.getElementById("puzzle-submit-alert-holder");
 const puzzleModalHeader = document.getElementById("puzzle-header");
 const puzzleModalBody = document.getElementById("puzzle-body");
+const puzzleSubmitInput = document.getElementById("puzzle-submit-input");
+const puzzleSubmitButton = document.getElementById("puzzle-submit-button");
 
 async function generatePuzzleModal(id) {
+  puzzleSubmitInput.value = "";
+  puzzleAlert.innerHTML = "";
   puzzleModalHeader.innerHTML = `<img style="width: 3rem; height: 3rem" src="img/Eclipse-1s-200px(1).svg" />`;
   puzzleModalBody.innerHTML = `<img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />`;
 
@@ -229,10 +264,6 @@ async function submitPuzzle(id, answer) {
   return data;
 }
 
-const puzzleSubmitInput = document.getElementById("puzzle-submit-input");
-const puzzleSubmitButton = document.getElementById("puzzle-submit-button");
-const puzzleAlert = document.getElementById("puzzle-submit-alert-holder");
-
 var submitDebounce = false;
 puzzleSubmitButton.onclick = async function (evt) {
   evt.preventDefault();
@@ -249,6 +280,8 @@ puzzleSubmitButton.onclick = async function (evt) {
 
   const result = await submitPuzzle(puzzleModalHeader.textContent, puzzleSubmitInput.value);
 
+  console.log(result);
+
   if (!result) {
     puzzleAlert.innerHTML = `<p class="text-dark mb-0 align-self-center"><b>something went wrong on the server</b></p>`;
     return;
@@ -257,7 +290,7 @@ puzzleSubmitButton.onclick = async function (evt) {
   if (result.correct) {
     puzzleAlert.innerHTML = `<p class="text-success mb-0 align-self-center">Success!</p>`;
     return;
-  } else if (result.alreadyFinished) {
+  } else if (result.alreadyCompleted) {
     puzzleAlert.innerHTML = `<p class="text-warning mb-0 align-self-center">Already Completed</p>`;
     return;
   } else {

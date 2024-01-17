@@ -60,7 +60,7 @@ async function onPuzzleCorrect(username, amount, id) {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .updateOne({ username: username }, { $inc: { points: amount }, $set: { completed_puzzles: { [id]: true } } });
+      .updateOne({ username: username }, { $inc: { points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
     return result;
   } catch (err) {
     console.log(err);
