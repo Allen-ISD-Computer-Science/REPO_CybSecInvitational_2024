@@ -33,6 +33,7 @@ async function fetchUser() {
 // const table = $("#dataTable").DataTable();
 const table = new DataTable("#dataTable", {
   columns: [{ title: "" }, { title: "Id" }, { title: "Division" }, { title: "Puzzle Points" }, { title: "Scenario Points" }, { title: "Total Points" }],
+  order: [[5, "desc"]],
 });
 table
   .on("order.dt search.dt", function () {
