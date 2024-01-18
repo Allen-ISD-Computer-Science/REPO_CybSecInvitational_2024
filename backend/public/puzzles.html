@@ -69,6 +69,13 @@
           >
         </li>
 
+        <li class="nav-item">
+          <a class="nav-link pt-0" href="/battleRound">
+            <i class="fas fa-fw fa-triangle-exclamation"></i>
+            <span>Battle Round</span></a
+          >
+        </li>
+
         <!-- Divider -->
         <hr class="sidebar-divider" />
 
@@ -103,7 +110,7 @@
               <i class="fa fa-bars"></i>
             </button>
 
-            <!-- Topbar Search -->
+            <!-- Time Data -->
             <div class="w-25 mr-5">
               <h6 class="text-nowrap">Time Remaining</h6>
               <div class="progress">
@@ -117,24 +124,23 @@
                 <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
               </div>
             </div>
+            <!-- End of Time Data -->
 
-            <!-- Topbar Navbar -->
+            <!-- Point and Name -->
             <ul class="navbar-nav ml-auto">
-              <!-- <div class="topbar-divider d-none d-sm-block"></div> -->
               <li class="nav-item">
                 <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-dark">Points: 100</span>
-                  <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
+                  <span class="mr-2 d-none d-lg-inline align-middle text-dark" id="points-text-label">Points: ...</span>
                 </div>
               </li>
-              <div class="d-none d-lg-block vr bg-gray-300" style="width: 0.1rem"></div>
+              <div class="vr d-none d-lg-block bg-gray-300" style="width: 0.1rem"></div>
               <li class="nav-item">
                 <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small">213608ca-0bfc-42d8-b5f9-604575348305</span>
-                  <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
+                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small" id="username-text-label">...</span>
                 </div>
               </li>
             </ul>
+            <!-- End of Point and Name -->
           </nav>
           <!-- End of Topbar -->
 
@@ -268,6 +274,8 @@
     <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
 
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/user-update.js"></script>
     <script src="js/puzzles.js"></script>
   </body>
 </html>

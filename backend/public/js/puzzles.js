@@ -279,9 +279,6 @@ puzzleSubmitButton.onclick = async function (evt) {
   }
 
   const result = await submitPuzzle(puzzleModalHeader.textContent, puzzleSubmitInput.value);
-
-  console.log(result);
-
   if (!result) {
     puzzleAlert.innerHTML = `<p class="text-dark mb-0 align-self-center"><b>something went wrong on the server</b></p>`;
     return;

@@ -345,25 +345,25 @@ async function getScoreboard() {
   }
 }
 
-async function updateScoreboard() {
+async function updateEvent() {
   if (paused) return;
   console.log("updating scoreboard");
   scoreboard = await getScoreboard();
-  io.emit("scoreboard_update", scoreboard);
-  setTimeout(updateScoreboard, config.internal_tick_rate); // in milliseconds
+  io.emit("update_event", scoreboard);
+  setTimeout(updateEvent, config.internal_tick_rate); // in milliseconds
 }
 
-function pauseScoreboardUpdates() {
+function pauseUpdates() {
   if (paused) return;
   paused = true;
 }
 
-function startScoreboardUpdates() {
+function startUpdates() {
   if (!paused) return;
   paused = false;
-  updateScoreboard();
+  updateEvent();
 }
-startScoreboardUpdates();
+startUpdates();
 
 //socket handling
 io.on("connection", (socket) => {
