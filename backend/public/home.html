@@ -124,14 +124,14 @@
               <!-- <div class="topbar-divider d-none d-sm-block"></div> -->
               <li class="nav-item">
                 <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-dark">Points: 100</span>
+                  <span class="mr-2 d-none d-lg-inline align-middle text-dark" id="points-text-label">Points: ...</span>
                   <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
                 </div>
               </li>
               <div class="vr d-none d-lg-block bg-gray-300" style="width: 0.1rem"></div>
               <li class="nav-item">
                 <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small">213608ca-0bfc-42d8-b5f9-604575348305</span>
+                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small" id="username-text-label">...</span>
                   <!-- <img class="img-profile rounded-circle" src="img/undraw_profile.svg" /> -->
                 </div>
               </li>
@@ -155,7 +155,7 @@
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Puzzle Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="puzzle-points-text-label">...</div>
                       </div>
                       <div class="col-auto">
                         <i class="fas fa-star-half-alt fa-2x text-gray-300"></i>
@@ -172,7 +172,7 @@
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Scenario Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">50</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="scenario-points-text-label">...</div>
                       </div>
                       <div class="col-auto">
                         <i class="fas fa-star-half-alt fa-2x text-gray-300"></i>
@@ -188,7 +188,7 @@
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
                         <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">100</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-points-text-label">...</div>
                       </div>
                       <div class="col-auto">
                         <i class="fas fa-star fa-2x text-gray-300"></i>
@@ -256,6 +256,6 @@
     <!-- <script src="js/scripts.js"></script> -->
     <!-- socket handling -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="js/socket.js"></script>
+    <script src="js/dashboard.js"></script>
   </body>
 </html>

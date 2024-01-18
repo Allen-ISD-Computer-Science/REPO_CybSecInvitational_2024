@@ -45,19 +45,6 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 //database functions
-async function setPointsOfUser(username, amount) {
-  try {
-    const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
-      .findOneAndUpdate({ username: username }, { $set: { points: amount } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
 async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
 
@@ -65,20 +52,7 @@ async function onPuzzleCorrect(username, amount, id) {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .updateOne({ username: username }, { $inc: { points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-async function addPointsToUser(username, amount) {
-  try {
-    const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
-      .findOneAndUpdate({ username: username }, { $inc: { points: amount } });
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
     return result;
   } catch (err) {
     console.log(err);
@@ -129,27 +103,6 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
   }
 }
 
-//game state
-var scoreboard = {};
-var paused = false;
-
-async function updateScoreboard() {
-  const cursor = await client.db("PuzzlesSection").collection("Users").find({}).project({ password: 0, _id: 0 });
-  scoreboard = await cursor.toArray();
-  setTimeout(updateScoreboard, scoreboard_update_interval * 1000);
-}
-
-function pauseScoreboardUpdates() {
-  if (paused) return;
-  paused = true;
-}
-
-function startScoreboardUpdates() {
-  if (!paused) return;
-  paused = true;
-  updateScoreboard();
-}
-
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
   Promise.resolve(func(req, res, next)).catch(next);
@@ -183,11 +136,19 @@ app.get("/logout", function (req, res) {
   res.redirect("/login");
 });
 
-app.get("/puzzles", function (req, res) {
-  if (!req.session.username) {
-    res.redirect("/login");
+app.get("/scoreboard", function (req, res) {
+  if (req.session.username) {
+    res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/puzzles", function (req, res) {
+  if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  } else {
+    res.redirect("/login");
   }
 });
 
@@ -205,7 +166,6 @@ app.post(
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(username, password);
     if (!username || !password) {
       res.sendStatus(400);
       return;
@@ -264,11 +224,8 @@ app.post(
     const count = req.body.count;
     const skip = req.body.skip;
 
-    console.log(dbquery);
-
     const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
     const puzzles = await cursor.toArray();
-    console.log(puzzles);
 
     if (puzzles) {
       res.json(puzzles);
@@ -298,7 +255,6 @@ app.post(
     }
 
     const puzzle = await fetchPuzzle(id);
-    console.log(puzzle);
     if (!puzzle) {
       res.sendStatus(404);
       return;
@@ -331,6 +287,7 @@ app.post(
 );
 
 //user interactions
+
 app.post(
   "/getUser",
   asyncHandler(async (req, res) => {
@@ -340,30 +297,12 @@ app.post(
       return;
     }
 
-    const user = scoreboard[username];
-    if (!username) {
-      res.sendStatus(404);
-    }
-
+    var user = await fetchUser(username);
+    delete user.password;
+    delete user._id;
     res.json(user);
   })
 );
-
-// app.post(
-//   "/getUser",
-//   asyncHandler(async (req, res) => {
-//     const username = req.session.username;
-//     if (!username) {
-//       res.sendStatus(400);
-//       return;
-//     }
-
-//     var user = await fetchUser(username);
-//     delete user.password;
-//     delete user._id;
-//     res.json(user);
-//   })
-// );
 
 app.post(
   "/getUsers",
@@ -384,52 +323,52 @@ app.post(
     res.json(UserArray);
   })
 );
-//socket handling
-io.on("connection", (socket) => {
-  console.log("a user connected");
-});
 
-async function getAllUsers() {
+//game state
+var paused = true;
+
+app.post(
+  "/getScoreboard",
+  asyncHandler(async (req, res) => {
+    const scoreboard = await getScoreboard();
+    res.json(scoreboard);
+  })
+);
+
+async function getScoreboard() {
   try {
-    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ password: 0, completed_puzzles: 0 });
-    return result;
+    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
+    return result.toArray();
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-app.get(
-  "/scoreboard",
-  asyncHandler(async (req, res) => {
-    const dbquery = req.body.query;
-    const sort = req.body.sort;
-    const projection = req.body.projection;
-    const count = req.body.count;
-    const skip = req.body.skip;
-
-    const users = await fetchUsers(dbquery, sort, projection, count, skip);
-
-    users.forEach((user) => {
-      delete user._id;
-      delete user.password;
-      delete user.completed_puzzles;
-    });
-    res.json(UserArray);
-  })
-);
-
-const scoreboardUpdateEvent = "scoreboard_update";
 async function updateScoreboard() {
-  const users = await getAllUsers();
-  if (!users) {
-    io.emit(scoreboardUpdateEvent, { error: 500 });
-    return;
-  } else {
-    io.emit(scoreboardUpdateEvent, users);
-    return;
-  }
+  if (paused) return;
+  console.log("updating scoreboard");
+  scoreboard = await getScoreboard();
+  io.emit("scoreboard_update", scoreboard);
+  setTimeout(updateScoreboard, config.internal_tick_rate); // in milliseconds
 }
+
+function pauseScoreboardUpdates() {
+  if (paused) return;
+  paused = true;
+}
+
+function startScoreboardUpdates() {
+  if (!paused) return;
+  paused = false;
+  updateScoreboard();
+}
+startScoreboardUpdates();
+
+//socket handling
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
 
 server.listen(Number(config.host_port), function () {
   var host = server.address().address;

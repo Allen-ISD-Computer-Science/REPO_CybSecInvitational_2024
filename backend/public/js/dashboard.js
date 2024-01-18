@@ -17,9 +17,18 @@ async function fetchUser() {
 const usernameTextLabel = document.getElementById("username-text-label");
 const pointsTextLabel = document.getElementById("points-text-label");
 
+const puzzlePointsCardLabel = document.getElementById("puzzle-points-text-label");
+const scenarioPointsCardLabel = document.getElementById("scenario-points-text-label");
+const totalPointsCardLabel = document.getElementById("total-points-text-label");
+
 function updateUI(user) {
-  if (usernameTextLabel) usernameTextLabel.textContent = user.username;
-  if (pointsTextLabel) pointsTextLabel.textContent = `points : ${user.points}`;
+  console.log(user);
+  usernameTextLabel.textContent = user.username;
+  pointsTextLabel.textContent = `points : ${user.puzzle_points + user.scenario_points}`;
+
+  puzzlePointsCardLabel.textContent = String(user.puzzle_points);
+  scenarioPointsCardLabel.textContent = String(user.scenario_points);
+  totalPointsCardLabel.textContent = String(user.puzzle_points + user.scenario_points);
 }
 
 const socket = io();
