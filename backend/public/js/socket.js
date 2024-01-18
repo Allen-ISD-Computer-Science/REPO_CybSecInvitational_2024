@@ -18,12 +18,12 @@ const usernameTextLabel = document.getElementById("username-text-label");
 const pointsTextLabel = document.getElementById("points-text-label");
 
 function updateUI(user) {
-  if (usernameTextLabel) usernameTextLabel.textContent = user.username;
-  if (pointsTextLabel) pointsTextLabel.textContent = `points : ${user.points}`;
+  usernameTextLabel.textContent = user.username;
+  pointsTextLabel.textContent = `points : ${user.puzzle_points + user.scenario_points}`;
 }
 
-const socket = io();
-socket.on("scoreboard_update", async (data) => {
+const _socket = io();
+_socket.on("scoreboard_update", async (data) => {
   user = await fetchUser();
   updateUI(user);
 });

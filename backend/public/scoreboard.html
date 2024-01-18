@@ -11,6 +11,7 @@
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="css/global-alert.css" rel="stylesheet" type="text/css" />
 
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
 
@@ -19,6 +20,7 @@
   </head>
 
   <body id="page-top">
+    <div id="global-alert-holder"></div>
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
@@ -141,15 +143,13 @@
 
           <!-- Begin Page Content -->
           <div class="container-fluid">
-            <h1 class="h3 mb-2 text-gray-800">Scoreboard</h1>
-
             <!-- DataTales Example -->
             <div class="card shadow mb-4">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+                <h3 class="m-0 font-weight-bold text-primary">Scoreboard</h3>
               </div>
               <div class="card-body">
-                <div class="table-responsive">
+                <div class="table-responsive overflow-hidden">
                   <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                       <tr>
@@ -216,8 +216,8 @@
     <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="/socket.io/socket.io.js"></script>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script src="js/scoreboard.js"></script>
   </body>
 
@@ -232,6 +232,10 @@
       display: flex;
       gap: 1rem;
       flex-direction: row;
+    }
+
+    .odd {
+      background-color: #f8f9fc;
     }
   </style>
 </html>

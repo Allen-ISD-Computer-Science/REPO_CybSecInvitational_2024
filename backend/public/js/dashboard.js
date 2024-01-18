@@ -11,6 +11,8 @@ async function fetchUser() {
     return null;
   }
   const data = await response.json();
+  localStorage.setItem("user", data);
+  console.log(localStorage.getItem("user"));
   return data;
 }
 

@@ -14,10 +14,25 @@ async function fetchScoreboard() {
   return data;
 }
 
-// const table = $("#dataTable").DataTable();
+var user = null;
+async function fetchUser() {
+  const response = await fetch(location.protocol + "//" + location.host + "/getUser", {
+    method: "POST",
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
 
+  if (!response.ok) {
+    return null;
+  }
+  const data = await response.json();
+  return data;
+}
+
+// const table = $("#dataTable").DataTable();
 const table = new DataTable("#dataTable", {
-  columns: [{ title: "Rank" }, { title: "Id" }, { title: "Division" }, { title: "Puzzle Points" }, { title: "Scenario Points" }, { title: "Total Points" }],
+  columns: [{ title: "" }, { title: "Id" }, { title: "Division" }, { title: "Puzzle Points" }, { title: "Scenario Points" }, { title: "Total Points" }],
 });
 table
   .on("order.dt search.dt", function () {
@@ -58,14 +73,26 @@ function updateUI(scoreboard) {
   table.draw(false);
 }
 
+const usernameTextLabel = document.getElementById("username-text-label");
+const pointsTextLabel = document.getElementById("points-text-label");
+function updateUserUI(user) {
+  console.log(user);
+  usernameTextLabel.textContent = user.username;
+  pointsTextLabel.textContent = `points : ${user.puzzle_points + user.scenario_points}`;
+}
+
 const socket = io();
 socket.on("scoreboard_update", async (data) => {
   scoreboard = data;
+  user = await fetchUser();
   updateUI(scoreboard);
+  updateUserUI(user);
 });
 
 async function init() {
   scoreboard = await fetchScoreboard();
   updateUI(scoreboard);
+  user = await fetchUser();
+  updateUserUI(user);
 }
 init();
