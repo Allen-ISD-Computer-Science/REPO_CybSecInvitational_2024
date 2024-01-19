@@ -104,7 +104,6 @@ function generateCard(puzzle) {
       break;
   }
 
-  console.log(diffColor);
   var inactive = "";
   if (user.completed_puzzles[name]) {
     inactive = "background-color: #eaecf4 !important";
@@ -136,8 +135,6 @@ async function generatePage(category, difficulty, pageNum) {
   </div>`;
 
   const puzzles = await queryPuzzles(category, difficulty, Math.floor(pageNum) * 12);
-  console.log(user);
-
   if (!puzzles || puzzles.length <= 0) {
     pageHolder.innerHTML = `<div class="container text-center text-lg pt-5 pb-5">No Puzzles Found <i class="fas fa-frown"></i></div>`;
     return;
@@ -210,7 +207,6 @@ for (let element of difficultyOptions) {
         break;
       default:
         puzzleDifficulty = null;
-        console.log("Invalid difficulty option");
         break;
     }
   };
@@ -247,8 +243,6 @@ async function generatePuzzleModal(id) {
 
   const puzzle = await fetchPuzzle(id);
 
-  console.log(puzzle);
-
   puzzleModalHeader.innerHTML = puzzle.name;
   puzzleModalBody.innerHTML = puzzle.description;
 }
@@ -267,7 +261,6 @@ async function submitPuzzle(id, answer) {
   });
 
   if (!response.ok) {
-    console.log("error encountered");
     return;
   }
 

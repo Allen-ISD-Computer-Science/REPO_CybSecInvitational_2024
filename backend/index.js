@@ -152,6 +152,14 @@ app.get("/puzzles", function (req, res) {
   }
 });
 
+app.get("/battleRound", function (req, res) {
+  if (req.session.username) {
+    res.sendFile(path.join(__dirname, "public/battleRound.html"));
+  } else {
+    res.redirect("/login");
+  }
+});
+
 app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "public/404.html"));
 });
