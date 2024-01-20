@@ -73,6 +73,7 @@ nextPageButton.onclick = function (evt) {
 
 function generateCard(puzzle) {
   const name = puzzle.name;
+
   const point_value = puzzle.point_value;
   const difficulty = puzzle.difficulty;
   const category = puzzle.category;
@@ -103,8 +104,13 @@ function generateCard(puzzle) {
       break;
   }
 
+  var inactive = "";
+  if (user.completed_puzzles[name]) {
+    inactive = "background-color: #eaecf4 !important";
+  }
+
   return `<div class="col-xl-3 col-md-6 mb-4">
-                <div type="button" data-puzzlename="${name}" class="card border-left-${diffColor} shadow h-100 py-2 w-100 puzzle-card-button" data-toggle="modal" data-target="#puzzleModal">
+                <div type="button" data-puzzlename="${name}" class="card border-left-${diffColor} shadow h-100 py-2 w-100 puzzle-card-button" data-toggle="modal" data-target="#puzzleModal" style="${inactive}">
                   <div class="card-body">
                     <div class="row no-gutters align-items-center">
                       <div class="col mr-2">
@@ -125,11 +131,10 @@ const pageHolder = document.getElementById("puzzlePage");
 async function generatePage(category, difficulty, pageNum) {
   currentPageLabel.innerHTML = String(pageNum + 1);
   pageHolder.innerHTML = `<div class="container-fluid d-flex justify-content-center p-5">
-              <img src="img/sharp_reloading.svg" />
-            </div>`;
+  <img src="img/sharp_reloading.svg" />
+  </div>`;
 
   const puzzles = await queryPuzzles(category, difficulty, Math.floor(pageNum) * 12);
-
   if (!puzzles || puzzles.length <= 0) {
     pageHolder.innerHTML = `<div class="container text-center text-lg pt-5 pb-5">No Puzzles Found <i class="fas fa-frown"></i></div>`;
     return;
@@ -202,7 +207,6 @@ for (let element of difficultyOptions) {
         break;
       default:
         puzzleDifficulty = null;
-        console.log("Invalid difficulty option");
         break;
     }
   };
@@ -220,7 +224,10 @@ searchButton.onclick = function () {
     searchDebounce = false;
   }, 1500);
 };
-generatePage(null, null, 0);
+
+document.addEventListener("user-loaded", () => {
+  generatePage(null, null, 0);
+});
 
 const puzzleAlert = document.getElementById("puzzle-submit-alert-holder");
 const puzzleModalHeader = document.getElementById("puzzle-header");
@@ -235,8 +242,6 @@ async function generatePuzzleModal(id) {
   puzzleModalBody.innerHTML = `<img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />`;
 
   const puzzle = await fetchPuzzle(id);
-
-  console.log(puzzle);
 
   puzzleModalHeader.innerHTML = puzzle.name;
   puzzleModalBody.innerHTML = puzzle.description;
@@ -256,7 +261,6 @@ async function submitPuzzle(id, answer) {
   });
 
   if (!response.ok) {
-    console.log("error encountered");
     return;
   }
 
@@ -279,9 +283,6 @@ puzzleSubmitButton.onclick = async function (evt) {
   }
 
   const result = await submitPuzzle(puzzleModalHeader.textContent, puzzleSubmitInput.value);
-
-  console.log(result);
-
   if (!result) {
     puzzleAlert.innerHTML = `<p class="text-dark mb-0 align-self-center"><b>something went wrong on the server</b></p>`;
     return;

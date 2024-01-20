@@ -45,19 +45,6 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 //database functions
-async function setPointsOfUser(username, amount) {
-  try {
-    const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
-      .findOneAndUpdate({ username: username }, { $set: { points: amount } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
 async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
 
@@ -65,20 +52,7 @@ async function onPuzzleCorrect(username, amount, id) {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .updateOne({ username: username }, { $inc: { points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-async function addPointsToUser(username, amount) {
-  try {
-    const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
-      .findOneAndUpdate({ username: username }, { $inc: { points: amount } });
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
     return result;
   } catch (err) {
     console.log(err);
@@ -162,11 +136,27 @@ app.get("/logout", function (req, res) {
   res.redirect("/login");
 });
 
-app.get("/puzzles", function (req, res) {
-  if (!req.session.username) {
-    res.redirect("/login");
+app.get("/scoreboard", function (req, res) {
+  if (req.session.username) {
+    res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/puzzles", function (req, res) {
+  if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  } else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/battleRound", function (req, res) {
+  if (req.session.username) {
+    res.sendFile(path.join(__dirname, "public/battleRound.html"));
+  } else {
+    res.redirect("/login");
   }
 });
 
@@ -184,7 +174,6 @@ app.post(
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(username, password);
     if (!username || !password) {
       res.sendStatus(400);
       return;
@@ -243,12 +232,8 @@ app.post(
     const count = req.body.count;
     const skip = req.body.skip;
 
-    console.log(dbquery);
-
     const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
-    const puzzles = cursor.toArray();
-    const documentCount = cursor.count();
-    console.log(puzzles, documentCount);
+    const puzzles = await cursor.toArray();
 
     if (puzzles) {
       res.json(puzzles);
@@ -278,7 +263,6 @@ app.post(
     }
 
     const puzzle = await fetchPuzzle(id);
-    console.log(puzzle);
     if (!puzzle) {
       res.sendStatus(404);
       return;
@@ -311,6 +295,7 @@ app.post(
 );
 
 //user interactions
+
 app.post(
   "/getUser",
   asyncHandler(async (req, res) => {
@@ -346,40 +331,52 @@ app.post(
     res.json(UserArray);
   })
 );
-//socket handling
-io.on("connection", (socket) => {
-  console.log("a user connected");
-});
 
-async function getAllUsers() {
+//game state
+var paused = true;
+
+app.post(
+  "/getScoreboard",
+  asyncHandler(async (req, res) => {
+    const scoreboard = await getScoreboard();
+    res.json(scoreboard);
+  })
+);
+
+async function getScoreboard() {
   try {
-    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ password: 0, completed_puzzles: 0 });
-    return result;
+    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
+    return result.toArray();
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-function emitEvent() {
-  const data = { users: ["user1", "user2", "user3"], points: 100 };
-
-  io.emit("event1", data);
-  setTimeout(emitEvent, 10000);
+async function updateEvent() {
+  if (paused) return;
+  console.log("updating scoreboard");
+  scoreboard = await getScoreboard();
+  io.emit("update_event", scoreboard);
+  setTimeout(updateEvent, config.internal_tick_rate); // in milliseconds
 }
-emitEvent();
 
-const scoreboardUpdateEvent = "scoreboard_update";
-async function updateScoreboard() {
-  const users = await getAllUsers();
-  if (!users) {
-    io.emit(scoreboardUpdateEvent, { error: true });
-    return;
-  } else {
-    io.emit(scoreboardUpdateEvent, users);
-    return;
-  }
+function pauseUpdates() {
+  if (paused) return;
+  paused = true;
 }
+
+function startUpdates() {
+  if (!paused) return;
+  paused = false;
+  updateEvent();
+}
+startUpdates();
+
+//socket handling
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
 
 server.listen(Number(config.host_port), function () {
   var host = server.address().address;
