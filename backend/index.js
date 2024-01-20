@@ -30,7 +30,28 @@ const client = new MongoClient(uri, {
   },
 });
 
+<<<<<<< Updated upstream
 //middleware
+=======
+async function listDatabases() {
+  const dbList = await client.db().admin().listDatabases();
+  console.log("Databases");
+  dbList.databases.forEach((db) => {
+    console.log("-" + db.name);
+  });
+}
+listDatabases();
+
+async function fetchUser(query) {
+  const result = await client.db("PuzzleSection").collection("Users").findOne(query);
+  console.log(result);
+}
+
+fetchUser({ username: "username" });
+
+var app = express();
+
+>>>>>>> Stashed changes
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -44,6 +65,7 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
+<<<<<<< Updated upstream
 //database functions
 async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
@@ -102,6 +124,11 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
     return null;
   }
 }
+=======
+//Databases (json format)
+// var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, false, ":"));
+// var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, false, ":"));
+>>>>>>> Stashed changes
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
