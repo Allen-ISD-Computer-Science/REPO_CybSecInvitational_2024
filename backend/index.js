@@ -332,8 +332,151 @@ app.post(
   })
 );
 
+//battle round
+app.post(
+  "/battleRound/submitPuzzle",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.send("No Current Battle Round");
+      return;
+    }
+
+    const puzzleid = req.body.id;
+    const answer = req.body.answer;
+    if (!puzzleid || !answer) {
+      res.send(400);
+      return;
+    }
+
+    if (
+      !Array.find((value, index) => {
+        return value.username == req.session.username;
+      })
+    ) {
+    }
+  })
+);
+
 //game state
 var paused = true;
+var currentBattleRound = null;
+
+async function startBattleRound(battleRoundId) {
+  const battleRoundPuzzleIds = config[battleRoundId];
+  console.log(battleRoundPuzzleIds);
+  if (!battleRoundPuzzleIds) {
+    console.warn("Battle round of id " + battleRoundId + " not found");
+    return;
+  }
+
+  puzzles = {};
+  for (let puzzleId of battleRoundPuzzleIds) {
+    var result = null;
+    try {
+      result = await client.db("PuzzlesSection").collection("BattleRoundPuzzles").findOne({ name: puzzleId });
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+
+    if (!result) {
+      console.warn("Failed to fetch puzzle of id " + puzzleId);
+      return;
+    } else {
+      delete result._id;
+      puzzles[result.name] = result;
+      // puzzles.push(result);
+    }
+  }
+
+  currentBattleRound = {
+    id: battleRoundId,
+    puzzles: puzzles,
+    startTime: Date.now(),
+    users: [],
+  };
+}
+
+function lerp(a, b, alpha) {
+  return a + alpha * (b - a);
+}
+
+async function endBattleRound() {
+  if (!currentBattleRound) {
+    console.log("No Current Battle Round");
+    return;
+  } else {
+    console.log("Ending Battle Round");
+  }
+
+  if (currentBattleRound.users.length <= 0) {
+    currentBattleRound = null;
+    console.warn("No users in battle round");
+    return; //no users took part in the battle round
+  }
+
+  currentBattleRound.users.sort((a, b) => {
+    return a.completed.length - b.completed.length;
+  });
+  console.log(currentBattleRound.users);
+
+  for (let i = 0; i < currentBattleRound.users.length; i++) {
+    const user = currentBattleRound.users[i];
+    const k = i / (currentBattleRound.users.length - 1);
+    console.log(k);
+    const multiplier = lerp(config.battle_round_max_multiplier, config.battle_round_min_multiplier, k);
+    console.log(user.username, multiplier, multiplier * user.bid);
+  }
+
+  currentBattleRound = null;
+}
+
+async function onBattleRoundPuzzleCorrect(username, id, answer) {}
+
+async function onJoinBattleRound(username, percentage) {
+  if (!currentBattleRound) return;
+  const user = await fetchUser(username);
+  if (!user) return;
+
+  console.log(user);
+
+  const bid = Math.max(Math.min(Math.floor(user.puzzle_points * percentage), user.puzzle_points), 0);
+
+  // try {
+  //   const result = await client
+  //     .db("PuzzlesSection")
+  //     .collection("Users")
+  //     .updateOne({ username: username }, { $set: { puzzle_points: user.puzzle_points - bid } });
+  // } catch (err) {
+  //   console.log(err);
+  //   return;
+  // }
+
+  currentBattleRound.users.push({
+    username: user.username,
+    bid: bid,
+    completed: [],
+  });
+  console.log(currentBattleRound);
+}
+
+startBattleRound("battle_round_1_puzzles").then(() => {
+  console.log("BattleRound Started");
+  Promise.all([onJoinBattleRound("username", 0.5), onJoinBattleRound("user1", 0.25)]).then(() => {
+    console.log(
+      Array.prototype.find((value, index) => {
+        console.log("Spring", value);
+        return value.username == "username";
+      })
+    );
+    endBattleRound();
+  });
+});
 
 app.post(
   "/getScoreboard",
