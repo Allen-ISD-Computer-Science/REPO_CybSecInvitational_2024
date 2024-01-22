@@ -30,28 +30,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-<<<<<<< Updated upstream
 //middleware
-=======
-async function listDatabases() {
-  const dbList = await client.db().admin().listDatabases();
-  console.log("Databases");
-  dbList.databases.forEach((db) => {
-    console.log("-" + db.name);
-  });
-}
-listDatabases();
-
-async function fetchUser(query) {
-  const result = await client.db("PuzzleSection").collection("Users").findOne(query);
-  console.log(result);
-}
-
-fetchUser({ username: "username" });
-
-var app = express();
-
->>>>>>> Stashed changes
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -65,7 +44,6 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
-<<<<<<< Updated upstream
 //database functions
 async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
@@ -124,11 +102,6 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
     return null;
   }
 }
-=======
-//Databases (json format)
-// var userdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("userDatabase", true, false, ":"));
-// var puzzlesdb = new nodeJsonDB.JsonDB(new nodeJsonDB.Config("questionsDatabase", true, false, ":"));
->>>>>>> Stashed changes
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -359,40 +332,11 @@ app.post(
   })
 );
 
-//battle round
-app.post(
-  "/battleRound/submitPuzzle",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
-
-    if (!currentBattleRound) {
-      res.send("No Current Battle Round");
-      return;
-    }
-
-    const puzzleid = req.body.id;
-    const answer = req.body.answer;
-    if (!puzzleid || !answer) {
-      res.send(400);
-      return;
-    }
-
-    if (
-      !Array.find((value, index) => {
-        return value.username == req.session.username;
-      })
-    ) {
-    }
-  })
-);
-
 //game state
 var paused = true;
 var currentBattleRound = null;
 
+//battle round
 async function startBattleRound(battleRoundId) {
   const battleRoundPuzzleIds = config[battleRoundId];
   console.log(battleRoundPuzzleIds);
@@ -425,7 +369,7 @@ async function startBattleRound(battleRoundId) {
     id: battleRoundId,
     puzzles: puzzles,
     startTime: Date.now(),
-    users: [],
+    users: {},
   };
 }
 
@@ -441,78 +385,141 @@ async function endBattleRound() {
     console.log("Ending Battle Round");
   }
 
-  if (currentBattleRound.users.length <= 0) {
+  if (Object.keys(currentBattleRound.users).length <= 0) {
     currentBattleRound = null;
     console.warn("No users in battle round");
     return; //no users took part in the battle round
   }
 
-  currentBattleRound.users.sort((a, b) => {
-    return a.completed.length - b.completed.length;
-  });
-  console.log(currentBattleRound.users);
+  let participants = Object.values(currentBattleRound.users);
 
-  for (let i = 0; i < currentBattleRound.users.length; i++) {
-    const user = currentBattleRound.users[i];
-    const k = i / (currentBattleRound.users.length - 1);
+  participants.sort((a, b) => {});
+
+  participants.forEach((participant, i) => {
+    const user = participant.user;
+    const username = user.username;
+    const k = i / (participants.length - 1);
     console.log(k);
     const multiplier = lerp(config.battle_round_max_multiplier, config.battle_round_min_multiplier, k);
-    console.log(user.username, multiplier, multiplier * user.bid);
-  }
+    console.log(username, multiplier, multiplier * participant.bid);
+  });
 
   currentBattleRound = null;
 }
 
-async function onBattleRoundPuzzleCorrect(username, id, answer) {}
-
-async function onJoinBattleRound(username, percentage) {
-  if (!currentBattleRound) return;
-  const user = await fetchUser(username);
-  if (!user) return;
-
-  console.log(user);
-
-  const bid = Math.max(Math.min(Math.floor(user.puzzle_points * percentage), user.puzzle_points), 0);
-
-  // try {
-  //   const result = await client
-  //     .db("PuzzlesSection")
-  //     .collection("Users")
-  //     .updateOne({ username: username }, { $set: { puzzle_points: user.puzzle_points - bid } });
-  // } catch (err) {
-  //   console.log(err);
-  //   return;
-  // }
-
-  currentBattleRound.users.push({
-    username: user.username,
-    bid: bid,
-    completed: [],
-  });
-  console.log(currentBattleRound);
-}
+async function onJoinBattleRound(username, percentage) {}
 
 startBattleRound("battle_round_1_puzzles").then(() => {
-  console.log("BattleRound Started");
-  Promise.all([onJoinBattleRound("username", 0.5), onJoinBattleRound("user1", 0.25)]).then(() => {
-    console.log(
-      Array.prototype.find((value, index) => {
-        console.log("Spring", value);
-        return value.username == "username";
-      })
-    );
-    endBattleRound();
-  });
+  // console.log("BattleRound Started");
+  // Promise.all([onJoinBattleRound("username", 0.5), onJoinBattleRound("user1", 0.25)]).then(() => {
+  //   endBattleRound();
+  // });
 });
 
+//battle round
 app.post(
-  "/getScoreboard",
+  "/battleRound/join",
   asyncHandler(async (req, res) => {
-    const scoreboard = await getScoreboard();
-    res.json(scoreboard);
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const bidPercentage = req.body.bid;
+    if (!bidPercentage) {
+      res.sendStatus(400);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ success: false, notStarted: true });
+      return;
+    }
+
+    const user = await fetchUser(req.session.username);
+    delete user._id;
+    delete user.password;
+    delete user.completed_puzzles;
+    if (!user) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (currentBattleRound.users[req.session.username]) {
+      res.json({ success: false, alreadyJoined: true });
+      return;
+    }
+
+    const bid = Math.max(Math.min(Math.floor(user.puzzle_points * bidPercentage), user.puzzle_points), 0);
+
+    // try {
+    //   const result = await client
+    //     .db("PuzzlesSection")
+    //     .collection("Users")
+    //     .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
+    // if (result) user.puzzle_points -= bid
+    // } catch (err) {
+    //   console.log(err);
+    // res.sendStatus(500)
+    //   return;
+    // }
+
+    currentBattleRound.users[req.session.username] = {
+      user: user,
+      bid: bid,
+      completed: {},
+    };
+    console.log(currentBattleRound.users);
+
+    res.json({ success: true });
+    console.log(currentBattleRound);
   })
 );
 
+app.post(
+  "/battleRound/submitPuzzle",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    const participant = currentBattleRound.users[req.session.username];
+    if (!participant) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const puzzleid = req.body.id;
+    const answer = req.body.answer;
+    if (!puzzleid || !answer) {
+      res.send(400);
+      return;
+    }
+
+    const puzzle = currentBattleRound.puzzles[puzzleid];
+    if (!puzzle) {
+      res.sendStatus(400);
+      return;
+    }
+
+    if (puzzle.answer === answer) {
+      participant.completed[puzzle.name] = true;
+      res.json({ correct: true });
+      return;
+    } else {
+      res.json({ correct: false });
+      return;
+    }
+  })
+);
+
+//scoreboard
 async function getScoreboard() {
   try {
     const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
@@ -522,6 +529,14 @@ async function getScoreboard() {
     return null;
   }
 }
+
+app.post(
+  "/getScoreboard",
+  asyncHandler(async (req, res) => {
+    const scoreboard = await getScoreboard();
+    res.json(scoreboard);
+  })
+);
 
 async function updateEvent() {
   if (paused) return;
