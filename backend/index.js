@@ -337,6 +337,40 @@ var paused = true;
 var currentBattleRound = null;
 
 //battle round
+function lerp(a, b, alpha) {
+  return a + alpha * (b - a);
+}
+
+async function endBattleRound() {
+  if (!currentBattleRound) {
+    console.log("No Current Battle Round");
+    return;
+  } else {
+    console.log("Ending Battle Round");
+  }
+
+  if (Object.keys(currentBattleRound.users).length <= 0) {
+    currentBattleRound = null;
+    console.warn("No users in battle round");
+    return; //no users took part in the battle round
+  }
+
+  let participants = Object.values(currentBattleRound.users);
+
+  participants.sort((a, b) => {});
+
+  participants.forEach((participant, i) => {
+    const user = participant.user;
+    const username = user.username;
+    const k = i / (participants.length - 1);
+    console.log(k);
+    const multiplier = lerp(config.battle_round_max_multiplier, config.battle_round_min_multiplier, k);
+    console.log(username, multiplier, multiplier * participant.bid);
+  });
+
+  currentBattleRound = null;
+}
+
 async function startBattleRound(battleRoundId) {
   const battleRoundPuzzleIds = config[battleRoundId];
   console.log(battleRoundPuzzleIds);
@@ -372,42 +406,6 @@ async function startBattleRound(battleRoundId) {
     users: {},
   };
 }
-
-function lerp(a, b, alpha) {
-  return a + alpha * (b - a);
-}
-
-async function endBattleRound() {
-  if (!currentBattleRound) {
-    console.log("No Current Battle Round");
-    return;
-  } else {
-    console.log("Ending Battle Round");
-  }
-
-  if (Object.keys(currentBattleRound.users).length <= 0) {
-    currentBattleRound = null;
-    console.warn("No users in battle round");
-    return; //no users took part in the battle round
-  }
-
-  let participants = Object.values(currentBattleRound.users);
-
-  participants.sort((a, b) => {});
-
-  participants.forEach((participant, i) => {
-    const user = participant.user;
-    const username = user.username;
-    const k = i / (participants.length - 1);
-    console.log(k);
-    const multiplier = lerp(config.battle_round_max_multiplier, config.battle_round_min_multiplier, k);
-    console.log(username, multiplier, multiplier * participant.bid);
-  });
-
-  currentBattleRound = null;
-}
-
-async function onJoinBattleRound(username, percentage) {}
 
 startBattleRound("battle_round_1_puzzles").then(() => {
   // console.log("BattleRound Started");
