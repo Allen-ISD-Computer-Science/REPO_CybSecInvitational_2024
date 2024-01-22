@@ -109,65 +109,66 @@ const asyncHandler = (func) => (req, res, next) => {
 };
 
 //routing
-app.get("/home", function (req, res) {
+app.get(config.host_relative_path + "/home", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.redirect("/login");
+    res.redirect(config.host_relative_path + "/login");
   }
 });
 
-app.get("/", function (req, res) {
-  res.redirect("/login");
+app.get(config.host_relative_path + "/", function (req, res) {
+  res.redirect(config.host_relative_path + "/login");
 });
 
-app.get("/login", function (req, res) {
+app.get(config.host_relative_path + "/login", function (req, res) {
   if (req.session.username) {
-    res.redirect("/home");
+    res.redirect(config.host_relative_path + "/home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
   }
 });
 
-app.get("/logout", function (req, res) {
+app.get(config.host_relative_path + "/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
-  res.redirect("/login");
+  res.redirect(config.host_relative_path + "/login");
 });
 
-app.get("/scoreboard", function (req, res) {
+app.get(config.host_relative_path + "/scoreboard", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
-    res.redirect("/login");
+    res.redirect(config.host_relative_path + "/login");
   }
 });
 
-app.get("/puzzles", function (req, res) {
+app.get(config.host_relative_path + "/puzzles", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
   } else {
-    res.redirect("/login");
+    res.redirect(config.host_relative_path + "/login");
   }
 });
 
-app.get("/battleRound", function (req, res) {
+app.get(config.host_relative_path + "/battleRound", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/battleRound.html"));
   } else {
-    res.redirect("/login");
+    res.redirect(config.host_relative_path + "/login");
   }
 });
 
 app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "public/404.html"));
+  res.redirect(config.host_relative_path + "/home");
+  // res.sendFile(path.join(__dirname, "public/404.html"));
 });
 
 //actions
 //login
 app.post(
-  "/login",
+  config.host_relative_path + "/login",
   asyncHandler(async (req, res) => {
     console.log("attempting login ");
 
@@ -187,7 +188,7 @@ app.post(
 
     if (user.password === password) {
       req.session.username = user.username;
-      res.redirect("/home");
+      res.redirect(config.host_relative_path + "/home");
       return;
     } else {
       console.log("invalid login credentials");
@@ -199,7 +200,7 @@ app.post(
 
 //puzzle interactions
 app.post(
-  "/getPuzzle",
+  config.host_relative_path + "/getPuzzle",
   asyncHandler(async (req, res) => {
     const id = req.body.id;
     if (!id) {
@@ -222,7 +223,7 @@ app.post(
 );
 
 app.post(
-  "/getMultiplePuzzles",
+  config.host_relative_path + "/getMultiplePuzzles",
   asyncHandler(async (req, res) => {
     console.log("attempting to fetch puzzles");
 
@@ -246,7 +247,7 @@ app.post(
 );
 
 app.post(
-  "/submitPuzzle",
+  config.host_relative_path + "/submitPuzzle",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
     const id = req.body.id;
@@ -297,7 +298,7 @@ app.post(
 //user interactions
 
 app.post(
-  "/getUser",
+  config.host_relative_path + "/getUser",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
     if (!username) {
@@ -313,7 +314,7 @@ app.post(
 );
 
 app.post(
-  "/getUsers",
+  config.host_relative_path + "/getUsers",
   asyncHandler(async (req, res) => {
     const dbquery = req.body.query;
     const sort = req.body.sort;
@@ -416,7 +417,7 @@ startBattleRound("battle_round_1_puzzles").then(() => {
 
 //battle round
 app.post(
-  "/battleRound/join",
+  config.host_relative_path + "/battleRound/join",
   asyncHandler(async (req, res) => {
     if (!req.session.username) {
       res.sendStatus(403);
@@ -475,7 +476,7 @@ app.post(
 );
 
 app.post(
-  "/battleRound/submitPuzzle",
+  config.host_relative_path + "/battleRound/submitPuzzle",
   asyncHandler(async (req, res) => {
     if (!req.session.username) {
       res.sendStatus(403);
@@ -529,7 +530,7 @@ async function getScoreboard() {
 }
 
 app.post(
-  "/getScoreboard",
+  config.host_relative_path + "/getScoreboard",
   asyncHandler(async (req, res) => {
     const scoreboard = await getScoreboard();
     res.json(scoreboard);
