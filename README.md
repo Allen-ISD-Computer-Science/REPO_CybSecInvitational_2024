@@ -83,3 +83,8 @@ As part of this effort, students will not only leverage (and improve) upon their
 * Wifi network(s) for participants to be able to use during event (can be segregated from another network or a standalone network)
 * Tables and chairs (competition room, training room(s), operations center, Volunteer sign in/out area)
 * Laptops(?)
+
+# Planning Timeline
+Phases: There will be 4 phases to the 2024 Allen Cyber Games Invitational. Those phases and estimated timeframes are shown below:
+![alt text](assets/img/Planning_Timeline.png)
+
