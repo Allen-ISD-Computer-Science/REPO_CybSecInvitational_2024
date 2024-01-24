@@ -2,7 +2,21 @@
 
 Create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, cli commands, binary exploitation and much more) and then apply them in a scenario based challenge.
 
+# Goals
+Goals: The 5 goals for the 2024 Allen Cyber Games Invitational include:
+* Allen High School Cyber Club students will have leveraged and improved their programming skills and developed other career-related skills (e.g. branding, recruiting, planning, etc.).
+* The 2024 Allen Cyber Games Invitational will be executed relatively smoothly.
+* The 2024 Allen Cyber Games will serve as the foundation for future Allen Cyber Games Invitationals.
+* More than xx high school students, including at least xx students from other high schools, will participate in the 2024 Allen Cyber Games Invitational.
+* The 2024 Allen Cyber Games Invitational will raise $xxxxxx to support student scholarships.
+
+# Event Details
+* When: Saturday, April 27, 2024 
+* Where: Venue TBD (see Venue Requirements below)
+
 # Roles
+Skill Development and Mentors
+As part of this effort, students will not only leverage (and improve) upon their programming skills. They will also work with a mentor to learn project management and event planning skills. To accomplish this, Allen Cyber Club members will be assigned to the roles identified in Table 1 below:
 
 - Project Manager: James Dungan, JamesMDungan [Digital Portfolio](https://codermerlin.academy/users/james-dungan/Digital%20Portfolio/index.html)
   - Chair
