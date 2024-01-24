@@ -11,6 +11,8 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
+const router = express.Router();
+
 const mongo_username = encodeURIComponent(config.mongodb_username);
 const mongo_password = encodeURIComponent(config.mongodb_password);
 
@@ -43,6 +45,13 @@ app.use(
 );
 
 app.use(express.static(path.join(__dirname, "public")));
+
+router.get("/testRequest", (req, res) => {
+  console.log("gotten");
+  res.send("check the url");
+});
+
+app.use("/vapor/soohan-cho", router);
 
 //database functions
 async function onPuzzleCorrect(username, amount, id) {
@@ -109,7 +118,7 @@ const asyncHandler = (func) => (req, res, next) => {
 };
 
 //routing
-app.get(config.host_relative_path + "/home", function (req, res) {
+app.get("/home", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
@@ -117,11 +126,11 @@ app.get(config.host_relative_path + "/home", function (req, res) {
   }
 });
 
-app.get(config.host_relative_path + "/", function (req, res) {
+app.get("/", function (req, res) {
   res.redirect(config.host_relative_path + "/login");
 });
 
-app.get(config.host_relative_path + "/login", function (req, res) {
+app.get("/login", function (req, res) {
   if (req.session.username) {
     res.redirect(config.host_relative_path + "/home");
   } else {
@@ -129,14 +138,14 @@ app.get(config.host_relative_path + "/login", function (req, res) {
   }
 });
 
-app.get(config.host_relative_path + "/logout", function (req, res) {
+app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
   res.redirect(config.host_relative_path + "/login");
 });
 
-app.get(config.host_relative_path + "/scoreboard", function (req, res) {
+app.get("/scoreboard", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
@@ -144,7 +153,7 @@ app.get(config.host_relative_path + "/scoreboard", function (req, res) {
   }
 });
 
-app.get(config.host_relative_path + "/puzzles", function (req, res) {
+app.get("/puzzles", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
   } else {
@@ -152,7 +161,7 @@ app.get(config.host_relative_path + "/puzzles", function (req, res) {
   }
 });
 
-app.get(config.host_relative_path + "/battleRound", function (req, res) {
+app.get("/battleRound", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/battleRound.html"));
   } else {
@@ -168,7 +177,7 @@ app.get("*", function (req, res) {
 //actions
 //login
 app.post(
-  config.host_relative_path + "/login",
+  "/login",
   asyncHandler(async (req, res) => {
     console.log("attempting login ");
 
@@ -200,7 +209,7 @@ app.post(
 
 //puzzle interactions
 app.post(
-  config.host_relative_path + "/getPuzzle",
+  "/getPuzzle",
   asyncHandler(async (req, res) => {
     const id = req.body.id;
     if (!id) {
@@ -223,7 +232,7 @@ app.post(
 );
 
 app.post(
-  config.host_relative_path + "/getMultiplePuzzles",
+  "/getMultiplePuzzles",
   asyncHandler(async (req, res) => {
     console.log("attempting to fetch puzzles");
 
@@ -247,7 +256,7 @@ app.post(
 );
 
 app.post(
-  config.host_relative_path + "/submitPuzzle",
+  "/submitPuzzle",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
     const id = req.body.id;
@@ -298,7 +307,7 @@ app.post(
 //user interactions
 
 app.post(
-  config.host_relative_path + "/getUser",
+  "/getUser",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
     if (!username) {
@@ -314,7 +323,7 @@ app.post(
 );
 
 app.post(
-  config.host_relative_path + "/getUsers",
+  "/getUsers",
   asyncHandler(async (req, res) => {
     const dbquery = req.body.query;
     const sort = req.body.sort;
@@ -417,7 +426,7 @@ startBattleRound("battle_round_1_puzzles").then(() => {
 
 //battle round
 app.post(
-  config.host_relative_path + "/battleRound/join",
+  "/battleRound/join",
   asyncHandler(async (req, res) => {
     if (!req.session.username) {
       res.sendStatus(403);
@@ -476,7 +485,7 @@ app.post(
 );
 
 app.post(
-  config.host_relative_path + "/battleRound/submitPuzzle",
+  "/battleRound/submitPuzzle",
   asyncHandler(async (req, res) => {
     if (!req.session.username) {
       res.sendStatus(403);
@@ -530,7 +539,7 @@ async function getScoreboard() {
 }
 
 app.post(
-  config.host_relative_path + "/getScoreboard",
+  "/getScoreboard",
   asyncHandler(async (req, res) => {
     const scoreboard = await getScoreboard();
     res.json(scoreboard);
@@ -570,3 +579,5 @@ server.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
+
+console.log(process);
