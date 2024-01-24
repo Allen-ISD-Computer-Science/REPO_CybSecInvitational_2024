@@ -3,7 +3,7 @@ const badRequestAlert = document.getElementById("badRequestAlert");
 invalidAlert.style.display = "none";
 badRequestAlert.style.display = "none";
 
-const relativeUrl = host_relative_path;
+var relativeUrl = host_relative_path;
 if (!relativeUrl) relativeUrl = "";
 
 const submitButton = document.getElementById("formSubmit");
