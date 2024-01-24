@@ -3,6 +3,9 @@ const badRequestAlert = document.getElementById("badRequestAlert");
 invalidAlert.style.display = "none";
 badRequestAlert.style.display = "none";
 
+const relativeUrl = host_relative_path;
+if (!relativeUrl) relativeUrl = "";
+
 const submitButton = document.getElementById("formSubmit");
 submitButton.onclick = async (evt) => {
   evt.preventDefault();
@@ -17,7 +20,7 @@ submitButton.onclick = async (evt) => {
   invalidAlert.style.display = "none";
   badRequestAlert.style.display = "none";
 
-  const response = await fetch(location.protocol + "//" + location.host + "/login", {
+  const response = await fetch(location.protocol + "//" + location.host + relativeUrl + "/login", {
     method: "POST",
     body: JSON.stringify({ username: username, password: password }),
     headers: {
