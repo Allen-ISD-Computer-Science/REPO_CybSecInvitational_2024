@@ -59,3 +59,27 @@ As part of this effort, students will not only leverage (and improve) upon their
 | Vendors Coordinator                | Coordinate vendors (e.g. food vendors, “merch”, etc.)                                              | Communication, Planning, Networking with External Parties | TBD               | TBD             |
 | Special Guests Coordinator         | Invite and track attendance of special guests (e.g. Federal/state/local elected leaders, sponsor representatives, etc.) | Communication, Networking with External Parties | TBD               | TBD             |
 | Branding Coordinator               | Develops Invitational logo and key messaging                                                       | Communication                               | TBD               | TBD             |
+
+# Student and Mentor Rules 
+1. Mentors will complete an Allen ISD Background check.
+1. Mentors and students will ALWAYS cc: Mr. Ben on all emails between one another.
+1. Mentors and students will not contact one another via phone, texting, or virtual meetings without Mr. Ben or another member of Allen ISD staff participating in the conversation or meeting.
+1. Mentors and students will not meet in-person without Mr. Ben or another member of Allen ISD staff present.
+1. Mentors will never be in a classroom or event venue room with a student without Mr. Ben or another member of Allen ISD staff present. 
+1. Students will coordinate with one another and make decisions (within Mr. Ben’s parameters). Mentors will advise individual students and recognize that the students need to effectively communicate with one another. If mentor identifies a risk/concern that (s)he does not believe students appropriately understand/appreciate, the mentor should communicate that directly to 1. Mr. Ben and the chair’s mentor so that, if appropriate, they can work with the chair to better understand the situation.
+
+# Venue Requirements 
+* Competition room (can accommodate xx students and their stations)
+* Training room(s) (can accommodate xx students and their stations)
+* Operations room (room that can easily accommodate an operations team of 6+ with work areas, dry erase board. Will need to add more space if running independent network for event as that should be run from Operations Center.)
+* Volunteer break room
+* Audio/video options
+* Food service and eating area(s)
+* Check-in area(s) for visitors and guests
+* Multi-stall male and female restrooms
+* Parking (can accommodate xxx personal vehicles and xxx buses)
+
+# Equipment Needed
+* Wifi network(s) for participants to be able to use during event (can be segregated from another network or a standalone network)
+* Tables and chairs (competition room, training room(s), operations center, Volunteer sign in/out area)
+* Laptops(?)
