@@ -1,5 +1,0 @@
-[ 'battleRound1Puzzle1', 'battleRound1Puzzle2', 'battleRound1Puzzle3' ]
-updating scoreboard
-{ address: '::', family: 'IPv6', port: 11278 }
-server at http://localhost:11278/home
-attempting login 
