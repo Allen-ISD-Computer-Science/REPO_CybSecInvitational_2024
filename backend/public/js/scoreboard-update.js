@@ -54,8 +54,10 @@ function updateUI(scoreboard) {
   table.draw(false);
 }
 
-socket.on("scoreboard_update", async (data) => {
-  scoreboard = data;
+socket.on("update_event", async (data) => {
+    console.log("updating")
+
+    scoreboard = data;
   updateUI(scoreboard);
 });
 
