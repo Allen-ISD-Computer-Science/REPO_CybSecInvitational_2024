@@ -122,7 +122,7 @@ app.get("/home", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.redirect(config.host_relative_path + "/login");
+    res.redirect("login");
   }
 });
 
@@ -132,7 +132,7 @@ app.get("/", function (req, res) {
 
 app.get("/login", function (req, res) {
   if (req.session.username) {
-    res.redirect(config.host_relative_path + "/home");
+    res.redirect("home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
   }
