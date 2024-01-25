@@ -1,8 +1,13 @@
 console.log(location.href);
 
-const socket = io({
-  path: "/vapor/soohan-cho/socket.io",
-});
+var socket = null;
+if (location.href.includes("/vapor/soohan-cho")) {
+  socket = io({
+    path: "/vapor/soohan-cho/socket.io",
+  });
+} else {
+  socket = io();
+}
 
 const userLoaded = new CustomEvent("user-loaded");
 
