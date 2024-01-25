@@ -4,6 +4,7 @@ const session = require("express-session");
 const { Server } = require("socket.io");
 const path = require("path");
 const bodyParser = require("body-parser");
+const fs = require("fs");
 
 const config = require(path.join(__dirname, "config.json"));
 
@@ -45,13 +46,6 @@ app.use(
 );
 
 app.use(express.static(path.join(__dirname, "public")));
-
-router.get("/testRequest", (req, res) => {
-  console.log("gotten");
-  res.send("check the url");
-});
-
-app.use("/vapor/soohan-cho", router);
 
 //database functions
 async function onPuzzleCorrect(username, amount, id) {
@@ -112,6 +106,11 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
   }
 }
 
+app.use("*", (req, res, next) => {
+  console.log(req.url, req.baseUrl);
+  next();
+});
+
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
   Promise.resolve(func(req, res, next)).catch(next);
@@ -127,7 +126,7 @@ app.get("/home", function (req, res) {
 });
 
 app.get("/", function (req, res) {
-  res.redirect(config.host_relative_path + "/login");
+  res.redirect("login");
 });
 
 app.get("/login", function (req, res) {
@@ -142,14 +141,14 @@ app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
-  res.redirect(config.host_relative_path + "/login");
+  res.redirect("login");
 });
 
 app.get("/scoreboard", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
-    res.redirect(config.host_relative_path + "/login");
+    res.redirect("login");
   }
 });
 
@@ -157,7 +156,7 @@ app.get("/puzzles", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
   } else {
-    res.redirect(config.host_relative_path + "/login");
+    res.redirect("login");
   }
 });
 
@@ -165,12 +164,12 @@ app.get("/battleRound", function (req, res) {
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/battleRound.html"));
   } else {
-    res.redirect(config.host_relative_path + "/login");
+    res.redirect("login");
   }
 });
 
 app.get("*", function (req, res) {
-  res.redirect(config.host_relative_path + "/home");
+  res.redirect("home");
   // res.sendFile(path.join(__dirname, "public/404.html"));
 });
 
@@ -197,7 +196,7 @@ app.post(
 
     if (user.password === password) {
       req.session.username = user.username;
-      res.redirect(config.host_relative_path + "/home");
+      res.sendStatus(200);
       return;
     } else {
       console.log("invalid login credentials");
@@ -579,5 +578,3 @@ server.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
-
-console.log(process);

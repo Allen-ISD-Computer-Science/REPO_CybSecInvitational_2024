@@ -1,6 +1,6 @@
 var scoreboard = null;
 async function fetchScoreboard() {
-  const response = await fetch(location.protocol + "//" + location.host + "/getScoreboard", {
+  const response = await fetch(location.protocol + "//" + location.host + relative_path + "/getScoreboard", {
     method: "POST",
     headers: {
       "Content-type": "application/json; charset=UTF-8",

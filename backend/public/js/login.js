@@ -3,9 +3,6 @@ const badRequestAlert = document.getElementById("badRequestAlert");
 invalidAlert.style.display = "none";
 badRequestAlert.style.display = "none";
 
-var relativeUrl = host_relative_path;
-if (!relativeUrl) relativeUrl = "";
-
 const submitButton = document.getElementById("formSubmit");
 submitButton.onclick = async (evt) => {
   evt.preventDefault();
@@ -20,7 +17,8 @@ submitButton.onclick = async (evt) => {
   invalidAlert.style.display = "none";
   badRequestAlert.style.display = "none";
 
-  const response = await fetch(location.protocol + "//" + location.host + relativeUrl + "/login", {
+  console.log(relative_path);
+  const response = await fetch(location.protocol + "//" + location.host + relative_path + "/login", {
     method: "POST",
     body: JSON.stringify({ username: username, password: password }),
     headers: {
@@ -29,7 +27,7 @@ submitButton.onclick = async (evt) => {
   });
   console.log(response);
   if (response.ok) {
-    window.location.replace(location.protocol + "//" + location.host + "/home");
+    window.location.replace(location.protocol + "//" + location.host + relative_path + "/home");
   } else {
     switch (response.status) {
       case 404:

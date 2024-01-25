@@ -238,7 +238,7 @@ const puzzleSubmitButton = document.getElementById("puzzle-submit-button");
 async function generatePuzzleModal(id) {
   puzzleSubmitInput.value = "";
   puzzleAlert.innerHTML = "";
-  puzzleModalHeader.innerHTML = `<img style="width: 3rem; height: 3rem" src="img/Eclipse-1s-200px(1).svg" />`;
+  puzzleModalHeader.innerHTML = `<img style="width: 3rem; height: 3rem" src="img/sharp_reloading.svg" />`;
   puzzleModalBody.innerHTML = `<img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />`;
 
   const puzzle = await fetchPuzzle(id);
