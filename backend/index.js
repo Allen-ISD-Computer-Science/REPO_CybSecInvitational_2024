@@ -411,9 +411,11 @@ async function startBattleRound(battleRoundId) {
   };
 }
 
-startBattleRound("battle_round_1_puzzles").then(() => {
+startBattleRound("battle_round_1_puzzles").then(async () => {
+  // await onJoinBattleRound("username", 0.5);
+  console.log(currentBattleRound);
   // console.log("BattleRound Started");
-  // Promise.all([onJoinBattleRound("username", 0.5), onJoinBattleRound("user1", 0.25)]).then(() => {
+  // Promise.all([, onJoinBattleRound("user1", 0.25)]).then(() => {
   //   endBattleRound();
   // });
 });
@@ -428,7 +430,7 @@ app.post(
     }
 
     const bidPercentage = req.body.bid;
-    if (!bidPercentage) {
+    if (!bidPercentage && bidPercentage !== 0) {
       res.sendStatus(400);
       return;
     }
@@ -475,6 +477,37 @@ app.post(
 
     res.json({ success: true });
     console.log(currentBattleRound);
+  })
+);
+
+app.post(
+  "/battleRound/getPuzzles",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    const participant = currentBattleRound.users[req.session.username];
+    if (!participant) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const puzzles = Object.values(currentBattleRound.puzzles);
+    console.log(puzzles, typeof puzzles);
+    const package = [];
+    for (let puzzle of puzzles) {
+      let clone = { ...puzzle };
+      delete clone.answer;
+      package.push(clone);
+    }
+    res.json(package);
   })
 );
 
