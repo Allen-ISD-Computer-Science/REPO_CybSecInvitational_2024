@@ -1,5 +1,5 @@
 async function fetchPuzzle(id) {
-  const response = await fetch(location.protocol + "//" + location.host + "/getPuzzle", {
+  const response = await fetch("getPuzzle", {
     method: "POST",
     body: JSON.stringify({ id: id }),
     headers: {
@@ -36,7 +36,7 @@ async function queryPuzzles(category, difficulty, skip) {
     delete body.query.difficulty;
   }
 
-  const response = await fetch(location.protocol + "//" + location.host + "/getMultiplePuzzles", {
+  const response = await fetch("getMultiplePuzzles", {
     method: "POST",
     body: JSON.stringify(body),
     headers: {
@@ -252,7 +252,7 @@ async function onPuzzleButtonClick(button) {
 }
 
 async function submitPuzzle(id, answer) {
-  const response = await fetch(location.protocol + "//" + location.host + "/submitPuzzle", {
+  const response = await fetch("submitPuzzle", {
     method: "POST",
     body: JSON.stringify({ id: id, answer: answer }),
     headers: {

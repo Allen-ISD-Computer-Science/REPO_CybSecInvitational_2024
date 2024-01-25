@@ -5,7 +5,7 @@ const userLoaded = new CustomEvent("user-loaded");
 var user = null;
 
 async function fetchUser() {
-  const response = await fetch(location.protocol + "//" + location.host + relative_path + "/getUser", {
+  const response = await fetch("getUser", {
     method: "POST",
     headers: {
       "Content-type": "application/json; charset=UTF-8",

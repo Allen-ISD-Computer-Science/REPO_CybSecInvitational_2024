@@ -168,11 +168,6 @@ app.get("/battleRound", function (req, res) {
   }
 });
 
-app.get("*", function (req, res) {
-  res.redirect("home");
-  // res.sendFile(path.join(__dirname, "public/404.html"));
-});
-
 //actions
 //login
 app.post(

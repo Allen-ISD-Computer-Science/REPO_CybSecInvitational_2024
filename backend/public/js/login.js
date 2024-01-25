@@ -17,8 +17,7 @@ submitButton.onclick = async (evt) => {
   invalidAlert.style.display = "none";
   badRequestAlert.style.display = "none";
 
-  console.log(relative_path);
-  const response = await fetch(location.protocol + "//" + location.host + relative_path + "/login", {
+  const response = await fetch("login", {
     method: "POST",
     body: JSON.stringify({ username: username, password: password }),
     headers: {
@@ -27,7 +26,7 @@ submitButton.onclick = async (evt) => {
   });
   console.log(response);
   if (response.ok) {
-    window.location.replace(location.protocol + "//" + location.host + relative_path + "/home");
+    window.location.replace("home");
   } else {
     switch (response.status) {
       case 404:
