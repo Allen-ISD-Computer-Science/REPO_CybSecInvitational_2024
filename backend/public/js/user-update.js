@@ -1,8 +1,8 @@
-const socket = io(
-    {
-    "path": "/vapor/soohan-cho/socket.io"
-    }
-);
+console.log(location.href);
+
+const socket = io({
+  path: "/vapor/soohan-cho/socket.io",
+});
 
 const userLoaded = new CustomEvent("user-loaded");
 
