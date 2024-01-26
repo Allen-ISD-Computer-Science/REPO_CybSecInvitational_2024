@@ -233,6 +233,49 @@ confirmButton.onclick = async function (ev) {
   }
 };
 
+const minutesDisplay = document.getElementById("battle_round_minutes");
+const secondsDisplay = document.getElementById("battle_round_seconds");
+const millisecondsDisplay = document.getElementById("battle_round_milliseconds");
+
+const timeText = document.getElementById("battle_round_time_text");
+
+var endTime = 0;
+function msToTime(duration) {
+  var date = new Date(duration);
+  return { ms: date.getUTCMilliseconds(), s: date.getUTCSeconds(), m: date.getUTCMinutes() };
+}
+
+function pad(number, length) {
+  return ("000" + number).slice(-length);
+}
+
+const clockUpdateInterval = 20;
+var warningStage = false;
+var dangerStage = false;
+function updateBattleRoundTime() {
+  let timeLeft = Math.max(0, endTime - Date.now());
+  const time = msToTime(timeLeft);
+
+  if (!warningStage && timeLeft < 60000) {
+    timeText.classList.add("text-warning");
+    timeText.classList.add("shakeSmall");
+
+    warningStage = true;
+  } else if (!dangerStage && timeLeft < 30000) {
+    timeText.classList.remove("text-warning");
+    timeText.classList.remove("shakeSmall");
+    timeText.classList.add("text-danger");
+    timeText.classList.add("shakeBig");
+    dangerStage = true;
+  }
+
+  minutesDisplay.textContent = pad(time.m, 2);
+  secondsDisplay.textContent = pad(time.s, 2);
+  millisecondsDisplay.textContent = pad(time.ms, 3);
+
+  setTimeout(updateBattleRoundTime, clockUpdateInterval);
+}
+
 document.addEventListener("user-loaded", async () => {
   const result = await fetchStatus();
   if (result.alreadyJoined) {
@@ -244,6 +287,12 @@ document.addEventListener("user-loaded", async () => {
   } else {
     loadingDisplay.style.display = "none";
     joinUi.style.display = "block";
+  }
+
+  console.log(result);
+  if (result.endTime) {
+    endTime = result.endTime;
+    updateBattleRoundTime();
   }
 });
 

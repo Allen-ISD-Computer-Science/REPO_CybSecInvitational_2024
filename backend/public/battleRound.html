@@ -17,13 +17,14 @@
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
     <link href="css/slider.css" rel="stylesheet" />
+    <link href="css/shake.css" rel="stylesheet" />
   </head>
 
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
           <div class="sidebar-brand-icon">
@@ -177,12 +178,12 @@
 
             <div id="battle_round_main" class="container-fluid" style="display: none">
               <div id="countDown" class="container mb-5">
-                <div class="display-1 align-middle text-center d-flex flex-row justify-content-center">
-                  <div>00</div>
+                <div id="battle_round_time_text" class="display-1 align-middle text-center d-flex flex-row justify-content-center">
+                  <div id="battle_round_minutes">00</div>
                   <h6 class="align-self-end" style="width: fit-content">min</h6>
-                  <div>00</div>
+                  <div id="battle_round_seconds">00</div>
                   <h6 class="align-self-end" style="width: fit-content">sec</h6>
-                  <div>00</div>
+                  <div id="battle_round_milliseconds">00</div>
                   <!-- <h6 class="align-self-end" style="width: fit-content"></h6> -->
                 </div>
               </div>

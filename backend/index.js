@@ -393,7 +393,6 @@ async function endBattleRound() {
 
 async function startBattleRound(battleRoundId) {
   const battleRoundPuzzleIds = config[battleRoundId];
-  console.log(battleRoundPuzzleIds);
   if (!battleRoundPuzzleIds) {
     console.warn("Battle round of id " + battleRoundId + " not found");
     return;
@@ -419,10 +418,12 @@ async function startBattleRound(battleRoundId) {
     }
   }
 
+  let now = Date.now();
   currentBattleRound = {
     id: battleRoundId,
     puzzles: puzzles,
-    startTime: Date.now(),
+    startTime: now,
+    endTime: now + config.battle_round_duration,
     users: {},
   };
 
@@ -443,11 +444,11 @@ app.post(
     }
 
     if (currentBattleRound.users[req.session.username]) {
-      res.json({ alreadyJoined: true });
+      res.json({ alreadyJoined: true, endTime: currentBattleRound.endTime });
       return;
     }
 
-    res.json({});
+    res.json({ alreadyJoined: false, endTime: currentBattleRound.endTime });
   })
 );
 
@@ -503,10 +504,7 @@ app.post(
       bid: bid,
       completed: {},
     };
-    console.log(currentBattleRound.users);
-
     res.json({ success: true });
-    console.log(currentBattleRound);
   })
 );
 
