@@ -23,6 +23,7 @@ As part of this effort, students will not only leverage (and improve) upon their
   - Logistics Coordinator
 - Release Manager: Blake Gateley, KrabbiePatty [Digital Portfolio](https://codermerlin.academy/users/jonathan-gateley/Digital%20Portfolio/index.html)
   - Operations Director
+  - Sponsor Coordinator
 - Product Manager: Soohan Cho, BurntWaffleCake [Digital Portfolio](https://codermerlin.academy/users/soohan-cho/Digital%20Portfolio/index.html)
   - Director of Training Events
   - Director of Battle Rounds
@@ -31,10 +32,9 @@ As part of this effort, students will not only leverage (and improve) upon their
 - Engineer-Frontend: Aidan Morris, SirromEloc [Digital Portfolio](https://codermerlin.academy/users/aidan-morris/Digital%20Portfolio/index.html)
   - Volunteer Coordinator
   - Training Director
-- Back-End Developer: Richard Jang, o7 [Digital Portfolio](https://codermerlin.academy/users/ming-ruei-jang/Digital%20Portfolio/index.html)
+- UI/UX Designer: Richard Jang, o7 [Digital Portfolio](https://codermerlin.academy/users/ming-ruei-jang/Digital%20Portfolio/index.html)
   - External Parties Coordinator
-- UI/UX Designer: Onik Hoque, onikh [Digital Portfolio](https://codermerlin.academy/users/onik-hoque/Digital%20Portfolio/index.html)
-  - Sponsor Coordinator
+  - Back-End Engineer
 - DBA: Faraz Piracha, FarazPir [Digital Portfolio](https://codermerlin.academy/users/faraz-piracha/Digital%20Portfolio/index.html) 
   - Marketing Management
 - Website Consultant: Marisa Patel, marisapatel5 [Digital Portfolio](https://codermerlin.academy/users/marisa-patel/Digital%20Portfolio/index.html) 
@@ -52,7 +52,7 @@ As part of this effort, students will not only leverage (and improve) upon their
 | Logistics Coordinator              | Proactively identifies and obtains/provides logistics support before and during the event          | Planning, Organization, Logistics           | James Dungan            | TBD             |
 | Comms and IT Director              | Responsible for establishing website to register, and arrange event communications system (e.g. radios) and event IT system | Technical Prowess                            | Abel Semahegn               | TBD             |
 | Training Director                  | Responsible for train the trainers (i.e. ensure that those who will be training students are trained and ready); will also help lead a table-top exercise before the event. | Develops Others, Planner                    | Aidan Morris               | TBD             |
-| Sponsor Coordinator                | Responsible for securing financial sponsors                                                        | Communication, Networking, Financial management | Onik Hoque               | Mrs. Jungman    |
+| Sponsor Coordinator                | Responsible for securing financial sponsors                                                        | Communication, Networking, Financial management | Blake Gateley               | Mrs. Jungman    |
 | District/School Outreach Coordinator | Engages non-Allen ISD schools and/or districts                                                     | Communication, Networking with External Parties | Richard Jang               | TBD             |
 | Clubs/Organizations Outreach Coordinator | Engages local clubs/organizations (e.g. Boy and Girl scout units) to invite participants           | Communication, Networking with External Parties | Richard Jang              | TBD             |
 | Venue Coordinator                  | Serves as POC and coordinates with venue staff                                                     | Communication, Planning, Networking with External Parties |  James Dungan              | TBD             |
