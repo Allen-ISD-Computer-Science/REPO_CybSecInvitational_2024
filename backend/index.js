@@ -131,6 +131,11 @@ const asyncHandler = (func) => (req, res, next) => {
 //routing
 app.get("/home", function (req, res) {
   if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
     res.redirect("login");
@@ -158,6 +163,11 @@ app.get("/logout", function (req, res) {
 
 app.get("/scoreboard", function (req, res) {
   if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
     res.sendFile(path.join(__dirname, "public/scoreboard.html"));
   } else {
     res.redirect("login");
@@ -166,6 +176,11 @@ app.get("/scoreboard", function (req, res) {
 
 app.get("/puzzles", function (req, res) {
   if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
     res.sendFile(path.join(__dirname, "public/puzzles.html"));
   } else {
     res.redirect("login");
@@ -382,7 +397,7 @@ async function endBattleRound() {
       console.log(participant.bid, multiplier);
       const prize = Math.min(multiplier * participant.bid);
       console.log(prize);
-      // onBattleRoundCredit(username, prize);
+      onBattleRoundCredit(username, prize);
     });
   }
 
@@ -487,17 +502,17 @@ app.post(
 
     const bid = Math.max(Math.min(Math.floor(user.puzzle_points * bidPercentage), user.puzzle_points), 0);
 
-    // try {
-    //   const result = await client
-    //     .db("PuzzlesSection")
-    //     .collection("Users")
-    //     .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
-    // if (result) user.puzzle_points -= bid
-    // } catch (err) {
-    //   console.log(err);
-    // res.sendStatus(500)
-    //   return;
-    // }
+    try {
+      const result = await client
+        .db("PuzzlesSection")
+        .collection("Users")
+        .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
+      if (result) user.puzzle_points -= bid;
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
 
     currentBattleRound.users[req.session.username] = {
       user: user,

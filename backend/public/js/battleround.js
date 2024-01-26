@@ -210,7 +210,7 @@ const amountDisplay = document.getElementById("battle_round_bid_amount");
 const loadingDisplay = document.getElementById("battle_round_loading");
 
 amountSlider.oninput = function () {
-  amountDisplay.textContent = `Points: ${(user.puzzle_points * amountSlider.value) / 100}`;
+  amountDisplay.textContent = `Points: ${Math.min((user.puzzle_points * amountSlider.value) / 100)}`;
 };
 
 const confirmButton = document.getElementById("battle_round_bid_confirm");
