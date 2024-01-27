@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Register</title>
+    <title>Registration</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -18,9 +18,17 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template-->
-    <link href="css/registration.css" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
 </head>
+<style>
+.bg-register-image {
+background: url("/assets/img/logo.png");
+background-position: center;
+background-repeat: no-repeat;
+background-size: 90%;
+}
+</style>
 
 <body class="bg-gradient-primary">
 
@@ -30,73 +38,120 @@
             <div class="card-body p-0">
                 <!-- Nested Row within Card Body -->
                 <div class="row">
-                    <div class="col-lg-5 d-none d-lg-block bg-register-image"></div>
+                    <div class="col-lg-5 d-lg-block bg-register-image"></div>
                     <div class="col-lg-7">
                         <div class="p-5">
                             <div class="text-center">
-                                <h1 class="h4 text-gray-900 mb-4">Register</h1>
+                                <h1 class="h4 text-gray-900 mb-4">Register Team</h1>
                             </div>
                             <form class="user">
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="First Name">
+                                <div class="member1">
+                                    <div class="form-group row">
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="exampleFirstName" placeholder="First Name">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="exampleLastName" placeholder="Last Name">
+                                        </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Last Name">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user"
+                                            id="exampleInputEmail" placeholder="Email Address">
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address">
-                                </div>
-                                <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Confirm Email Address">
-                                </div>
-                                
-                                <div class="form-inline">
-                                    <select class="custom-select mb-2 mr-sm-2" aria-label="Default select example">
-                                        <option selected>Select School</option>
-                                        <option value="1">School 1</option>
-                                        <option value="2">School 2</option>
-                                        <option value="3">School 3</option>
-                                    </select>
-                                
-                                    <select class="custom-select mb-2 mr-sm-2" aria-label="Default select example">
-                                        <option selected>Select Grade Level</option>
-                                        <option value="1">9th Grade</option>
-                                        <option value="2">10th Grade</option>
-                                        <option value="3">11th Grade</option>
-                                        <option value="3">12th Grade</option>
-                                    </select>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user"
+                                            id="exampleInputEmail" placeholder="Confirm Email Address">
+                                    </div>
 
-                                    <select class="custom-select mb-2 mr-2" aria-label="Default select example">
-                                        <option selected>Select Shirt Size</option>
-                                        <option value="1">S</option>
-                                        <option value="2">M</option>
-                                        <option value="3">L</option>
-                                        <option value="3">XL</option>
-                                    </select>
-                                </div>
+                                    <div class="d-flex mb-3">
+                                        <select class="custom-select rounded-pill mr-sm-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select School</option>
+                                            <option value="1">School 1</option>
+                                            <option value="2">School 2</option>
+                                            <option value="3">School 3</option>
+                                        </select>
 
-                                <div class="form-group row mt-1">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
+                                        <select class="custom-select rounded-pill mr-sm-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select Grade Level</option>
+                                            <option value="1">9th Grade</option>
+                                            <option value="2">10th Grade</option>
+                                            <option value="3">11th Grade</option>
+                                            <option value="3">12th Grade</option>
+                                        </select>
+                                        <select class="custom-select rounded-pill mr-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select Shirt Size</option>
+                                            <option value="1">S</option>
+                                            <option value="2">M</option>
+                                            <option value="3">L</option>
+                                            <option value="3">XL</option>
+                                        </select>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Confirm Password">
+                                </div>
+                                <button onclick="style.display = 'none'" class="btn btn-primary mb-lg-3" id="addMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Add Team Member">
+                                    Add Member
+                                </button>
+                                <div class="member2 collapse" id="addMember">
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-6 mb-3 mb-sm-0">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="exampleFirstName" placeholder="First Name">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control form-control-user"
+                                                id="exampleLastName" placeholder="Last Name">
+                                        </div>
                                     </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user"
+                                            id="exampleInputEmail" placeholder="Email Address">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-user"
+                                            id="exampleInputEmail" placeholder="Confirm Email Address">
+                                    </div>
+
+                                    <div class="d-flex mb-3">
+                                        <select class="custom-select rounded-pill mr-sm-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select School</option>
+                                            <option value="1">School 1</option>
+                                            <option value="2">School 2</option>
+                                            <option value="3">School 3</option>
+                                        </select>
+
+                                        <select class="custom-select rounded-pill mr-sm-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select Grade Level</option>
+                                            <option value="1">9th Grade</option>
+                                            <option value="2">10th Grade</option>
+                                            <option value="3">11th Grade</option>
+                                            <option value="3">12th Grade</option>
+                                        </select>
+                                        <select class="custom-select rounded-pill mr-2"
+                                            aria-label="Default select example" style="font-size: 0.8rem">
+                                            <option selected>Select Shirt Size</option>
+                                            <option value="1">S</option>
+                                            <option value="2">M</option>
+                                            <option value="3">L</option>
+                                            <option value="3">XL</option>
+                                        </select>
+                                    </div>
+                                    <button onclick=`document.getElementById("addMemberButton").style.display = "inline"` class="btn btn-primary mb-lg-3" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Remove Team Member">
+                                        Remove Member
+                                    </button>
                                 </div>
                                 <a href="login.html" class="btn btn-primary btn-user btn-block">
                                     Register Account
                                 </a>
                             </form>
                             <hr>
-                            
+
                             <div class="text-center">
                                 <a class="small" href="login.html">Already registered? Login!</a>
                             </div>
