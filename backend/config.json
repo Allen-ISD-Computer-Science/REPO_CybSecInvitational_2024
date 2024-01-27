@@ -1,0 +1,14 @@
+{
+  "host_port": 11278,
+
+  "internal_tick_rate": 10000,
+
+  "battle_round_duration": 10000,
+  "battle_round_min_multiplier": 0.5,
+  "battle_round_max_multiplier": 2,
+
+  "battle_round_1": {
+    "puzzles": ["battleRound1Puzzle1", "battleRound1Puzzle2", "battleRound1Puzzle3", "battleRound1Puzzle4"],
+    "min_bid": 0.1
+  }
+}

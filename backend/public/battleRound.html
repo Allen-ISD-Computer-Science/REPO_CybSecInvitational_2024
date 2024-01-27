@@ -16,13 +16,15 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="css/slider.css" rel="stylesheet" />
+    <link href="css/shake.css" rel="stylesheet" />
   </head>
 
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+      <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
           <div class="sidebar-brand-icon">
@@ -146,9 +148,44 @@
 
           <!-- Begin Page Content -->
           <div class="container-fluid">
-            <div id="battle_round_main" class="container-fluid pl-0">
-              <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Battle Round</h1>
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Battle Round</h1>
+            </div>
+
+            <div id="battle_round_loading" style="display: flex" class="container justify-content-center">
+              <img src="img/sharp_reloading.svg" />
+            </div>
+
+            <div id="battle_round_join" class="container-fluid" style="display: none">
+              <div class="display-1 align-middle text-center d-flex flex-row justify-content-center py-5">Choose Amount to Bid!</div>
+              <div id="battle_round_bid_amount" class="display-4 align-middle text-center d-flex flex-row justify-content-center pb-5">Amount:</div>
+
+              <div class="form-group mb-3">
+                <input id="battle_round_bid_slider" type="range" class="rounded-pill shadow form-range w-100 h-25" step="5" min="0" max="100" />
+                <span class="d-flex flex-row justify-content-between">
+                  <small id="helpId" class="form-text text-muted">0</small>
+                  <small id="helpId" class="form-text text-muted">25</small>
+                  <small id="helpId" class="form-text text-muted">50</small>
+                  <small id="helpId" class="form-text text-muted">75</small>
+                  <small id="helpId" class="form-text text-muted">100</small>
+                </span>
+              </div>
+
+              <div class="container d-flex justify-content-center w-100">
+                <input id="battle_round_bid_confirm" class="btn btn-danger" type="button" value="Confirm" />
+              </div>
+            </div>
+
+            <div id="battle_round_main" class="container-fluid" style="display: none">
+              <div id="countDown" class="container mb-5">
+                <div id="battle_round_time_text" class="display-1 align-middle text-center d-flex flex-row justify-content-center">
+                  <div id="battle_round_minutes">00</div>
+                  <h6 class="align-self-end" style="width: fit-content">min</h6>
+                  <div id="battle_round_seconds">00</div>
+                  <h6 class="align-self-end" style="width: fit-content">sec</h6>
+                  <div id="battle_round_milliseconds">00</div>
+                  <!-- <h6 class="align-self-end" style="width: fit-content"></h6> -->
+                </div>
               </div>
 
               <div id="puzzleRow" class="row">
@@ -216,10 +253,6 @@
     <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-    <!-- <script src="js/scripts.js"></script> -->
     <!-- socket handling -->
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
     <script src="js/user-update.js"></script>

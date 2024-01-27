@@ -1,3 +1,37 @@
+async function joinBattleRound(bid) {
+  const response = await fetch("battleRound/join", {
+    method: "POST",
+    body: JSON.stringify({
+      bid: bid,
+    }),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+}
+
+async function fetchStatus() {
+  const response = await fetch("battleRound/getStatus", {
+    method: "POST",
+    body: JSON.stringify(),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  return response.json();
+}
+
 async function fetchPuzzles() {
   const response = await fetch("battleRound/getPuzzles", {
     method: "POST",
@@ -19,24 +53,6 @@ async function fetchPuzzle(id) {
     method: "POST",
     body: JSON.stringify({
       id: id,
-    }),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  });
-
-  if (!response.ok) {
-    return null;
-  }
-
-  return response.json();
-}
-
-async function joinBattleRound() {
-  const response = await fetch("battleRound/join", {
-    method: "POST",
-    body: JSON.stringify({
-      bid: 0,
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
@@ -95,8 +111,8 @@ function generateCard(puzzle) {
     inactive = "background-color: #eaecf4 !important";
   }
 
-  return `<div class="col-xl-3 col-md-6 mb-4">
-                  <div type="button" id="puzzle_${name}" data-puzzlename="${name}" class="sheen card border-left-warning shadow h-100 py-2 w-100 puzzle-card-button" data-toggle="modal" data-target="#puzzleModal" style="${inactive}">
+  return `<div class="col-xl-6 col-md-6 mb-4">
+                  <div type="button" id="puzzle_${name}" data-puzzlename="${name}" class="sheen card border-left-warning shadow h-100 py-5 w-100 puzzle-card-button" data-toggle="modal" data-target="#puzzleModal" style="${inactive}">
                     <div class="card-body">
                       <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -124,11 +140,6 @@ async function attemptLoad() {
 
   generateCardRow(puzzles);
 }
-document.addEventListener("user-loaded", async () => {
-  await joinBattleRound();
-  attemptLoad();
-});
-
 // Modal
 const puzzleAlert = document.getElementById("puzzle-submit-alert-holder");
 const puzzleModalHeader = document.getElementById("puzzle-header");
@@ -190,3 +201,106 @@ puzzleSubmitButton.onclick = async function (evt) {
     return;
   }
 };
+
+const joinUi = document.getElementById("battle_round_join");
+const mainUi = document.getElementById("battle_round_main");
+
+const amountSlider = document.getElementById("battle_round_bid_slider");
+const amountDisplay = document.getElementById("battle_round_bid_amount");
+const loadingDisplay = document.getElementById("battle_round_loading");
+
+amountSlider.oninput = function () {
+  amountDisplay.textContent = `Points: ${Math.min((user.puzzle_points * amountSlider.value) / 100)}`;
+};
+
+const confirmButton = document.getElementById("battle_round_bid_confirm");
+var doubleCheck = false;
+confirmButton.onclick = async function (ev) {
+  console.log("evented");
+  if (!doubleCheck) {
+    confirmButton.value = "Are you sure?";
+    doubleCheck = true;
+    return;
+  } else {
+    let result = await joinBattleRound(amountSlider.value / 100);
+    console.log(result);
+    if (result.alreadyJoined) return;
+
+    joinUi.style.display = "none";
+    mainUi.style.display = "block";
+
+    attemptLoad();
+  }
+};
+
+const minutesDisplay = document.getElementById("battle_round_minutes");
+const secondsDisplay = document.getElementById("battle_round_seconds");
+const millisecondsDisplay = document.getElementById("battle_round_milliseconds");
+
+const timeText = document.getElementById("battle_round_time_text");
+
+var endTime = 0;
+function msToTime(duration) {
+  var date = new Date(duration);
+  return { ms: date.getUTCMilliseconds(), s: date.getUTCSeconds(), m: date.getUTCMinutes() };
+}
+
+function pad(number, length) {
+  return ("000" + number).slice(-length);
+}
+
+const clockUpdateInterval = 20;
+var warningStage = false;
+var dangerStage = false;
+function updateBattleRoundTime() {
+  let timeLeft = Math.max(0, endTime - Date.now());
+  const time = msToTime(timeLeft);
+
+  if (!warningStage && timeLeft < 60000) {
+    timeText.classList.add("text-warning");
+    timeText.classList.add("shakeSmall");
+
+    warningStage = true;
+  } else if (!dangerStage && timeLeft < 30000) {
+    timeText.classList.remove("text-warning");
+    timeText.classList.remove("shakeSmall");
+    timeText.classList.add("text-danger");
+    timeText.classList.add("shakeBig");
+    dangerStage = true;
+  }
+
+  minutesDisplay.textContent = pad(time.m, 2);
+  secondsDisplay.textContent = pad(time.s, 2);
+  millisecondsDisplay.textContent = pad(time.ms, 3);
+
+  setTimeout(updateBattleRoundTime, clockUpdateInterval);
+}
+
+document.addEventListener("user-loaded", async () => {
+  const result = await fetchStatus();
+  if (result.alreadyJoined) {
+    loadingDisplay.style.display = "none";
+    mainUi.style.display = "block";
+    attemptLoad();
+  } else if (result.notStarted) {
+    window.location.replace("home");
+  } else {
+    loadingDisplay.style.display = "none";
+    joinUi.style.display = "block";
+  }
+
+  console.log(result);
+  if (result.endTime) {
+    endTime = result.endTime;
+    updateBattleRoundTime();
+  }
+});
+
+socket.on("battle_round_start", () => {
+  console.log("battle round started");
+});
+
+socket.on("battle_round_end", () => {
+  window.location.replace("home");
+  console.log("battle round ended");
+});
