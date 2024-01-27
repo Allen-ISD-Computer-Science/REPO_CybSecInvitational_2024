@@ -48,3 +48,55 @@
   z-index: -1;
   animation: move-background 70s linear infinite;
 }
+.headshots-container::before, .headshots-container::after {
+  content: "";
+  flex-grow: 1;
+}
+
+.headshots-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height));
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.headshots-scroll-area {
+  position: relative;
+  white-space: nowrap;
+  overflow-y: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.headshots-track {
+  display: inline-flex;
+  animation: scroll 30s linear infinite;
+}
+
+.headshot {
+  margin-right: 1rem;
+  flex-shrink: 0;
+  width: 160px;
+  height: 160px;
+  background-color: #f4f4f4;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.headshot img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
