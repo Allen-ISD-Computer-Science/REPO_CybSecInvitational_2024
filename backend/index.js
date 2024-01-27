@@ -95,6 +95,16 @@ async function fetchUsers(query = {}, sort = {}, projection = {}, count = 1, ski
   }
 }
 
+async function fetchAllUsers() {
+  try {
+    const cursor = await client.db("PuzzlesSection").collection("Users").find();
+    return cursor.toArray();
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 async function fetchPuzzle(name) {
   try {
     const result = await client.db("PuzzlesSection").collection("Puzzles").findOne({ name: name });
@@ -380,8 +390,18 @@ async function endBattleRound() {
     console.log("Ending Battle Round");
   }
 
+  usersList = {};
+  try {
+    const users = await fetchAllUsers();
+    console.log(users);
+    users.forEach((user) => {
+      usersList[user.username] = user;
+    });
+  } catch (err) {
+    console.log(err);
+  }
+
   if (Object.keys(currentBattleRound.users).length <= 0) {
-    currentBattleRound = null;
     console.warn("No users in battle round");
   } else {
     let participants = Object.values(currentBattleRound.users);
@@ -390,26 +410,42 @@ async function endBattleRound() {
     participants.forEach((participant, i) => {
       const user = participant.user;
       const username = user.username;
-      console.log(participant, Object.values(participant.completed).length);
-      // change according to plan
       const k = Object.values(participant.completed).length / 4;
       const multiplier = lerp(config.battle_round_min_multiplier, config.battle_round_max_multiplier, k);
-      console.log(participant.bid, multiplier);
       const prize = Math.min(multiplier * participant.bid);
       console.log(prize);
       onBattleRoundCredit(username, prize);
+      delete usersList[username];
     });
   }
 
-  io.emit("battle_round_end");
+  console.log(usersList);
+  Object.values(usersList).forEach(async (user) => {
+    try {
+      await client
+        .db("PuzzlesSection")
+        .collection("Users")
+        .updateOne({ username: user.username }, { $set: { puzzle_points: user.puzzle_points - Math.floor(Math.max(user.puzzle_points * currentBattleRound.min_bid, 0)) } });
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
+  });
 
+  io.emit("battle_round_end");
   currentBattleRound = null;
 }
 
 async function startBattleRound(battleRoundId) {
-  const battleRoundPuzzleIds = config[battleRoundId];
-  if (!battleRoundPuzzleIds) {
+  const battleRound = config[battleRoundId];
+  if (!battleRound) {
     console.warn("Battle round of id " + battleRoundId + " not found");
+    return;
+  }
+  const battleRoundPuzzleIds = battleRound["puzzles"];
+  if (!battleRoundPuzzleIds) {
+    console.warn("Battle round of missing puzzles");
     return;
   }
 
@@ -436,6 +472,7 @@ async function startBattleRound(battleRoundId) {
   let now = Date.now();
   currentBattleRound = {
     id: battleRoundId,
+    min_bid: battleRound.min_bid,
     puzzles: puzzles,
     startTime: now,
     endTime: now + config.battle_round_duration,
@@ -443,6 +480,10 @@ async function startBattleRound(battleRoundId) {
   };
 
   io.emit("battle_round_start");
+
+  setTimeout(async () => {
+    endBattleRound();
+  }, config.battle_round_duration);
 }
 
 app.post(
@@ -639,19 +680,6 @@ app.post(
     }
   })
 );
-
-startBattleRound("battle_round_1_puzzles").then(async () => {
-  // await onJoinBattleRound("username", 0.5);
-  console.log(currentBattleRound);
-
-  setTimeout(() => {
-    endBattleRound();
-  }, config.battle_round_duration);
-  // console.log("BattleRound Started");
-  // Promise.all([, onJoinBattleRound("user1", 0.25)]).then(() => {
-  //   endBattleRound();
-  // });
-});
 
 //scoreboard
 async function getScoreboard() {
