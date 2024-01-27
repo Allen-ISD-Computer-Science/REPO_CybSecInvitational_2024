@@ -46,6 +46,7 @@ background-size: 90%;
                             </div>
                             <form class="user">
                                 <div class="member1">
+                                    <h6> Team Member #1</h6>
                                     <div class="form-group row">
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <input type="text" class="form-control form-control-user"
@@ -92,11 +93,13 @@ background-size: 90%;
                                         </select>
                                     </div>
                                 </div>
-                                <button onclick="style.display = 'none'" class="btn btn-primary mb-lg-3" id="addMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Add Team Member">
-                                    Add Member
-                                </button>
+                                <div class="d-flex justify-content-center">
+                                    <button class="btn border-dark mb-lg-3 w-100 rounded-pill" id="addMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Add Team Member">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
                                 <div class="member2 collapse" id="addMember">
-
+                                    <h6> Team Member #2</h6>
                                     <div class="form-group row">
                                         <div class="col-sm-6 mb-3 mb-sm-0">
                                             <input type="text" class="form-control form-control-user"
@@ -142,9 +145,25 @@ background-size: 90%;
                                             <option value="3">XL</option>
                                         </select>
                                     </div>
-                                    <button onclick=`document.getElementById("addMemberButton").style.display = "inline"` class="btn btn-primary mb-lg-3" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Remove Team Member">
-                                        Remove Member
-                                    </button>
+
+                                    <div class="d-flex justify-content-center">
+                                        <button class="btn border-dark mb-lg-3 w-100 rounded-pill" id="removeMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Remove Team Member">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+                                    </div>
+
+                                    <script>
+                                        document.getElementById("removeMemberButton").addEventListener("click", () =>{
+                                            document.getElementById("addMemberButton").style.display = "inline"
+                                            document.getElementById("removeMemberButton").style.display = "none"
+                                        });
+
+                                        document.getElementById("addMemberButton").addEventListener("click", () => {
+                                            document.getElementById("addMemberButton").style.display = "none"
+                                            document.getElementById("removeMemberButton").style.display = "inline";
+                                        });
+
+                                        </script>
                                 </div>
                                 <a href="login.html" class="btn btn-primary btn-user btn-block">
                                     Register Account
