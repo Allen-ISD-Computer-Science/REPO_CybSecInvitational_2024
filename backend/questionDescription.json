@@ -2,59 +2,90 @@
   "9Lives": {
     "description": "Description: # 9Lives\n Given the file [**_Flag.txt_**](#), respond with the contents inside. This [link](https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html#cat-invocation) may help.\n",
     "point_value": 5,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{9ac8efe31b7a7a1e8dc66e4dad493308}"
   },
 
   "CDeezFlags": {
     "description": "Description: # CDeez Flags \n  Given the folder navigate towards [**_Flag.txt_**](#)\n. This [link](https://man7.org/linux/man-pages/man1/cd.1p.html) may help.\n",
     "point_value": 5,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{3cc66404a32f37c7be0206f399018c9c}"
   },
-  "Flagception": {
-    "description": "Description: # Flagception \n  Given the file [**_a.out_**](#), excicute the file \n to obtain the flag. This [link](https://ss64.com/bash/chmod.html) may help. \n",
+
+    "Flagception": {
+	"description": "Description: # Flagception \n  Given the file [**_a.out_**](#), excicute the file \n to obtain the flag. This [link](https://ss64.com/bash/chmod.html) may help. \n",
     "point_Value": 10,
-    "difficulty": "Easy"
+	"difficulty": "Easy"
+	"category": "Bash Basics",
+	"answer":"AHSINV{fa44e1036db4acca0b31a08a2faca16d}"
   },
-  "GetTheW": {
+
+    "GetTheW": {
     "description": "Description: # Get The W \n  Given the file [**FlagLink***](#), pull the flag from the specified source. \n This [link](https://ss64.com/bash/chmod.html) might help. \n ",
     "point_Value": 10,
-    "difficulty": "Easy"
+	"difficulty": "Easy"
+	"category": "Bash Basics",
+	"answer":"AHSINV{0b974ec3cc1b8cad08a2d7b2b9a34b4c}"
   },
-  "GREPGREPGREP": {
+
+    "GREPGREPGREP": {
     "description": "Description: # GREP GRE PGREP \n  Given the transcript submit the hidden [***flag* **](#) within the transcript of **_Romeo and Juliet_**. This [Link](https://man7.org/linux/man-pages/man1/grep.1.html) might help.",
     "point_Value": 15,
-    "difficulty": "Easy"
-  },
+	"difficulty": "Easy"
+	"category": "Bash Basics",
+	"answer":"AHSINV{3958678ec50c6226bc54d0bb5970c7c4}"
+    },
+    
   "LockDoors": {
     "description": "Description: # Locked Doors \n  Given an encrypted ***Flag***, run the python script to decrypt said Flag.\n This [link](https://realpython.com/run-python-scripts/) might help.",
     "point_Value": 10,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{064461e20d30f9b90aa729581c9c5234}"
   },
   "LockDoorsII": {
     "description": "Description: # Locked Doors II \n  Given an encrypted ***Flag***, run the python script to decrypt said Flag.\n This [link](https://realpython.com/run-python-scripts/) might help.",
     "point_Value": 15,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{6316f83fad947cc8e7e68f634ca3f6a2}"
   },
+    
   "PathofThePuzzled": {
     "description": "Description: # Path of The Puzzled \n  Given a maze of directories, find the ***Flag***.",
     "point_Value": 20,
-    "difficulty": "Medium"
+      "difficulty": "Medium"
+      "category": "Bash Basics",
+      "answer":"AHSINV{652105b13a18119d1013984f8a3743dc}"
   },
+    
   "PermisionConundrum": {
     "description": "Description: # Permision Conundrum \n  Given a ***Flag***, submit the contents. This [link](https://ss64.com/bash/chmod.html) might help",
     "point_Value": 10,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{477bd0239b5a3139fc5644da54abe592}"
   },
+    
   "PSSiHaveASecret": {
     "description": "Description: # PSS I Have a Secret \n  Given a ***Flag***, find the correct flag.",
     "point_Value": 10,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{f27a3286c4741944c2c6f7cd00f330b9}"
   },
+    
   "PathOfThePuzzledII": {
     "description": "Description: # PathOfThePuzzledII \n  Given a ***Series of Folders***, obtain the ***Flag***.",
     "point_Value": 15,
-    "difficulty": "Easy"
+      "difficulty": "Easy"
+      "category": "Bash Basics",
+      "answer":"AHSINV{652105b13a18119d1013984f8a3743dc}"
   },
+    
   "2HopsThisTime": {
     "description": "Description: # 2 Hops This Time \n  Given an encrypted ***Flag***, decrypt it and submit the ***Flag***. This [link](https://cryptii.com/) might help.",
     "point_Value": 10,

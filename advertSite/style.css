@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+
+
+header{
+  height: 100vh;
+}
+.Title{
+  display: flex;
+  justify-content: center;
+}
+header img{
+  display: block;
+  margin: auto;
+}
+.Thumbnail{
+  height: 50%;
+  width: 50%;
+}
+main{
+  
+  padding-left: 15%;
+  padding-right: 15%;
+}
+.button{
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+  border-radius: 8px;
+  height: 15vh;
+  width: 45vh;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(360deg, #FFF 36%, #FFF59C 54.44%, #FFF59C 56.83%, #FFC978 64.12%, #8F8FFF 68.89%, #6F6FCC 76%, #23235F 89.58%, #08081E 99.99%, rgba(11, 11, 36, 0.09) 100%);
+}
+
+.grid{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+  padding-left: 25%;
+  padding-right: 25%;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+
+
+.name-role {
+  margin-top: 10px;
+}
+
+
+
+.gradientContainer {
+  background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(47,47,139,1) 15%, rgba(111,111,204,1) 33%, rgba(255,243,209,1) 60%, rgba(245,243,212,1) 78%, rgba(211,221,209,1) 91%, rgba(255,255,255,1) 100%);
+  font-family: "Inter";
+  color: white;
+}

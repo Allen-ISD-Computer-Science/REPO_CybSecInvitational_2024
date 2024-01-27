@@ -1,9 +1,18 @@
-var express = require("express");
-var session = require("express-session");
-var path = require("path");
-var bodyParser = require("body-parser");
+const express = require("express");
+const { createServer } = require("http");
+const session = require("express-session");
+const { Server } = require("socket.io");
+const path = require("path");
+const bodyParser = require("body-parser");
+const fs = require("fs");
 
 const config = require(path.join(__dirname, "config.json"));
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
+
+const router = express.Router();
 
 const mongo_username = encodeURIComponent(config.mongodb_username);
 const mongo_password = encodeURIComponent(config.mongodb_password);
@@ -24,8 +33,7 @@ const client = new MongoClient(uri, {
   },
 });
 
-var app = express();
-
+//middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -40,12 +48,12 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 //database functions
-async function setPointsOfUser(username, amount) {
+async function onBattleRoundCredit(username, amount) {
   try {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .findOneAndUpdate({ username: username }, { $set: { points: amount } });
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount } });
     return result;
   } catch (err) {
     console.log(err);
@@ -55,25 +63,11 @@ async function setPointsOfUser(username, amount) {
 
 async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
-
   try {
     const result = await client
       .db("PuzzlesSection")
       .collection("Users")
-      .updateOne({ username: username }, { $inc: { points: amount }, $set: { completed_puzzles: { [id]: true } } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
-
-async function addPointsToUser(username, amount) {
-  try {
-    const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
-      .findOneAndUpdate({ username: username }, { $inc: { points: amount } });
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
     return result;
   } catch (err) {
     console.log(err);
@@ -112,14 +106,22 @@ async function fetchPuzzle(name) {
 }
 
 async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
+  // console.log(query, sort, projection, count, skip);
+  // console.log(sort);
+
   try {
     const cursor = await client.db("PuzzlesSection").collection("Puzzles").find(query).project(projection).skip(skip).sort(sort).limit(count);
-    return cursor.toArray();
+    return cursor;
   } catch (err) {
     console.log(err);
     return null;
   }
 }
+
+app.use("*", (req, res, next) => {
+  console.log(req.url, req.baseUrl);
+  next();
+});
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -128,22 +130,25 @@ const asyncHandler = (func) => (req, res, next) => {
 
 //routing
 app.get("/home", function (req, res) {
-  console.log(req.session);
-  // check login
   if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
     res.sendFile(path.join(__dirname, "public/home.html"));
   } else {
-    res.redirect("/login");
+    res.redirect("login");
   }
 });
 
 app.get("/", function (req, res) {
-  res.redirect("/login");
+  res.redirect("login");
 });
 
 app.get("/login", function (req, res) {
   if (req.session.username) {
-    res.redirect("/home");
+    res.redirect("home");
   } else {
     res.sendFile(path.join(__dirname, "public/login.html"));
   }
@@ -153,11 +158,41 @@ app.get("/logout", function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
-  res.redirect("/login");
+  res.redirect("login");
 });
 
-app.get("*", function (req, res) {
-  res.sendFile(path.join(__dirname, "public/404.html"));
+app.get("/scoreboard", function (req, res) {
+  if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
+    res.sendFile(path.join(__dirname, "public/scoreboard.html"));
+  } else {
+    res.redirect("login");
+  }
+});
+
+app.get("/puzzles", function (req, res) {
+  if (req.session.username) {
+    if (currentBattleRound) {
+      res.redirect("battleRound");
+      return;
+    }
+
+    res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  } else {
+    res.redirect("login");
+  }
+});
+
+app.get("/battleRound", function (req, res) {
+  if (req.session.username) {
+    res.sendFile(path.join(__dirname, "public/battleRound.html"));
+  } else {
+    res.redirect("login");
+  }
 });
 
 //actions
@@ -170,7 +205,6 @@ app.post(
     const username = req.body.username;
     const password = req.body.password;
 
-    console.log(username, password);
     if (!username || !password) {
       res.sendStatus(400);
       return;
@@ -184,7 +218,7 @@ app.post(
 
     if (user.password === password) {
       req.session.username = user.username;
-      res.redirect("/home");
+      res.sendStatus(200);
       return;
     } else {
       console.log("invalid login credentials");
@@ -195,10 +229,10 @@ app.post(
 );
 
 //puzzle interactions
-app.get(
+app.post(
   "/getPuzzle",
   asyncHandler(async (req, res) => {
-    const id = req.query.id;
+    const id = req.body.id;
     if (!id) {
       // Bad request
       res.sendStatus(400);
@@ -218,16 +252,20 @@ app.get(
   })
 );
 
-app.get(
+app.post(
   "/getMultiplePuzzles",
   asyncHandler(async (req, res) => {
-    const dbquery = req.query.query;
-    const sort = req.query.sort;
-    const projection = req.query.projection;
-    const count = req.query.count;
-    const skip = req.query.skip;
+    console.log("attempting to fetch puzzles");
 
-    const puzzles = fetchPuzzles(dbquery, sort, projection, count, skip);
+    const dbquery = req.body.query;
+    const sort = req.body.sort;
+    const projection = req.body.projection;
+    const count = req.body.count;
+    const skip = req.body.skip;
+
+    const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
+    const puzzles = await cursor.toArray();
+
     if (puzzles) {
       res.json(puzzles);
       return;
@@ -245,8 +283,6 @@ app.post(
     const id = req.body.id;
     const answer = req.body.answer;
 
-    console.log(username, id, answer);
-
     if (!id || !answer || !username) {
       res.sendStatus(400);
       return;
@@ -258,7 +294,6 @@ app.post(
     }
 
     const puzzle = await fetchPuzzle(id);
-    console.log(puzzle);
     if (!puzzle) {
       res.sendStatus(404);
       return;
@@ -291,7 +326,8 @@ app.post(
 );
 
 //user interactions
-app.get(
+
+app.post(
   "/getUser",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
@@ -307,14 +343,14 @@ app.get(
   })
 );
 
-app.get(
+app.post(
   "/getUsers",
   asyncHandler(async (req, res) => {
-    const dbquery = req.query.query;
-    const sort = req.query.sort;
-    const projection = req.query.projection;
-    const count = req.query.count;
-    const skip = req.query.skip;
+    const dbquery = req.body.query;
+    const sort = req.body.sort;
+    const projection = req.body.projection;
+    const count = req.body.count;
+    const skip = req.body.skip;
 
     const users = await fetchUsers(dbquery, sort, projection, count, skip);
 
@@ -327,9 +363,345 @@ app.get(
   })
 );
 
-var server = app.listen(Number(config.host_port), function () {
+//game state
+var paused = true;
+var currentBattleRound = null;
+
+//battle round
+function lerp(a, b, alpha) {
+  return a + alpha * (b - a);
+}
+
+async function endBattleRound() {
+  if (!currentBattleRound) {
+    console.log("No Current Battle Round");
+    return;
+  } else {
+    console.log("Ending Battle Round");
+  }
+
+  if (Object.keys(currentBattleRound.users).length <= 0) {
+    currentBattleRound = null;
+    console.warn("No users in battle round");
+  } else {
+    let participants = Object.values(currentBattleRound.users);
+
+    participants.sort((a, b) => {});
+    participants.forEach((participant, i) => {
+      const user = participant.user;
+      const username = user.username;
+      console.log(participant, Object.values(participant.completed).length);
+      // change according to plan
+      const k = Object.values(participant.completed).length / 4;
+      const multiplier = lerp(config.battle_round_min_multiplier, config.battle_round_max_multiplier, k);
+      console.log(participant.bid, multiplier);
+      const prize = Math.min(multiplier * participant.bid);
+      console.log(prize);
+      onBattleRoundCredit(username, prize);
+    });
+  }
+
+  io.emit("battle_round_end");
+
+  currentBattleRound = null;
+}
+
+async function startBattleRound(battleRoundId) {
+  const battleRoundPuzzleIds = config[battleRoundId];
+  if (!battleRoundPuzzleIds) {
+    console.warn("Battle round of id " + battleRoundId + " not found");
+    return;
+  }
+
+  puzzles = {};
+  for (let puzzleId of battleRoundPuzzleIds) {
+    var result = null;
+    try {
+      result = await client.db("PuzzlesSection").collection("BattleRoundPuzzles").findOne({ name: puzzleId });
+    } catch (err) {
+      console.log(err);
+      return;
+    }
+
+    if (!result) {
+      console.warn("Failed to fetch puzzle of id " + puzzleId);
+      return;
+    } else {
+      delete result._id;
+      puzzles[result.name] = result;
+      // puzzles.push(result);
+    }
+  }
+
+  let now = Date.now();
+  currentBattleRound = {
+    id: battleRoundId,
+    puzzles: puzzles,
+    startTime: now,
+    endTime: now + config.battle_round_duration,
+    users: {},
+  };
+
+  io.emit("battle_round_start");
+}
+
+app.post(
+  "/battleRound/getStatus",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    if (currentBattleRound.users[req.session.username]) {
+      res.json({ alreadyJoined: true, endTime: currentBattleRound.endTime });
+      return;
+    }
+
+    res.json({ alreadyJoined: false, endTime: currentBattleRound.endTime });
+  })
+);
+
+app.post(
+  "/battleRound/join",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const bidPercentage = req.body.bid;
+    if (!bidPercentage && bidPercentage !== 0) {
+      res.sendStatus(400);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ success: false, notStarted: true });
+      return;
+    }
+
+    if (currentBattleRound.users[req.session.username]) {
+      res.json({ success: false, alreadyJoined: true });
+      return;
+    }
+
+    const user = await fetchUser(req.session.username);
+    delete user._id;
+    delete user.password;
+    delete user.completed_puzzles;
+    if (!user) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const bid = Math.max(Math.min(Math.floor(user.puzzle_points * bidPercentage), user.puzzle_points), 0);
+
+    try {
+      const result = await client
+        .db("PuzzlesSection")
+        .collection("Users")
+        .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
+      if (result) user.puzzle_points -= bid;
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
+
+    currentBattleRound.users[req.session.username] = {
+      user: user,
+      bid: bid,
+      completed: {},
+    };
+    res.json({ success: true });
+  })
+);
+
+app.post(
+  "/battleRound/getPuzzles",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    const participant = currentBattleRound.users[req.session.username];
+    if (!participant) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const puzzles = Object.values(currentBattleRound.puzzles);
+    const package = [];
+    for (let puzzle of puzzles) {
+      let clone = { ...puzzle };
+      if (participant.completed[puzzle.name]) {
+        clone.completed = true;
+      }
+      delete clone.answer;
+      package.push(clone);
+    }
+    res.json(package);
+  })
+);
+
+app.post(
+  "/battleRound/getPuzzle",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    const participant = currentBattleRound.users[req.session.username];
+    if (!participant) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const id = req.body.id;
+    if (!id) {
+      res.sendStatus(402);
+      return;
+    }
+
+    const puzzle = currentBattleRound.puzzles[id];
+    if (!puzzle) {
+      res.sendStatus(404);
+    }
+
+    let package = { ...puzzle };
+    delete package.answer;
+    res.json(package);
+  })
+);
+
+app.post(
+  "/battleRound/submitPuzzle",
+  asyncHandler(async (req, res) => {
+    if (!req.session.username) {
+      res.sendStatus(403);
+      return;
+    }
+
+    if (!currentBattleRound) {
+      res.json({ notStarted: true });
+      return;
+    }
+
+    const participant = currentBattleRound.users[req.session.username];
+    if (!participant) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const puzzleid = req.body.id;
+    const answer = req.body.answer;
+    if (!puzzleid || !answer) {
+      res.send(400);
+      return;
+    }
+
+    const puzzle = currentBattleRound.puzzles[puzzleid];
+    if (!puzzle) {
+      res.sendStatus(400);
+      return;
+    }
+
+    if (participant.completed[puzzle.name]) {
+      res.json({ alreadyCompleted: true });
+      return;
+    }
+
+    if (puzzle.answer === answer) {
+      participant.completed[puzzle.name] = true;
+      res.json({ correct: true });
+      return;
+    } else {
+      res.json({ correct: false });
+      return;
+    }
+  })
+);
+
+startBattleRound("battle_round_1_puzzles").then(async () => {
+  // await onJoinBattleRound("username", 0.5);
+  console.log(currentBattleRound);
+
+  setTimeout(() => {
+    endBattleRound();
+  }, config.battle_round_duration);
+  // console.log("BattleRound Started");
+  // Promise.all([, onJoinBattleRound("user1", 0.25)]).then(() => {
+  //   endBattleRound();
+  // });
+});
+
+//scoreboard
+async function getScoreboard() {
+  try {
+    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
+    return result.toArray();
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+app.post(
+  "/getScoreboard",
+  asyncHandler(async (req, res) => {
+    const scoreboard = await getScoreboard();
+    res.json(scoreboard);
+  })
+);
+
+async function updateEvent() {
+  if (paused) return;
+  console.log("updating scoreboard");
+  scoreboard = await getScoreboard();
+  io.emit("update_event", scoreboard);
+  setTimeout(updateEvent, config.internal_tick_rate); // in milliseconds
+}
+
+function pauseUpdates() {
+  if (paused) return;
+  paused = true;
+}
+
+function startUpdates() {
+  if (!paused) return;
+  paused = false;
+  updateEvent();
+}
+startUpdates();
+
+//socket handling
+io.on("connection", (socket) => {
+  console.log("a user connected");
+});
+
+server.listen(Number(config.host_port), function () {
   var host = server.address().address;
   var port = server.address().port;
+
+  console.log(server.address());
 
   console.log("server at http://localhost:%s/home", port);
 });

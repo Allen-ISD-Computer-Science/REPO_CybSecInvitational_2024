@@ -1,6 +1,0 @@
-grep -ir 'AHSINV' ZipZip
-Key: AHSINV{244abf05f9f9eade2dd0b521512d9631}
-if you want to zip this file then 
-tar -cvzf ZipZip.tar.gz ZipZip
-if you want to unzip then
-tar -xvzf ZipZip.tar.gz

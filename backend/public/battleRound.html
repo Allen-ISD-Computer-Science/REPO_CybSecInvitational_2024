@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>AHS Invitational - Dashboard</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+
+    <!-- Custom styles for this template-->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet" />
+    <link href="css/slider.css" rel="stylesheet" />
+    <link href="css/shake.css" rel="stylesheet" />
+  </head>
+
+  <body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+      <!-- Sidebar -->
+      <ul class="navbar-nav bg-gradient-danger sidebar sidebar-dark accordion" id="accordionSidebar">
+        <!-- Sidebar - Brand -->
+        <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
+          <div class="sidebar-brand-icon">
+            <img src="./img/logo.png" alt="Logo" width="100%" height="100%" />
+          </div>
+          <div class="sidebar-brand-text mx-3">AHS Invitational</div>
+        </a>
+
+        <!-- Logout -->
+        <hr class="sidebar-divider" />
+        <a href="/logout" class="mr-3 ml-3 mt-0 mb-3 d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-sign-out-alt fa-sm text-white-50"></i> Logout </a>
+        <hr class="sidebar-divider" />
+        <!--Logout end-->
+
+        <div class="sidebar-heading">Main</div>
+
+        <!-- Nav Item - Dashboard -->
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/home">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a
+          >
+        </li>
+
+        <!-- Nav Item - Scoreboard -->
+        <li class="nav-item">
+          <a class="nav-link pt-0" href="/scoreboard">
+            <i class="fas fa-fw fa-clipboard-list"></i>
+            <span>Scoreboard</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Puzzle Round -->
+        <div class="sidebar-heading">Puzzle Round</div>
+
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/puzzles">
+            <i class="fas fa-fw fa-puzzle-piece"></i>
+            <span>Puzzles</span></a
+          >
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link pt-0" href="/battleRound">
+            <i class="fas fa-fw fa-triangle-exclamation"></i>
+            <span>Battle Round</span></a
+          >
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider" />
+
+        <!-- Scenario Round -->
+        <div class="sidebar-heading">Scenario Round</div>
+
+        <!-- Nav Item - Pages Collapse Menu -->
+        <li class="nav-item">
+          <a class="nav-link p-3" href="/home">
+            <i class="fas fa-fw fa-signal"></i>
+            <span>Status</span></a
+          >
+        </li>
+        <!-- Divider -->
+        <hr class="sidebar-divider d-none d-md-block" />
+
+        <!-- Sidebar Toggler (Sidebar) -->
+        <div class="text-center d-none d-md-inline">
+          <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+      </ul>
+
+      <!-- End of Sidebar -->
+
+      <!-- Content Wrapper -->
+      <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+          <!-- Topbar -->
+          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow pr-0">
+            <!-- Sidebar Toggle (Topbar) -->
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+              <i class="fa fa-bars"></i>
+            </button>
+
+            <!-- Time Data -->
+            <div class="w-25 mr-5">
+              <h6 class="text-nowrap">Time Remaining</h6>
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+
+            <div class="w-25 mr-5">
+              <h6 class="text-nowrap">Battle Round Time Remaining</h6>
+              <div class="progress">
+                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <!-- End of Time Data -->
+
+            <!-- Point and Name -->
+            <ul class="navbar-nav ml-auto">
+              <li class="nav-item">
+                <div class="nav-link">
+                  <span class="mr-2 d-none d-lg-inline align-middle text-dark" id="points-text-label">Points: ...</span>
+                </div>
+              </li>
+              <div class="vr d-none d-lg-block bg-gray-300" style="width: 0.1rem"></div>
+              <li class="nav-item">
+                <div class="nav-link">
+                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small" id="username-text-label">...</span>
+                </div>
+              </li>
+            </ul>
+            <!-- End of Point and Name -->
+          </nav>
+          <!-- End of Topbar -->
+
+          <!-- Begin Page Content -->
+          <div class="container-fluid">
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+              <h1 class="h3 mb-0 text-gray-800">Battle Round</h1>
+            </div>
+
+            <div id="battle_round_loading" style="display: flex" class="container justify-content-center">
+              <img src="img/sharp_reloading.svg" />
+            </div>
+
+            <div id="battle_round_join" class="container-fluid" style="display: none">
+              <div class="display-1 align-middle text-center d-flex flex-row justify-content-center py-5">Choose Amount to Bid!</div>
+              <div id="battle_round_bid_amount" class="display-4 align-middle text-center d-flex flex-row justify-content-center pb-5">Amount:</div>
+
+              <div class="form-group mb-3">
+                <input id="battle_round_bid_slider" type="range" class="rounded-pill shadow form-range w-100 h-25" step="5" min="0" max="100" />
+                <span class="d-flex flex-row justify-content-between">
+                  <small id="helpId" class="form-text text-muted">0</small>
+                  <small id="helpId" class="form-text text-muted">25</small>
+                  <small id="helpId" class="form-text text-muted">50</small>
+                  <small id="helpId" class="form-text text-muted">75</small>
+                  <small id="helpId" class="form-text text-muted">100</small>
+                </span>
+              </div>
+
+              <div class="container d-flex justify-content-center w-100">
+                <input id="battle_round_bid_confirm" class="btn btn-danger" type="button" value="Confirm" />
+              </div>
+            </div>
+
+            <div id="battle_round_main" class="container-fluid" style="display: none">
+              <div id="countDown" class="container mb-5">
+                <div id="battle_round_time_text" class="display-1 align-middle text-center d-flex flex-row justify-content-center">
+                  <div id="battle_round_minutes">00</div>
+                  <h6 class="align-self-end" style="width: fit-content">min</h6>
+                  <div id="battle_round_seconds">00</div>
+                  <h6 class="align-self-end" style="width: fit-content">sec</h6>
+                  <div id="battle_round_milliseconds">00</div>
+                  <!-- <h6 class="align-self-end" style="width: fit-content"></h6> -->
+                </div>
+              </div>
+
+              <div id="puzzleRow" class="row">
+                <div class="container-fluid d-flex justify-content-center p-5">
+                  <img src="img/sharp_reloading.svg" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+          <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+              <span>Copyright &copy; AHS Invitational 2024</span>
+            </div>
+          </div>
+        </footer>
+        <!-- End of Footer -->
+      </div>
+      <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Puzzle Modal-->
+    <div class="modal fade" id="puzzleModal" tabindex="-1" role="dialog" aria-labelledby="puzzle-header" aria-hidden="true">
+      <div class="modal-dialog" style="max-width: 1000px" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="puzzle-header">
+              <img style="width: 3rem; height: 3rem" src="img/sharp_reloading.svg" />
+            </h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div id="puzzle-body" class="modal-body">
+            <img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />
+          </div>
+          <div class="modal-footer">
+            <form class="align-self-center d-flex w-100">
+              <div class="form-group m-0 w-50">
+                <input type="text" id="puzzle-submit-input" class="form-control" placeholder="Flag" aria-describedby="helpId" />
+              </div>
+              <div class="d-flex h-auto ml-3" id="puzzle-submit-alert-holder"></div>
+              <button id="puzzle-submit-button" class="btn btn-primary" style="margin-left: auto">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+      <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Custom scripts for all pages-->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="vendor/chart.js/Chart.min.js"></script>
+
+    <!-- socket handling -->
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+    <script src="js/user-update.js"></script>
+    <script src="js/battleround.js"></script>
+
+    <style>
+      .sheen {
+        overflow: hidden;
+        position: relative;
+      }
+
+      .sheen:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 300px;
+        height: 100%;
+        background: rgba(200, 200, 200, 0.1);
+        transform: skewX(-30deg);
+        transition: 0.5s;
+        z-index: 1;
+      }
+
+      .sheen:hover:before {
+        left: 100%;
+        background: rgba(200, 200, 200, 0.1);
+      }
+    </style>
+  </body>
+</html>
