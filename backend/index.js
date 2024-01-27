@@ -5,6 +5,7 @@ const { Server } = require("socket.io");
 const path = require("path");
 const bodyParser = require("body-parser");
 const fs = require("fs");
+require("dotenv").config();
 
 const config = require(path.join(__dirname, "config.json"));
 
@@ -14,8 +15,8 @@ const io = new Server(server);
 
 const router = express.Router();
 
-const mongo_username = encodeURIComponent(config.mongodb_username);
-const mongo_password = encodeURIComponent(config.mongodb_password);
+const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
+const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
 
 if (!mongo_password || !mongo_username) {
   throw new Error("Missing Mongodb credentials!");
@@ -39,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   session({
-    secret: config.express_session_secret,
+    secret: process.env.EXPRESS_SESSION_SECRET,
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
   })
