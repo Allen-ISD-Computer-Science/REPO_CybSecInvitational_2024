@@ -206,6 +206,25 @@ app.get("/battleRound", function (req, res) {
   }
 });
 
+app.get(
+  "/admin",
+  asyncHandler(async (req, res) => {
+    if (req.session.username) {
+      const user = await fetchUser(req.session.username);
+      if (user.admin) {
+        res.sendFile(path.join(__dirname, "public/admin.html"));
+        return;
+      } else {
+        res.sendStatus(403);
+        return;
+      }
+    } else {
+      res.redirect("login");
+      return;
+    }
+  })
+);
+
 //actions
 //login
 app.post(
@@ -337,7 +356,6 @@ app.post(
 );
 
 //user interactions
-
 app.post(
   "/getUser",
   asyncHandler(async (req, res) => {
@@ -438,16 +456,16 @@ async function endBattleRound() {
   currentBattleRound = null;
 }
 
-async function startBattleRound(battleRoundId) {
-  const battleRound = config[battleRoundId];
+async function startBattleRound(battleRoundId, duration = config.battle_round_duration) {
+  const battleRound = config.battle_rounds[battleRoundId];
   if (!battleRound) {
     console.warn("Battle round of id " + battleRoundId + " not found");
-    return;
+    return { success: false };
   }
   const battleRoundPuzzleIds = battleRound["puzzles"];
   if (!battleRoundPuzzleIds) {
     console.warn("Battle round of missing puzzles");
-    return;
+    return { success: false };
   }
 
   puzzles = {};
@@ -457,12 +475,12 @@ async function startBattleRound(battleRoundId) {
       result = await client.db("PuzzlesSection").collection("BattleRoundPuzzles").findOne({ name: puzzleId });
     } catch (err) {
       console.log(err);
-      return;
+      return { success: false };
     }
 
     if (!result) {
       console.warn("Failed to fetch puzzle of id " + puzzleId);
-      return;
+      return { success: false };
     } else {
       delete result._id;
       puzzles[result.name] = result;
@@ -485,6 +503,8 @@ async function startBattleRound(battleRoundId) {
   setTimeout(async () => {
     endBattleRound();
   }, config.battle_round_duration);
+
+  return { success: true };
 }
 
 app.post(
@@ -720,6 +740,45 @@ function startUpdates() {
   updateEvent();
 }
 startUpdates();
+
+//admin
+const adminRouter = express.Router();
+
+adminRouter.post(
+  "/startBattleRound",
+  asyncHandler(async (req, res) => {
+    const username = req.session.username;
+    if (!username) {
+      res.sendStatus(400);
+      return;
+    }
+
+    const user = await fetchUser(req.session.username);
+    if (user.admin !== true) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const battleRoundId = req.body.id;
+    const battleRoundDuration = Number(req.body.duration);
+    if (!battleRoundId || !config.battle_rounds[battleRoundId]) {
+      res.sendStatus(400);
+      return;
+    }
+
+    const status = await startBattleRound(battleRoundId, battleRoundDuration);
+
+    if (status.success) {
+      res.send({ status: "starting" });
+      return;
+    } else {
+      res.send({ status: "failestartd" });
+      return;
+    }
+  })
+);
+
+app.use("/admin", adminRouter);
 
 //socket handling
 io.on("connection", (socket) => {
