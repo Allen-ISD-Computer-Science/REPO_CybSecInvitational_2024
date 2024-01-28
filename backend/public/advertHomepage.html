@@ -4,106 +4,124 @@
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Promo Site</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="css/sb-admin-2.min.css">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Promo Site</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/sb-admin-2.min.css" />
 
-        <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
-    </head>
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+  </head>
 
-    <style>
-        #stars-background {
-            position: absolute;
-            height: 100vw;
-            width: 100vw;
-        }
+  <style>
+    :root {
+      --box-shadow-color: #ffffff;
+    }
 
-        html {
-            height: 100%;
-            width: 100%;
-            color: '#ffffff';
-        }
+    body {
+      background: rgb(0, 15, 93);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(39, 55, 136) 100%);
+      background-repeat: no-repeat;
+    }
 
-        body {
-            background: rgb(0,15,93);
-            background: linear-gradient(180deg, rgba(0,15,93,1) 0%, rgba(182,200,244,1) 75%, rgba(255,255,255,1) 100%);
-            color: "#ffffff";
-        }
-        
-        .glow-hover:hover {
-            box-shadow: 0 0 100px var(--box-shadow-color);
-            background-color: black !important
-        }
-        </style>
+    .glow-button {
+      box-shadow: 0 0 10px var(--box-shadow-color);
+    }
 
-    <script>
-    </script>
+    .glow-hover:hover {
+      box-shadow: 0 0 30px var(--box-shadow-color);
+    }
 
-    <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
+    #actions_navbar {
+    }
 
-        <div id="stars-background">
-            <!-- <img src="img/"> -->
+    #title_page {
+    }
+  </style>
+
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+    <div id="title_page" class="container-fluid vh-100 d-flex justify-content-center">
+      <div class="display-1 align-self-center" style="color: #ffffff">Allen Cyber Invitational</div>
+    </div>
+
+    <div id="actions_navbar" class="container-fluid d-flex justify-content-end p-2 sticky-top">
+      <button type="button" href="./register.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light mr-2">REGISTER</button>
+      <button type="button" href="./login.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light">LOG IN</button>
+    </div>
+
+    <div id="content" class="container-fluid">
+      <div class="Head">
+        <div class="Title">
+          <h2>Allen Cyber Invitational</h2>
+        </div>
+      </div>
+
+      <div class="justify-content-evenly"></div>
+
+      <div class="Socials">
+        <!--Insta, Discord, Youtube-->
+      </div>
+
+      <div class="container">
+        <div class="Time">
+          <h3>Time</h3>
+          <p>April 27th, 2024 - 8am->4:30</p>
         </div>
 
-        <div class="display-1" style="color: #ffffff;">
-            Display
+        <div class="Place">
+          <h3>Place</h3>
+          <p>We are currently deciding on a venue for the competition</p>
         </div>
 
-        <div class="Head">
-            <div class="Title">
-                <h2>Allen Cyber Invitational</h2>
-            </div>
+        <div class="Mission">
+          <h3>Our Mission</h3>
+          <p>
+            Create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of
+            major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, cli commands, binary exploitation and much more) and then apply them in a
+            scenario based challenge. All for no cost to the student!
+          </p>
         </div>
 
-        <div class="row justify-content-evenly">
-            <button type="button" style="box-shadow: 0 0 30px var(--box-shadow-color); --box-shadow-color: #FFFFFF;" href="./register.html" class="glow-hover btn btn-outline-primary btn-outline-light">REGISTER</button>
-            <button type="button" style="box-shadow: 0 0 30px var(--box-shadow-color); --box-shadow-color: #FFFFFF;" href="./login.html" class="glow-hover btn btn-outline-primary btn-outline-light">LOG IN</button>
+        <div class="Sponsors">
+          <h3>Sponsors</h3>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+            non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </div>
+        <div class="Team">
+          <h3>Meet the Team</h3>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+            non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
         </div>
 
-        <div class="Socials">
-            <!--Insta, Discord, Youtube-->
+        <div class="FAQ">
+          <h3>FAQ</h3>
+          <h4>Question</h4>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
+            non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
         </div>
+      </div>
+    </div>
 
-        <div>
-            <div class="Time">
-                <h3>Time</h3>
-                <p>April 27th, 2024 - 8am->4:30</p>
-            </div>
-
-            <div class="Place">
-                <h3>Place</h3>
-                <p>We are currently deciding on a venue for the competition</p>
-            </div>
-
-            <div class="Mission">
-                <h3>Our Mission</h3>
-                <p>Create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, cli commands, binary exploitation and much more) and then apply them in a scenario based challenge. All for no cost to the student!</p> 
-            </div>
-            
-            <div class="Sponsors">
-                <h3>Sponsors</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-            <div class="Team">
-                <h3>Meet the Team</h3>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-
-            <div class="FAQ">
-                <h3>FAQ</h3>
-                <h4>Question</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-        </div>
-
-        <scrip src="" async defer></scrip>
-    </body>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>
