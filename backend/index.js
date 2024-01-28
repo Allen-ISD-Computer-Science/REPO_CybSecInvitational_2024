@@ -1,5 +1,5 @@
 const express = require("express");
-const { createServer } = require("http");
+const { createServer, get } = require("http");
 const session = require("express-session");
 const { Server } = require("socket.io");
 const path = require("path");
@@ -140,6 +140,11 @@ const asyncHandler = (func) => (req, res, next) => {
 };
 
 //routing
+
+app.get("/public", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/public.html"));
+});
+
 app.get("/home", function (req, res) {
   if (req.session.username) {
     if (currentBattleRound) {
