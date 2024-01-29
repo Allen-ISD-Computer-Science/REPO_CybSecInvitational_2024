@@ -216,7 +216,6 @@ amountSlider.oninput = function () {
 const confirmButton = document.getElementById("battle_round_bid_confirm");
 var doubleCheck = false;
 confirmButton.onclick = async function (ev) {
-  console.log("evented");
   if (!doubleCheck) {
     confirmButton.value = "Are you sure?";
     doubleCheck = true;

@@ -9,6 +9,30 @@ if (location.href.includes("/vapor/soohan-cho")) {
 
 var scoreboard = null;
 
+function pad(number, length) {
+  return ("000" + number).slice(-length);
+}
+
+const timerLabel = document.getElementById("timer");
+var currentEndTime = 0;
+function updateTimer() {
+  let timeLeft = currentEndTime - Date.now();
+  if (timeLeft < 0) {
+    timerLabel.textContent = "00:00:00:00";
+    return;
+  }
+
+  var date = new Date(timeLeft);
+  timerLabel.textContent = `${pad(date.getUTCHours(), 2)}:${pad(date.getUTCMinutes(), 2)}:${pad(date.getUTCSeconds(), 2)}:${pad(date.getUTCMilliseconds(), 3)}`;
+
+  window.requestAnimationFrame(updateTimer);
+}
+
+function setTimer(endTime) {
+  currentEndTime = endTime;
+  updateTimer();
+}
+
 const cardHolder = document.getElementById("card_holder");
 const templateCard = document.getElementById("template_card");
 const cardHeight = templateCard.getBoundingClientRect().height;
@@ -24,9 +48,7 @@ function getHeightAtRank(card, rank) {
 }
 
 function updateUserScore(user, rank) {
-  console.log(user);
   let card = cardHolder.getElementsByClassName(user.username).item(0);
-
   cardHolder.child;
 
   if (!card) {
@@ -69,7 +91,6 @@ function updateUserScore(user, rank) {
   scenarioPoints.textContent = String(user.scenario_points);
   totalPoints.textContent = String(user.puzzle_points + user.scenario_points);
 
-  console.log(getHeightAtRank(card, rank));
   anime({
     targets: `.${user.username}`,
     translateY: `${getHeightAtRank(card, rank)}px`,
@@ -88,8 +109,6 @@ window.onresize = function () {
 };
 
 socket.on("update_event", async (data) => {
-  console.log("updating");
-
   data.sort((a, b) => {
     return -(a.puzzle_points + a.scenario_points - (b.puzzle_points + b.scenario_points));
   });
@@ -98,3 +117,5 @@ socket.on("update_event", async (data) => {
 
   updateUI();
 });
+
+setTimer(Date.now() + 3600000);
