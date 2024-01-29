@@ -27,6 +27,20 @@
       background-repeat: no-repeat;
     }
 
+    .glow {
+      color: #ffffff;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+
+    @-webkit-keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff;
+      }
+      to {
+        text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff;
+      }
+    }
+
     .glow-button {
       box-shadow: 0 0 10px var(--box-shadow-color);
     }
@@ -48,14 +62,16 @@
     <![endif]-->
 
     <div id="title_page" class="container-fluid vh-100 d-flex justify-content-center">
-      <div class="display-1 align-self-center" style="color: #ffffff">Allen Cyber Invitational</div>
+      <!--<img src="./img/ico/stars2.png"> -->
+      <div class="glow display-1 align-self-center" style="color: #ffffff">Allen Cyber Invitational</div>
       <!--Include arrows pointing down (Inverse Carrot (^))-->
     </div>
 
-    <div id="actions_navbar" class="container-fluid d-flex justify-content-around p-2" style="margin-bottom: 4rem;">
+    <div id="actions_navbar" class="container-fluid d-flex justify-content-around p-2" style="margin-bottom: 3rem;">
       <button type="button" href="./register.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light mr-2 vh-7" style="font-size: 2rem; width: 15rem; height: 7rem; text-shadow: 0 0 10px #ffffff;">REGISTER</button>
       <button type="button" href="./login.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: 2rem; width: 15rem; height: 7rem; text-shadow: 0 0 10px #ffffff;">LOG IN</button>
     </div>
+    <hr style="border-top: 2px solid #ffffff; width: 75%; margin-bottom: 10rem;" align="center"/>
 
     <div id="content" class="container-fluid 100vh" style="color: #ffffff;">
       <!--
@@ -73,27 +89,53 @@
       </div>
 
       <div class="container">
-        <div class="Time d-flex flex-column justify-content-center align-items-start text-start" style="height: 100%; width: 100%; margin-bottom: 4rem;">
-          <h3>Time</h3>
-          <hr style="border-top: 2px solid #FFFFFF; width: 50%;" align="left" />
-          <p style="width: 40%;">April 27th, 2024</p>
-          <p style="width: 40%;">8am to 4:30pm</p>
+
+        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem;">
+          <div class="d-flex flex-column justify-content-center align-items-start text-start" style="height: 100%; width: 50%; margin-bottom: 4rem;">
+            <h3>Time</h3>
+            <hr style="border-top: 2px solid #FFFFFF; width: 100%;" align="left" />
+            <p style="width: 100%;">April 27th, 2024</p>
+            <p style="width: 100%;">8am to 4:30pm</p>
+            <p style="width: 100%;">
+              Our mission is to create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of
+              major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, CLI commands, binary exploitation and much more) and then apply them in a
+              scenario based challenge. All for no cost to the student!
+            </p>
+          </div>
+          <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%;">
+            <img class="align-self-center" src="./img/logo.png" align="right" style="height: 15rem; width: 15rem;">
+          </div>
         </div>
 
-        <div class="Place d-flex flex-column justify-content-center align-items-end text-end" style="height: 100%; width: 100%; margin-bottom: 4rem;">
-          <h3>Place</h3>
-          <hr style="border-top: 2px solid #FFFFFF; width: 50%;" align="right" />
-          <p style="width: 40%; text-align: right;">We are currently deciding on a venue for the competition</p>
+        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem;">
+          <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%;">
+            <img class="align-self-center" src="./img/logo.png" align="right" style="height: 15rem; width: 15rem;">
+          </div>
+          <div class="d-flex flex-column justify-content-center align-items-end text-end" style="height: 100%; width: 50%; margin-bottom: 4rem;">
+            <h3>Place</h3>
+            <hr style="border-top: 2px solid #FFFFFF; width: 100%;" align="right" />
+            <p style="width: 100%; text-align: right;">We are currently deciding on a venue for the competition</p>
+            <p style="width: 100%;">
+              Our mission is to create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of
+              major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, CLI commands, binary exploitation and much more) and then apply them in a
+              scenario based challenge. All for no cost to the student!
+            </p>
+          </div>
         </div>
 
-        <div class="Mission d-flex flex-column justify-content-center align-items-start text-start" style="height: 100%; width: 100%; margin-bottom: 4rem;">
-          <h3>Our Mission</h3>
-          <hr style="border-top: 2px solid #FFFFFF; width: 50%;" align="left" />
-          <p style="width: 40%;">
-            Our mission is to create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of
-            major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, CLI commands, binary exploitation and much more) and then apply them in a
-            scenario based challenge. All for no cost to the student!
-          </p>
+        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem;">
+          <div class="d-flex flex-column justify-content-center align-items-start text-start" style="height: 100%; width: 50%; margin-bottom: 4rem;">
+            <h3>Our Mission</h3>
+            <hr style="border-top: 2px solid #FFFFFF; width: 100%;" align="left" />
+            <p style="width: 100%;">
+              Our mission is to create a responsive and interpretive environment for fellow students to explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding a multitude of
+              major cyber security concepts (including but not limited to cryptography, steganography, web exploitation, CLI commands, binary exploitation and much more) and then apply them in a
+              scenario based challenge. All for no cost to the student!
+            </p>
+          </div>
+          <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%;">
+            <img class="align-self-center" src="./img/logo.png" align="right" style="height: 15rem; width: 15rem;">
+          </div>
         </div>
 
         <div class="Team d-flex flex-column justify-content-center align-items-center" style="height: 100%; width: 100%; margin-bottom: 4rem;">
