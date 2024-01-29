@@ -42,66 +42,34 @@
       </div>
       <!-- end of labels -->
       <hr class="m-0 w-100 mb-1" />
-      <!-- card-holder -->
-      <div>
-        <!-- card1 -->
-        <div class="border rounded border-left-light p-0 m-0 mb-1">
-          <div class="row p-3 border-left-primary m-0">
-            <div class="pr-3">1</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm-3">16df-2bac-823c-8fa7</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">School</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">Silver</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">0000</div>
-          </div>
-        </div>
 
-        <div class="border rounded border-left-warning p-0 m-0 mb-1">
-          <div class="row p-3 border-left-primary m-0">
-            <div class="pr-3">1</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm-3">16df-2bac-823c-8fa7</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">School</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">Gold</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">0000</div>
-          </div>
+      <!-- template-card -->
+      <div id="template_card" class="border rounded border-left-light p-0 m-0 mb-1" style="display: none">
+        <div class="row p-3 border-left-primary m-0">
+          <div class="pr-3 card_ranking"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm-3 card_teamid"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm card_school"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm card_division"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm card_puzzle_points"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm card_scenario_points"></div>
+          <div class="vr bg-secondary" style="width: 1px"></div>
+          <div class="col-sm card_total_points"></div>
         </div>
-
-        <div class="border rounded border-left-secondary p-0 m-0 mb-1">
-          <div class="row p-3 border-left-primary m-0">
-            <div class="pr-3">1</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm-3">16df-2bac-823c-8fa7</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">School</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">Platinum</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">000</div>
-            <div class="vr bg-secondary" style="width: 1px"></div>
-            <div class="col-sm">0000</div>
-          </div>
-        </div>
-        <!-- end of card 1 -->
       </div>
+
+      <!-- end of template-card -->
+
+      <!-- card-holder -->
+      <div id="card_holder"></div>
     </div>
     <!-- end of card holder -->
-    <script src="" async defer></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+    <script src="js/anime.min.js"></script>
+    <script src="js/public.js"></script>
   </body>
 </html>
