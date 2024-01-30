@@ -710,7 +710,7 @@ app.post(
 //scoreboard
 async function getScoreboard() {
   try {
-    const result = await client.db("PuzzlesSection").collection("Users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
+    const result = await client.db("sample_data").collection("sample_users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
     return result.toArray();
   } catch (err) {
     console.log(err);

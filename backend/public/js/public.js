@@ -41,9 +41,6 @@ console.log(cardHeight);
 function getHeightAtRank(card, rank) {
   let currentHeight = card.offsetTop - cardHolder.offsetTop;
   let height = rank * card.offsetHeight + 4 * (rank + 1);
-  if (rank > 0) {
-    height - 5;
-  }
   return height - currentHeight;
 }
 
@@ -58,6 +55,8 @@ function updateUserScore(user, rank) {
     cardHolder.append(newCard);
     card = newCard;
   }
+
+  card.dataset.username = user.username;
 
   const ranking = card.getElementsByClassName("card_ranking").item(0);
   const teamid = card.getElementsByClassName("card_teamid").item(0);
@@ -93,7 +92,9 @@ function updateUserScore(user, rank) {
 
   anime({
     targets: `.${user.username}`,
+    duration: 500,
     translateY: `${getHeightAtRank(card, rank)}px`,
+    easing: "easeInOutSine",
   });
 }
 
@@ -110,10 +111,23 @@ window.onresize = function () {
 
 socket.on("update_event", async (data) => {
   data.sort((a, b) => {
-    return -(a.puzzle_points + a.scenario_points - (b.puzzle_points + b.scenario_points));
+    return b.puzzle_points + b.scenario_points - (a.puzzle_points + a.scenario_points);
   });
 
-  scoreboard = data;
+  scoreboard = data.slice(0, 50);
+
+  let updatedUsers = {};
+
+  scoreboard.forEach((user) => {
+    updatedUsers[user.username] = true;
+  });
+
+  let userCardCollection = document.getElementsByClassName("user-card");
+  for (let card of userCardCollection) {
+    if (!updatedUsers[card.dataset.username]) {
+      card.remove();
+    }
+  }
 
   updateUI();
 });
