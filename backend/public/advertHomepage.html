@@ -23,7 +23,7 @@
 
     body {
       background: rgb(0, 15, 93);
-      background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(39, 55, 136) 100%);
+      background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(76, 88, 151) 100%);
       background-repeat: no-repeat;
     }
 
@@ -34,10 +34,10 @@
 
     @-webkit-keyframes glow {
       from {
-        text-shadow: 0 0 10px #ffffff, 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff;
+        text-shadow: 0 0 0 #ffffff, 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ffffff;
       }
       to {
-        text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff, 0 0 50px #ffffff;
+        text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ffffff, 0 0 20px #ffffff;
       }
     }
 
@@ -60,16 +60,19 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-
+    <div style="height: 100vh;">
+      <img src="./img/ico/stars1.png" class="card-img-top" style="z-index: -1; width: 100%;">
+      <div class="glow display-1 text-center card-img-overlay" style="color: #ffffff; top: 50vh;">Allen Cyber Invitational</div>
+    </div>
     <div id="title_page" class="container-fluid vh-100 d-flex justify-content-center">
-      <!--<img src="./img/ico/stars2.png"> -->
-      <div class="glow display-1 align-self-center" style="color: #ffffff">Allen Cyber Invitational</div>
+      <!--<div class="glow display-1 align-self-center" style="color: #ffffff">Allen Cyber Invitational</div>-->
       <!--Include arrows pointing down (Inverse Carrot (^))-->
     </div>
 
-    <div id="actions_navbar" class="container-fluid d-flex justify-content-around p-2" style="margin-bottom: 3rem;">
-      <button type="button" href="./register.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light mr-2 vh-7" style="font-size: 2rem; width: 15rem; height: 7rem; text-shadow: 0 0 10px #ffffff;">REGISTER</button>
-      <button type="button" href="./login.html" class="glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: 2rem; width: 15rem; height: 7rem; text-shadow: 0 0 10px #ffffff;">LOG IN</button>
+    <hr style="border-top: 2px solid #ffffff; width: 75%; margin-top: 10rem;" align="center"/>
+    <div id="actions_navbar" class="container-fluid d-flex justify-content-around p-2" style="margin-bottom: 3rem; margin-top: 3rem;">
+      <button type="button" href="./register.html" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light mr-2 vh-7" style="font-size: 2rem; width: 15rem; height: 7rem;">REGISTER</button>
+      <button type="button" href="./home.html" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: 2rem; width: 15rem; height: 7rem;">LOG IN</button>
     </div>
     <hr style="border-top: 2px solid #ffffff; width: 75%; margin-bottom: 10rem;" align="center"/>
 
@@ -146,6 +149,25 @@
             laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat
             non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
           </p>
+
+          <!--
+          <div style="color: #000000">
+            <div class="card" size="width: 10rem;">
+              <img src="./img/ico/HeadShots/James.jpg" alt="James's Headshot" class="card-img-top align-self-center">
+              <div class="card-body align-self-center" style="text-align: center;">
+                <h5 class="card-title">James Dungan</h5>
+                <p class="card-text">Project Manager, Chair, Logistics Coordinator</p>
+              </div>
+            </div>
+            <div class="card" size="width: 10rem;">
+              <img src="./img/ico/HeadShots/James.jpg" alt="James's Headshot" class="card-img-top align-self-center">
+              <div class="card-body align-self-center" style="text-align: center;">
+                <h5 class="card-title">James Dungan</h5>
+                <p class="card-text">Project Manager, Chair, Logistics Coordinator</p>
+              </div>
+            </div>
+          </div>
+        -->
         </div>
 
         <div class="Sponsors d-flex flex-column justify-content-center align-items-center" style="height: 100%; width: 100%; margin-bottom: 4rem;">
