@@ -25,7 +25,6 @@ As part of this effort, students will not only leverage (and improve) upon their
   - Operations Director
   - Sponsor Coordinator
 - Product Manager: Soohan Cho, BurntWaffleCake [Digital Portfolio](https://codermerlin.academy/users/soohan-cho/Digital%20Portfolio/index.html)
-  - Director of Training Events
   - Director of Battle Rounds
 - QA Analyst: Abel Semahegn, abelSemahegn [Digital Portfolio](https://codermerlin.academy/users/abel-semahegn/Digital%20Portfolio/index.html)
   - Comms and IT Director
@@ -47,7 +46,6 @@ As part of this effort, students will not only leverage (and improve) upon their
 | Assistant (or Co-) Chair           | Supports the Chair, oversee development of a budget and tracks expenses                            | Coordinating, Financial management, Delegating, Conflict Management | Aidan Morris                   |                 |
 | Volunteer Coordinator              | Identifies # of volunteers needed, establishes volunteer sign up opportunities, assigns volunteers, creates shifts, oversees volunteers day of event. Will need 1-2 deputies to support as Volunteer Coordinator on day of event so that Volunteer Coordinator can get breaks. | Recruiting, Organization, Conflict Management | Abel Semahegn               | TBD            |
 | Operations Director (and Operations Team) | On day of event, this person (and her/his Operations team) will be the people who are keeping things moving, putting out fires, etc. | Action oriented, Problem solver, Calm under duress | Blake Gateley              | TBD             |
-| Director of Training Events        | Develops, tests, and oversees execution of event day training events                               | Technical Prowess                            | Soohan Cho               | TBD             |
 | Director of Battle Rounds          | Develops, tests, and oversees execution of event day battle rounds                                 | Technical Prowess                            | Soohan Cho               | TBD             |
 | Logistics Coordinator              | Proactively identifies and obtains/provides logistics support before and during the event          | Planning, Organization, Logistics           | James Dungan            | TBD             |
 | Comms and IT Director              | Responsible for establishing website to register, and arrange event communications system (e.g. radios) and event IT system | Technical Prowess                            | Abel Semahegn               | TBD             |
@@ -70,7 +68,6 @@ As part of this effort, students will not only leverage (and improve) upon their
 
 # Venue Requirements 
 * Competition room (can accommodate xx students and their stations)
-* Training room(s) (can accommodate xx students and their stations)
 * Operations room (room that can easily accommodate an operations team of 6+ with work areas, dry erase board. Will need to add more space if running independent network for event as that should be run from Operations Center.)
 * Volunteer break room
 * Audio/video options
@@ -82,7 +79,6 @@ As part of this effort, students will not only leverage (and improve) upon their
 # Equipment Needed
 * Wifi network(s) for participants to be able to use during event (can be segregated from another network or a standalone network)
 * Tables and chairs (competition room, training room(s), operations center, Volunteer sign in/out area)
-* Laptops(?)
 
 # Planning Timeline
 Phases: There will be 4 phases to the 2024 Allen Cyber Games Invitational. Those phases and estimated timeframes are shown below:
