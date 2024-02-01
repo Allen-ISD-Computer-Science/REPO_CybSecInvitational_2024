@@ -16,11 +16,20 @@ const server = createServer(app);
 const io = new Server(server);
 
 //MongoDB
-if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
-  throw Error("Process is missing MongoDB Credentials");
-}
+if (!process.env.MONGODB_USERNAME) throw Error("Process missing MongoDB Username");
+if (!process.env.MONGODB_PASSWORD) throw Error("Process missing MongoDB Password");
+if (!process.env.MAIN_DATABASE_NAME) throw Error("Missing main database name");
+if (!process.env.USERS_COLLECTION) throw Error("Missing users collection name");
+if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection name");
+if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
+
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
+
+const mainDbName = process.env.MAIN_DATABASE_NAME;
+const usersColName = process.env.USERS_COLLECTION;
+const puzzlesColName = process.env.PUZZLES_COLLECTION;
+const battleRoundPuzzlesColName = process.env.BATTLE_ROUND_COLLECTION;
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { generateKey } = require("crypto");
@@ -65,8 +74,8 @@ app.use(express.static(path.join(__dirname, "public")));
 async function onBattleRoundCredit(username, amount) {
   try {
     const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
+      .db(mainDbName)
+      .collection(usersColName)
       .updateOne({ username: username }, { $inc: { puzzle_points: amount } });
     return result;
   } catch (err) {
@@ -79,8 +88,8 @@ async function onPuzzleCorrect(username, amount, id) {
   console.log(username, amount, id);
   try {
     const result = await client
-      .db("PuzzlesSection")
-      .collection("Users")
+      .db(mainDbName)
+      .collection(usersColName)
       .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
     return result;
   } catch (err) {
@@ -91,7 +100,7 @@ async function onPuzzleCorrect(username, amount, id) {
 
 async function fetchUser(username) {
   try {
-    const result = await client.db("PuzzlesSection").collection("Users").findOne({ username: username });
+    const result = await client.db(mainDbName).collection(usersColName).findOne({ username: username });
     return result;
   } catch (err) {
     console.log(err);
@@ -101,7 +110,7 @@ async function fetchUser(username) {
 
 async function fetchUsers(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
   try {
-    const cursor = await client.db("PuzzlesSection").collection("Users").find(query).project(projection).skip(skip).sort(sort).limit(count);
+    const cursor = await client.db(mainDbName).collection(usersColName).find(query).project(projection).skip(skip).sort(sort).limit(count);
     return cursor.toArray();
   } catch (err) {
     console.log(err);
@@ -111,7 +120,7 @@ async function fetchUsers(query = {}, sort = {}, projection = {}, count = 1, ski
 
 async function fetchAllUsers() {
   try {
-    const cursor = await client.db("PuzzlesSection").collection("Users").find();
+    const cursor = await client.db(mainDbName).collection(usersColName).find();
     return cursor.toArray();
   } catch (err) {
     console.log(err);
@@ -121,7 +130,7 @@ async function fetchAllUsers() {
 
 async function fetchPuzzle(name) {
   try {
-    const result = await client.db("PuzzlesSection").collection("Puzzles").findOne({ name: name });
+    const result = await client.db(mainDbName).collection(puzzlesColName).findOne({ name: name });
     return result;
   } catch (err) {
     console.log(err);
@@ -131,7 +140,7 @@ async function fetchPuzzle(name) {
 
 async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
   try {
-    const cursor = await client.db("PuzzlesSection").collection("Puzzles").find(query).project(projection).skip(skip).sort(sort).limit(count);
+    const cursor = await client.db(mainDbName).collection(puzzlesColName).find(query).project(projection).skip(skip).sort(sort).limit(count);
     return cursor;
   } catch (err) {
     console.log(err);
@@ -158,7 +167,7 @@ async function addUser(email1, shirt1, email2, shirt2) {
       puzzle_points: 0,
       scenario_points: 0,
     };
-    return await client.db("PuzzlesSection").collection("Users").insertOne(user);
+    return await client.db(mainDbName).collection(usersColName).insertOne(user);
   } catch (err) {
     console.log(err);
     return null;
@@ -375,6 +384,7 @@ app.post(
     const userData = await fetchUser(username);
     if (!userData) {
       res.sendStatus(400);
+      return;
     }
 
     const puzzle = await fetchPuzzle(id);
@@ -420,6 +430,11 @@ app.post(
     }
 
     var user = await fetchUser(username);
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
     delete user.password;
     delete user._id;
     res.json(user);
@@ -436,6 +451,10 @@ app.post(
     const skip = req.body.skip;
 
     const users = await fetchUsers(dbquery, sort, projection, count, skip);
+    if (!users) {
+      res.sendStatus(500);
+      return;
+    }
 
     users.forEach((user) => {
       delete user._id;
@@ -466,7 +485,10 @@ async function endBattleRound() {
   let usersList = {};
   try {
     const users = await fetchAllUsers();
-    console.log(users);
+    if (!users) {
+      console.warn("Failed to fetch users");
+      return;
+    }
     users.forEach((user) => {
       usersList[user.username] = user;
     });
@@ -495,8 +517,8 @@ async function endBattleRound() {
   Object.values(usersList).forEach(async (user) => {
     try {
       await client
-        .db("PuzzlesSection")
-        .collection("Users")
+        .db(mainDbName)
+        .collection(usersColName)
         .updateOne({ username: user.username }, { $set: { puzzle_points: user.puzzle_points - Math.floor(Math.max(user.puzzle_points * currentBattleRound.min_bid, 0)) } });
     } catch (err) {
       console.log(err);
@@ -521,11 +543,11 @@ async function startBattleRound(battleRoundId, duration = config.battle_round_du
     return { success: false };
   }
 
-  puzzles = {};
+  let puzzles = {};
   for (let puzzleId of battleRoundPuzzleIds) {
     var result = null;
     try {
-      result = await client.db("PuzzlesSection").collection("BattleRoundPuzzles").findOne({ name: puzzleId });
+      result = await client.db(mainDbName).collection(battleRoundPuzzlesColName).findOne({ name: puzzleId });
     } catch (err) {
       console.log(err);
       return { success: false };
@@ -535,6 +557,7 @@ async function startBattleRound(battleRoundId, duration = config.battle_round_du
       console.warn("Failed to fetch puzzle of id " + puzzleId);
       return { success: false };
     } else {
+      //@ts-ignore
       delete result._id;
       puzzles[result.name] = result;
       // puzzles.push(result);
@@ -607,6 +630,12 @@ app.post(
     }
 
     const user = await fetchUser(req.session.username);
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
+    //@ts-ignore
     delete user._id;
     delete user.password;
     delete user.completed_puzzles;
@@ -619,8 +648,8 @@ app.post(
 
     try {
       const result = await client
-        .db("PuzzlesSection")
-        .collection("Users")
+        .db(mainDbName)
+        .collection(usersColName)
         .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
       if (result) user.puzzle_points -= bid;
     } catch (err) {
@@ -777,8 +806,7 @@ app.post(
 async function updateEvent() {
   if (paused) return;
   console.log("updating scoreboard");
-  scoreboard = await getScoreboard();
-  io.emit("update_event", scoreboard);
+  io.emit("update_event", await getScoreboard());
   setTimeout(updateEvent, config.internal_tick_rate); // in milliseconds
 }
 
@@ -798,6 +826,197 @@ startUpdates();
 const adminRouter = express.Router();
 
 adminRouter.post(
+  "/team",
+  asyncHandler(async (req, res) => {
+    const operation = req.body.operation;
+    const operand = req.body.operand;
+    //amount of points added
+    const amount = req.body.amount;
+    //id of completed puzzle
+    const id = req.body.amount;
+
+    const target = req.body.target;
+
+    switch (operation) {
+      case "ADD": // increment points by certain amount
+        switch (operand) {
+          case "PUZZLE_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus();
+              return;
+            }
+
+          case "SCENARIO_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+
+          case "COMPLETED_PUZZLE":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .updateOne({ username: target }, { $set: { [`completed_puzzles.${id}`]: true } });
+
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+
+          default:
+            res.sendStatus(400);
+            return;
+        }
+      case "SUB":
+        switch (operand) {
+          case "PUZZLE_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: -amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus();
+              return;
+            }
+
+          case "SCENARIO_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: -amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+
+          case "COMPLETED_PUZZLE":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .updateOne({ username: target }, { $unset: { [`completed_puzzles.${id}`]: "" } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+
+          default:
+            res.sendStatus(400);
+            return;
+        }
+      case "SET":
+        switch (operand) {
+          case "PUZZLE_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus();
+              return;
+            }
+
+          case "SCENARIO_POINTS":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+          default:
+            res.sendStatus(400);
+            return;
+        }
+        break;
+      default:
+        res.sendStatus(400);
+        return;
+    }
+  })
+);
+
+adminRouter.post(
   "/startBattleRound",
   asyncHandler(async (req, res) => {
     const username = req.session.username;
@@ -807,6 +1026,11 @@ adminRouter.post(
     }
 
     const user = await fetchUser(req.session.username);
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+
     if (user.admin !== true) {
       res.sendStatus(403);
       return;
@@ -825,7 +1049,7 @@ adminRouter.post(
       res.send({ status: "starting" });
       return;
     } else {
-      res.send({ status: "failestartd" });
+      res.send({ status: "failed" });
       return;
     }
   })
