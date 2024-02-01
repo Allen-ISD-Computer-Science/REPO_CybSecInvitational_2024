@@ -1,3 +1,6 @@
+//@ts-check
+require("dotenv").config();
+
 const express = require("express");
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -5,7 +8,6 @@ const { Server } = require("socket.io");
 const path = require("path");
 const bodyParser = require("body-parser");
 const fs = require("fs");
-require("dotenv").config();
 
 const config = require(path.join(__dirname, "config.json"));
 
@@ -13,16 +15,15 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-const router = express.Router();
-
+//MongoDB
+if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
+  throw Error("Process is missing MongoDB Credentials");
+}
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
 
-if (!mongo_password || !mongo_username) {
-  throw new Error("Missing Mongodb credentials!");
-}
-
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const { generateKey } = require("crypto");
 const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -34,13 +35,25 @@ const client = new MongoClient(uri, {
   },
 });
 
+process.on("SIGINT", () => {
+  client.close().then(() => {
+    console.info("Mongoose primary connection disconnected through app termination!");
+    process.exit(0);
+  });
+});
+
 //middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   session({
-    secret: process.env.EXPRESS_SESSION_SECRET,
+    //@ts-ignore
+    secret:
+      process.env.EXPRESS_SESSION_SECRET ||
+      generateKey("hmac", { length: 256 }, (err, key) => {
+        return key;
+      }),
     resave: false, // don't save session if unmodified
     saveUninitialized: false, // don't create session until something stored
   })
@@ -117,9 +130,6 @@ async function fetchPuzzle(name) {
 }
 
 async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
-  // console.log(query, sort, projection, count, skip);
-  // console.log(sort);
-
   try {
     const cursor = await client.db("PuzzlesSection").collection("Puzzles").find(query).project(projection).skip(skip).sort(sort).limit(count);
     return cursor;
@@ -129,10 +139,37 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
   }
 }
 
-app.use("*", (req, res, next) => {
-  console.log(req.url, req.baseUrl);
-  next();
-});
+function genRandPassword() {
+  return Math.random().toString(36).slice(-8);
+}
+function genRandHex(size) {
+  return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+async function addUser(email1, shirt1, email2, shirt2) {
+  try {
+    const user = {
+      division: 0,
+      username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
+      password: genRandPassword(),
+      completed_puzzles: {},
+      emails: [email1, email2],
+      shirtSizes: [shirt1, shirt2],
+      puzzle_points: 0,
+      scenario_points: 0,
+    };
+    return await client.db("PuzzlesSection").collection("Users").insertOne(user);
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+// debugging middleware
+// app.use("*", (req, res, next) => {
+//   console.log(req.url, req.baseUrl);
+//   next();
+// });
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -146,6 +183,7 @@ app.get("/public", (req, res) => {
 });
 
 app.get("/home", function (req, res) {
+  //@ts-ignore
   if (req.session.username) {
     if (currentBattleRound) {
       res.redirect("battleRound");
@@ -163,6 +201,7 @@ app.get("/", function (req, res) {
 });
 
 app.get("/login", function (req, res) {
+  //@ts-ignore
   if (req.session.username) {
     res.redirect("home");
   } else {
@@ -178,6 +217,7 @@ app.get("/logout", function (req, res) {
 });
 
 app.get("/scoreboard", function (req, res) {
+  //@ts-ignore
   if (req.session.username) {
     if (currentBattleRound) {
       res.redirect("battleRound");
@@ -191,6 +231,7 @@ app.get("/scoreboard", function (req, res) {
 });
 
 app.get("/puzzles", function (req, res) {
+  //@ts-ignore
   if (req.session.username) {
     if (currentBattleRound) {
       res.redirect("battleRound");
@@ -204,6 +245,7 @@ app.get("/puzzles", function (req, res) {
 });
 
 app.get("/battleRound", function (req, res) {
+  //@ts-ignore
   if (req.session.username) {
     res.sendFile(path.join(__dirname, "public/battleRound.html"));
   } else {
@@ -231,6 +273,13 @@ app.get(
 );
 
 //actions
+
+//register
+app.post(
+  "/register",
+  asyncHandler(async (req, res) => {})
+);
+
 //login
 app.post(
   "/login",
@@ -393,7 +442,7 @@ app.post(
       delete user.password;
       delete user.completed_puzzles;
     });
-    res.json(UserArray);
+    res.json(users);
   })
 );
 
@@ -409,12 +458,12 @@ function lerp(a, b, alpha) {
 async function endBattleRound() {
   if (!currentBattleRound) {
     console.log("No Current Battle Round");
-    return;
+    return false;
   } else {
     console.log("Ending Battle Round");
   }
 
-  usersList = {};
+  let usersList = {};
   try {
     const users = await fetchAllUsers();
     console.log(users);
@@ -430,7 +479,6 @@ async function endBattleRound() {
   } else {
     let participants = Object.values(currentBattleRound.users);
 
-    participants.sort((a, b) => {});
     participants.forEach((participant, i) => {
       const user = participant.user;
       const username = user.username;
@@ -452,13 +500,13 @@ async function endBattleRound() {
         .updateOne({ username: user.username }, { $set: { puzzle_points: user.puzzle_points - Math.floor(Math.max(user.puzzle_points * currentBattleRound.min_bid, 0)) } });
     } catch (err) {
       console.log(err);
-      res.sendStatus(500);
-      return;
+      return false;
     }
   });
 
   io.emit("battle_round_end");
   currentBattleRound = null;
+  return true;
 }
 
 async function startBattleRound(battleRoundId, duration = config.battle_round_duration) {
@@ -791,7 +839,9 @@ io.on("connection", (socket) => {
 });
 
 server.listen(Number(config.host_port), function () {
+  //@ts-ignore
   var host = server.address().address;
+  //@ts-ignore
   var port = server.address().port;
 
   console.log(server.address());
