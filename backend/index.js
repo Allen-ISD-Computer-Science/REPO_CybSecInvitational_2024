@@ -837,8 +837,11 @@ adminRouter.post(
 
     const target = req.body.target;
 
+    console.log(operation, operand, amount, id, target);
+    return;
+
     switch (operation) {
-      case "ADD": // increment points by certain amount
+      case "ADD": // increment points by certain amount, add puzzle to completed
         switch (operand) {
           case "PUZZLE_POINTS":
             try {
@@ -847,15 +850,14 @@ adminRouter.post(
                 .collection(usersColName)
                 .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: amount } });
               if (result) {
-                res.sendStatus(200);
+                res.sendStatus(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.sendStatus(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
-              console.log(err);
-              res.sendStatus();
+              res.sendStatus(500).send("Server Failed to execute operation");
               return;
             }
 
@@ -866,15 +868,15 @@ adminRouter.post(
                 .collection(usersColName)
                 .findOneAndUpdate({ username: target }, { $inc: { scenario_points: amount } });
               if (result) {
-                res.sendStatus(200);
+                res.sendStatus(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.sendStatus(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.sendStatus(500).send("Server Failed to execute operation");
               return;
             }
 
@@ -886,15 +888,15 @@ adminRouter.post(
                 .updateOne({ username: target }, { $set: { [`completed_puzzles.${id}`]: true } });
 
               if (result) {
-                res.sendStatus(200);
+                res.sendStatus(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.sendStatus(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.sendStatus(500).send("Server Failed to execute operation");
               return;
             }
 
@@ -902,7 +904,8 @@ adminRouter.post(
             res.sendStatus(400);
             return;
         }
-      case "SUB":
+
+      case "SUB": //decrement points by certain amount, remove puzzle from completed
         switch (operand) {
           case "PUZZLE_POINTS":
             try {
@@ -965,14 +968,15 @@ adminRouter.post(
             res.sendStatus(400);
             return;
         }
-      case "SET":
+
+      case "SET": //set points values, set division,
         switch (operand) {
           case "PUZZLE_POINTS":
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: amount } });
+                .findOneAndUpdate({ username: target }, { $set: { puzzle_points: amount } });
               if (result) {
                 res.sendStatus(200);
                 return;
@@ -991,7 +995,26 @@ adminRouter.post(
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: amount } });
+                .findOneAndUpdate({ username: target }, { $set: { scenario_points: amount } });
+              if (result) {
+                res.sendStatus(200);
+                return;
+              } else {
+                res.sendStatus(500);
+                return;
+              }
+            } catch (err) {
+              console.log(err);
+              res.sendStatus(500);
+              return;
+            }
+
+          case "DIVISION":
+            try {
+              let result = await client
+                .db(mainDbName)
+                .collection(usersColName)
+                .findOneAndUpdate({ username: target }, { $set: { division: amount } });
               if (result) {
                 res.sendStatus(200);
                 return;
@@ -1008,12 +1031,29 @@ adminRouter.post(
             res.sendStatus(400);
             return;
         }
-        break;
+
+      case "START": //starts events (puzzle round, )
+        switch (operand) {
+          default:
+            return;
+        }
+
+      case "END": //ends events (puzzle round, battle round)
+        switch (operand) {
+          default:
+            return;
+        }
+
       default:
         res.sendStatus(400);
         return;
     }
   })
+);
+
+adminRouter.post(
+  "/start",
+  asyncHandler(async (req, res) => {})
 );
 
 adminRouter.post(
@@ -1052,6 +1092,28 @@ adminRouter.post(
       res.send({ status: "failed" });
       return;
     }
+  })
+);
+
+adminRouter.use(
+  asyncHandler(async (req, res, next) => {
+    const username = req.session.username;
+    if (!username) {
+      res.redirect(400);
+      return;
+    }
+
+    const user = await fetchUser(username);
+    if (!user) {
+      res.redirect(404);
+      return;
+    }
+
+    if (!user.admin === true) {
+      res.sendStatus(403);
+    }
+
+    next();
   })
 );
 

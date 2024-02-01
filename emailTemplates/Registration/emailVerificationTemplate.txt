@@ -1,0 +1,28 @@
+Key:
+???
+
+Description:
+Email Verification
+
+Html Template:
+<html lang="en">
+<title>Verify Email</title>
+<p>Team Member A: #(memberA)</p>
+<p>Team Member B: #(memberB)</p>
+<p>Use this code to verify your Allen Cyber Invitational Team emails</p>
+<p>Each team member will receive their own verification code.</p>
+<br />
+<p>#(code)</p>
+<br />
+<p>If you did not make such a request, please disregard.</p>
+</body>
+</html>
+
+Text Template:
+Allen Cyber Invitational: Your email verification code is #(code)
+
+Fields:
+'{"requiredFields": ["memberA", "memberB", "code"]}'
+
+Subject:
+Allen Cyber Invitational: Email Verification
