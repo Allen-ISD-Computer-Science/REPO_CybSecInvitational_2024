@@ -159,53 +159,76 @@
                 </div>
               </div>
 
-              <!-- Change Points UI -->
-              <label class="form-label">Points</label>
-              <div class="d-flex flex-wrap">
-                <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_section">
-                  <option hidden>Select Section</option>
-                  <option>PUZZLE_POINTS</option>
-                  <option>SCENARIO_POINTS</option>
-                </select>
-                <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_operation">
-                  <option hidden>Select Operation</option>
-                  <option>ADD</option>
-                  <option>SUB</option>
-                  <option>SET</option>
-                </select>
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_points_amount" placeholder="Amount" />
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_points_target" placeholder="Target" />
-                <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
-              </div>
-              <!-- End of Add Points UI -->
+              <div class="mb-5">
+                <h3>User Management</h3>
 
-              <!-- Change Complete Puzzles UI -->
-              <label class="form-label">Completed Puzzles</label>
-              <div class="d-flex flex-wrap">
-                <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_puzzles_operation">
-                  <option hidden>Select Operation</option>
-                  <option>ADD</option>
-                  <option>SUB</option>
-                </select>
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_puzzles_id" placeholder="Puzzle Id" />
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_puzzles_target" placeholder="Target" />
-                <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
-              </div>
-              <!-- End of Add Points UI -->
+                <!-- Change Points UI -->
+                <label class="form-label">Points</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_section">
+                    <option hidden>Select Section</option>
+                    <option>PUZZLE_POINTS</option>
+                    <option>SCENARIO_POINTS</option>
+                  </select>
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_operation">
+                    <option hidden>Select Operation</option>
+                    <option>ADD</option>
+                    <option>SUB</option>
+                    <option>SET</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_points_amount" placeholder="Amount" />
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_points_target" placeholder="Target" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
 
-              <!-- Division Change UI -->
-              <label class="form-label">Division</label>
+                <!-- Change Complete Puzzles UI -->
+                <label class="form-label">Completed Puzzles</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_puzzles_operation">
+                    <option hidden>Select Operation</option>
+                    <option>ADD</option>
+                    <option>SUB</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_puzzles_id" placeholder="Puzzle Id" />
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_puzzles_target" placeholder="Target" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
+
+                <!-- Division Change UI -->
+                <label class="form-label">Division</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                    <option hidden>Select Section</option>
+                    <option>Silver</option>
+                    <option>Gold</option>
+                    <option>Platinum</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Target" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
+              </div>
+
+              <h3>Event Management</h3>
+              <label class="form-label">Events</label>
               <div class="d-flex flex-wrap">
                 <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
-                  <option hidden>Select Section</option>
-                  <option>Silver</option>
-                  <option>Gold</option>
-                  <option>Platinum</option>
+                  <option hidden>Event Name</option>
+                  <option>SEEDING_ROUND</option>
+                  <option>PUZZLE_ROUND_1</option>
+                  <option>BATTLE_ROUND_1</option>
+                  <option>PUZZLE_ROUND_2</option>
+                  <option>BATTLE_ROUND_2</option>
+                  <option>PUZZLE_ROUND_3</option>
+                  <option>BATTLE_ROUND_3</option>
+                  <option>SCENARIO</option>
                 </select>
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Target" />
-                <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Duration" />
+                <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
+                <button type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
               </div>
-              <!-- End of Add Points UI -->
             </div>
           </div>
         </div>
