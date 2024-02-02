@@ -22,6 +22,7 @@ if (!process.env.MAIN_DATABASE_NAME) throw Error("Missing main database name");
 if (!process.env.USERS_COLLECTION) throw Error("Missing users collection name");
 if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection name");
 if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
+if (!process.env.ADMINISTRATOR_COLLECTION) throw Error("Missing administrator collection name");
 
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
@@ -30,9 +31,10 @@ const mainDbName = process.env.MAIN_DATABASE_NAME;
 const usersColName = process.env.USERS_COLLECTION;
 const puzzlesColName = process.env.PUZZLES_COLLECTION;
 const battleRoundPuzzlesColName = process.env.BATTLE_ROUND_COLLECTION;
+const adminColName = process.env.ADMINISTRATOR_COLLECTION;
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const { generateKey } = require("crypto");
+const { generateKey, verify } = require("crypto");
 const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -174,11 +176,27 @@ async function addUser(email1, shirt1, email2, shirt2) {
   }
 }
 
+const verifyUser = function (req, res, next) {
+  if (!req.session.username) {
+    res.redirect("login");
+    return;
+  }
+  next();
+};
+
+const testBattleRound = function (req, res, next) {
+  if (currentBattleRound) {
+    res.redirect("battleRound");
+    return;
+  }
+  next();
+};
+
 // debugging middleware
-// app.use("*", (req, res, next) => {
-//   console.log(req.url, req.baseUrl);
-//   next();
-// });
+app.use("*", (req, res, next) => {
+  console.log(req.url, req.baseUrl);
+  next();
+});
 
 //async handling
 const asyncHandler = (func) => (req, res, next) => {
@@ -186,100 +204,40 @@ const asyncHandler = (func) => (req, res, next) => {
 };
 
 //routing
-
 app.get("/public", (req, res) => {
   res.sendFile(path.join(__dirname, "public/public.html"));
-});
-
-app.get("/home", function (req, res) {
-  //@ts-ignore
-  if (req.session.username) {
-    if (currentBattleRound) {
-      res.redirect("battleRound");
-      return;
-    }
-
-    res.sendFile(path.join(__dirname, "public/home.html"));
-  } else {
-    res.redirect("login");
-  }
 });
 
 app.get("/", function (req, res) {
   res.redirect("login");
 });
 
+app.get("/home", verifyUser, testBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/home.html"));
+});
+
 app.get("/login", function (req, res) {
   //@ts-ignore
   if (req.session.username) {
     res.redirect("home");
-  } else {
-    res.sendFile(path.join(__dirname, "public/login.html"));
   }
+  res.sendFile(path.join(__dirname, "public/login.html"));
 });
 
-app.get("/logout", function (req, res) {
+app.get("/logout", verifyUser, function (req, res) {
   req.session.destroy(function () {
     console.log("User logged out!");
   });
   res.redirect("login");
 });
 
-app.get("/scoreboard", function (req, res) {
-  //@ts-ignore
-  if (req.session.username) {
-    if (currentBattleRound) {
-      res.redirect("battleRound");
-      return;
-    }
-
-    res.sendFile(path.join(__dirname, "public/scoreboard.html"));
-  } else {
-    res.redirect("login");
-  }
+app.get("/scoreboard", verifyUser, testBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/scoreboard.html"));
 });
 
-app.get("/puzzles", function (req, res) {
-  //@ts-ignore
-  if (req.session.username) {
-    if (currentBattleRound) {
-      res.redirect("battleRound");
-      return;
-    }
-
-    res.sendFile(path.join(__dirname, "public/puzzles.html"));
-  } else {
-    res.redirect("login");
-  }
+app.get("/battleRound", verifyUser, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/battleRound.html"));
 });
-
-app.get("/battleRound", function (req, res) {
-  //@ts-ignore
-  if (req.session.username) {
-    res.sendFile(path.join(__dirname, "public/battleRound.html"));
-  } else {
-    res.redirect("login");
-  }
-});
-
-app.get(
-  "/admin",
-  asyncHandler(async (req, res) => {
-    if (req.session.username) {
-      const user = await fetchUser(req.session.username);
-      if (user.admin) {
-        res.sendFile(path.join(__dirname, "public/admin.html"));
-        return;
-      } else {
-        res.sendStatus(403);
-        return;
-      }
-    } else {
-      res.redirect("login");
-      return;
-    }
-  })
-);
 
 //actions
 
@@ -289,7 +247,7 @@ app.post(
   asyncHandler(async (req, res) => {})
 );
 
-//login
+//#region Login
 app.post(
   "/login",
   asyncHandler(async (req, res) => {
@@ -320,10 +278,16 @@ app.post(
     }
   })
 );
+//#endregion
 
-//puzzle interactions
+//#region Puzzles
+app.get("/puzzles", verifyUser, testBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/puzzles.html"));
+});
+
 app.post(
   "/getPuzzle",
+  verifyUser,
   asyncHandler(async (req, res) => {
     const id = req.body.id;
     if (!id) {
@@ -347,6 +311,7 @@ app.post(
 
 app.post(
   "/getMultiplePuzzles",
+  verifyUser,
   asyncHandler(async (req, res) => {
     console.log("attempting to fetch puzzles");
 
@@ -357,6 +322,10 @@ app.post(
     const skip = req.body.skip;
 
     const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
+    if (!cursor) {
+      res.sendStatus(404);
+      return;
+    }
     const puzzles = await cursor.toArray();
 
     if (puzzles) {
@@ -371,6 +340,7 @@ app.post(
 
 app.post(
   "/submitPuzzle",
+  verifyUser,
   asyncHandler(async (req, res) => {
     const username = req.session.username;
     const id = req.body.id;
@@ -418,17 +388,14 @@ app.post(
     }
   })
 );
+//#endregion
 
-//user interactions
+//#region Users
 app.post(
   "/getUser",
+  verifyUser,
   asyncHandler(async (req, res) => {
     const username = req.session.username;
-    if (!username) {
-      res.sendStatus(400);
-      return;
-    }
-
     var user = await fetchUser(username);
     if (!user) {
       res.sendStatus(404);
@@ -443,6 +410,7 @@ app.post(
 
 app.post(
   "/getUsers",
+  verifyUser,
   asyncHandler(async (req, res) => {
     const dbquery = req.body.query;
     const sort = req.body.sort;
@@ -464,6 +432,7 @@ app.post(
     res.json(users);
   })
 );
+//#endregion
 
 //game state
 var paused = true;
@@ -822,11 +791,67 @@ function startUpdates() {
 }
 startUpdates();
 
-//admin
+//#region Admin
 const adminRouter = express.Router();
 
-adminRouter.post(
-  "/command",
+const adminCheck = function (req, res, next) {
+  const isAdmin = req.session.isAdmin;
+  if (isAdmin !== true) {
+    res.sendStatus(403);
+    return;
+  }
+  console.log("id admin!");
+  next();
+};
+
+app.post(
+  "/adminLogin",
+  asyncHandler(async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    console.log(username, password);
+
+    if (!username || !password) {
+      res.sendStatus(400);
+      return;
+    }
+
+    try {
+      let result = await client.db(mainDbName).collection(adminColName).findOne({ username: username });
+      if (result && result.password == password) {
+        req.session.isAdmin = true; // potentially insecure
+        res.sendStatus(200);
+        return;
+      } else {
+        res.sendStatus(403);
+        return;
+      }
+    } catch (err) {
+      console.log(err);
+      res.sendStatus(500);
+      return;
+    }
+  })
+);
+
+app.get("/adminLogin", (req, res) => {
+  //@ts-ignore
+  if (req.session.isAdmin === true) {
+    res.sendFile(path.join(__dirname, "public/admin.html"));
+  } else {
+    res.sendFile(path.join(__dirname, "public/adminLogin.html"));
+  }
+});
+
+app.get("/admin", adminCheck, (req, res) => {
+  console.log("sending file");
+  res.sendFile(path.join(__dirname, "public/admin.html"));
+});
+
+app.post(
+  "/admin/command",
+  adminCheck,
   asyncHandler(async (req, res) => {
     const operation = req.body.operation;
     const operand = req.body.operand;
@@ -1093,74 +1118,7 @@ adminRouter.post(
     }
   })
 );
-
-adminRouter.post(
-  "/start",
-  asyncHandler(async (req, res) => {})
-);
-
-adminRouter.post(
-  "/startBattleRound",
-  asyncHandler(async (req, res) => {
-    const username = req.session.username;
-    if (!username) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const user = await fetchUser(req.session.username);
-    if (!user) {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (user.admin !== true) {
-      res.sendStatus(403);
-      return;
-    }
-
-    const battleRoundId = req.body.id;
-    const battleRoundDuration = Number(req.body.duration);
-    if (!battleRoundId || !config.battle_rounds[battleRoundId]) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const status = await startBattleRound(battleRoundId, battleRoundDuration);
-
-    if (status.success) {
-      res.send({ status: "starting" });
-      return;
-    } else {
-      res.send({ status: "failed" });
-      return;
-    }
-  })
-);
-
-adminRouter.use(
-  asyncHandler(async (req, res, next) => {
-    const username = req.session.username;
-    if (!username) {
-      res.redirect(400);
-      return;
-    }
-
-    const user = await fetchUser(username);
-    if (!user) {
-      res.redirect(404);
-      return;
-    }
-
-    if (!user.admin === true) {
-      res.sendStatus(403);
-    }
-
-    next();
-  })
-);
-
-app.use("/admin", adminRouter);
+//#endregion
 
 //socket handling
 io.on("connection", (socket) => {
