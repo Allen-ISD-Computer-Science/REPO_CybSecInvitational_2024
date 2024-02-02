@@ -826,209 +826,252 @@ startUpdates();
 const adminRouter = express.Router();
 
 adminRouter.post(
-  "/team",
+  "/command",
   asyncHandler(async (req, res) => {
     const operation = req.body.operation;
     const operand = req.body.operand;
     //amount of points added
-    const amount = req.body.amount;
+    const arguments = req.body.arguments;
     //id of completed puzzle
-    const id = req.body.amount;
 
-    const target = req.body.target;
-
-    console.log(operation, operand, amount, id, target);
-    return;
+    // console.log(operation, operand, arguments);
+    // return;
 
     switch (operation) {
       case "ADD": // increment points by certain amount, add puzzle to completed
         switch (operand) {
           case "PUZZLE_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: arguments.amount } });
               if (result) {
-                res.sendStatus(200).send("Success");
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(404).send("Failed to fetch User");
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
-              res.sendStatus(500).send("Server Failed to execute operation");
+              console.log(err);
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "SCENARIO_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: arguments.amount } });
               if (result) {
-                res.sendStatus(200).send("Success");
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(404).send("Failed to fetch User");
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500).send("Server Failed to execute operation");
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "COMPLETED_PUZZLE":
+            if (!arguments.target || !arguments.id) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .updateOne({ username: target }, { $set: { [`completed_puzzles.${id}`]: true } });
+                .updateOne({ username: arguments.target }, { $set: { [`completed_puzzles.${arguments.id}`]: true } });
 
               if (result) {
-                res.sendStatus(200).send("Success");
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(404).send("Failed to fetch User");
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500).send("Server Failed to execute operation");
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           default:
-            res.sendStatus(400);
+            res.status(400).send("Invalid operand");
             return;
         }
 
       case "SUB": //decrement points by certain amount, remove puzzle from completed
         switch (operand) {
           case "PUZZLE_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { puzzle_points: -amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: -arguments.amount } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus();
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "SCENARIO_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $inc: { scenario_points: -amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: -arguments.amount } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "COMPLETED_PUZZLE":
+            if (!arguments.target || !arguments.id) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .updateOne({ username: target }, { $unset: { [`completed_puzzles.${id}`]: "" } });
+                .updateOne({ username: arguments.target }, { $unset: { [`completed_puzzles.${arguments.id}`]: "" } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           default:
-            res.sendStatus(400);
+            res.status(400).send("Operation missing arguments");
             return;
         }
 
       case "SET": //set points values, set division,
         switch (operand) {
           case "PUZZLE_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $set: { puzzle_points: amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $set: { puzzle_points: arguments.amount } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus();
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "SCENARIO_POINTS":
+            if (!arguments.target || !arguments.amount) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $set: { scenario_points: amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $set: { scenario_points: arguments.amount } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
 
           case "DIVISION":
+            if (!arguments.target || !arguments.division) {
+              res.status(400).send("Operation missing arguments");
+              return;
+            }
+
             try {
               let result = await client
                 .db(mainDbName)
                 .collection(usersColName)
-                .findOneAndUpdate({ username: target }, { $set: { division: amount } });
+                .findOneAndUpdate({ username: arguments.target }, { $set: { division: arguments.division } });
               if (result) {
-                res.sendStatus(200);
+                res.status(200).send("Success");
                 return;
               } else {
-                res.sendStatus(500);
+                res.status(404).send("Failed to fetch User");
                 return;
               }
             } catch (err) {
               console.log(err);
-              res.sendStatus(500);
+              res.status(500).send("Server Failed to execute operation");
               return;
             }
           default:
-            res.sendStatus(400);
+            res.status(400).send("Operation missing arguments");
             return;
         }
 
@@ -1045,7 +1088,7 @@ adminRouter.post(
         }
 
       default:
-        res.sendStatus(400);
+        res.status(400).send("Invalid Operation");
         return;
     }
   })
