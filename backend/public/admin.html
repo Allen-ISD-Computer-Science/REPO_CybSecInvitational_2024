@@ -210,24 +210,40 @@
                 </div>
                 <!-- End of Add Points UI -->
               </div>
+              <div class="mb-5">
+                <h3>Event Management</h3>
+                <label class="form-label">Events</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                    <option hidden>Event Name</option>
+                    <option>SEEDING_ROUND</option>
+                    <option>PUZZLE_ROUND_1</option>
+                    <option>BATTLE_ROUND_1</option>
+                    <option>PUZZLE_ROUND_2</option>
+                    <option>BATTLE_ROUND_2</option>
+                    <option>PUZZLE_ROUND_3</option>
+                    <option>BATTLE_ROUND_3</option>
+                    <option>SCENARIO</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Duration" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
+                  <button type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
+                </div>
+              </div>
 
-              <h3>Event Management</h3>
-              <label class="form-label">Events</label>
-              <div class="d-flex flex-wrap">
-                <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
-                  <option hidden>Event Name</option>
-                  <option>SEEDING_ROUND</option>
-                  <option>PUZZLE_ROUND_1</option>
-                  <option>BATTLE_ROUND_1</option>
-                  <option>PUZZLE_ROUND_2</option>
-                  <option>BATTLE_ROUND_2</option>
-                  <option>PUZZLE_ROUND_3</option>
-                  <option>BATTLE_ROUND_3</option>
-                  <option>SCENARIO</option>
-                </select>
-                <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Duration" />
-                <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
-                <button type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
+              <div>
+                <h3>Miscellaneous</h3>
+                <label class="form-label">Alerts</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                    <option hidden>Level</option>
+                    <option class="text-primary">Normal</option>
+                    <option class="text-warning">Warning</option>
+                    <option class="text-danger">Danger</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Message" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Submit</button>
+                </div>
               </div>
             </div>
           </div>
