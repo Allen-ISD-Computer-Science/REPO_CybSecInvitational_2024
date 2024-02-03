@@ -7,7 +7,6 @@ const session = require("express-session");
 const { Server } = require("socket.io");
 const path = require("path");
 const bodyParser = require("body-parser");
-const fs = require("fs");
 
 const config = require(path.join(__dirname, "config.json"));
 
@@ -15,7 +14,7 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server);
 
-//MongoDB
+//#region MongoDB
 if (!process.env.MONGODB_USERNAME) throw Error("Process missing MongoDB Username");
 if (!process.env.MONGODB_PASSWORD) throw Error("Process missing MongoDB Password");
 if (!process.env.MAIN_DATABASE_NAME) throw Error("Missing main database name");
@@ -46,12 +45,14 @@ const client = new MongoClient(uri, {
   },
 });
 
+// Close connection when server stops
 process.on("SIGINT", () => {
   client.close().then(() => {
     console.info("Mongoose primary connection disconnected through app termination!");
     process.exit(0);
   });
 });
+//#endregion
 
 //middleware
 app.use(bodyParser.json());
@@ -72,34 +73,109 @@ app.use(
 
 app.use(express.static(path.join(__dirname, "public")));
 
-//database functions
-async function onBattleRoundCredit(username, amount) {
+// debugging middleware
+app.use("*", (req, res, next) => {
+  console.log(req.url, req.baseUrl);
+  next();
+});
+
+class Round {
+  /**
+   * @constructor
+   * @property {string} cat
+   */
+  constructor() {
+    this.cat = 0;
+  }
+}
+
+let a = new Round();
+a.ca;
+//event states
+var paused = true;
+var currentBattleRound = null;
+
+//#region State Verification
+const verifyUser = function (req, res, next) {
+  if (!req.session.username) {
+    res.redirect("login");
+    return;
+  }
+  next();
+};
+
+// Verifies if a battle round currently exists then redirects to battle round page if so
+const verifyBattleRound = function (req, res, next) {
+  if (currentBattleRound) {
+    res.redirect("battleRound");
+    return;
+  }
+  next();
+};
+
+// Verifies if a battle round currently exists then returns json data if none does
+const testBattleRound = function (req, res, next) {
+  if (!currentBattleRound) {
+    res.send({ notStarted: true });
+    return;
+  }
+  next();
+};
+//#endregion
+
+//#region Helper Middleware
+const asyncHandler = (func) => (req, res, next) => {
+  Promise.resolve(func(req, res, next)).catch(next);
+};
+//#endregion
+
+//#region Public
+app.get("/public", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/public.html"));
+});
+
+app.get("/", function (req, res) {
+  res.redirect("login");
+});
+//#endregion
+
+//#region Home
+app.get("/home", verifyUser, verifyBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/home.html"));
+});
+//#endregion
+
+//#region Registration
+function genRandPassword() {
+  return Math.random().toString(36).slice(-8);
+}
+function genRandHex(size) {
+  return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+async function addUser(email1, shirt1, email2, shirt2) {
   try {
-    const result = await client
-      .db(mainDbName)
-      .collection(usersColName)
-      .updateOne({ username: username }, { $inc: { puzzle_points: amount } });
-    return result;
+    const user = {
+      division: 0,
+      username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
+      password: genRandPassword(),
+      completed_puzzles: {},
+      emails: [email1, email2],
+      shirtSizes: [shirt1, shirt2],
+      puzzle_points: 0,
+      scenario_points: 0,
+    };
+    return await client.db(mainDbName).collection(usersColName).insertOne(user);
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-async function onPuzzleCorrect(username, amount, id) {
-  console.log(username, amount, id);
-  try {
-    const result = await client
-      .db(mainDbName)
-      .collection(usersColName)
-      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}
+app.post("/register", async (req, res) => {});
+//#endregion
 
+//#region Login
 async function fetchUser(username) {
   try {
     const result = await client.db(mainDbName).collection(usersColName).findOne({ username: username });
@@ -130,6 +206,87 @@ async function fetchAllUsers() {
   }
 }
 
+app.get("/login", function (req, res) {
+  //@ts-ignore
+  if (req.session.username) {
+    res.redirect("home");
+  }
+  res.sendFile(path.join(__dirname, "public/login.html"));
+});
+
+app.get("/logout", verifyUser, function (req, res) {
+  req.session.destroy(function () {
+    console.log("User logged out!");
+  });
+  res.redirect("login");
+});
+
+app.post("/login", async (req, res) => {
+  console.log("attempting login ");
+
+  const username = req.body.username;
+  const password = req.body.password;
+
+  if (!username || !password) {
+    res.sendStatus(400);
+    return;
+  }
+
+  var user = await fetchUser(username);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+
+  if (user.password === password) {
+    req.session.username = user.username;
+    res.sendStatus(200);
+    return;
+  } else {
+    console.log("invalid login credentials");
+    res.sendStatus(401);
+    return;
+  }
+});
+//#endregion
+
+//#region Users
+app.post("/getUser", verifyUser, async (req, res) => {
+  const username = req.session.username;
+  var user = await fetchUser(username);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
+
+  delete user.password;
+  delete user._id;
+  res.json(user);
+});
+
+app.post("/getUsers", verifyUser, async (req, res) => {
+  const dbquery = req.body.query;
+  const sort = req.body.sort;
+  const projection = req.body.projection;
+  const count = req.body.count;
+  const skip = req.body.skip;
+
+  const users = await fetchUsers(dbquery, sort, projection, count, skip);
+  if (!users) {
+    res.sendStatus(500);
+    return;
+  }
+
+  users.forEach((user) => {
+    delete user._id;
+    delete user.password;
+    delete user.completed_puzzles;
+  });
+  res.json(users);
+});
+//#endregion
+
+//#region Puzzles
 async function fetchPuzzle(name) {
   try {
     const result = await client.db(mainDbName).collection(puzzlesColName).findOne({ name: name });
@@ -150,298 +307,138 @@ async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, s
   }
 }
 
-function genRandPassword() {
-  return Math.random().toString(36).slice(-8);
-}
-function genRandHex(size) {
-  return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
-}
-
-async function addUser(email1, shirt1, email2, shirt2) {
+async function onPuzzleCorrect(username, amount, id) {
+  console.log(username, amount, id);
   try {
-    const user = {
-      division: 0,
-      username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
-      password: genRandPassword(),
-      completed_puzzles: {},
-      emails: [email1, email2],
-      shirtSizes: [shirt1, shirt2],
-      puzzle_points: 0,
-      scenario_points: 0,
-    };
-    return await client.db(mainDbName).collection(usersColName).insertOne(user);
+    const result = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${id}`]: true } });
+    return result;
   } catch (err) {
     console.log(err);
     return null;
   }
 }
 
-const verifyUser = function (req, res, next) {
-  if (!req.session.username) {
-    res.redirect("login");
+app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/puzzles.html"));
+});
+
+app.post("/getPuzzle", verifyUser, async (req, res) => {
+  const id = req.body.id;
+  if (!id) {
+    // Bad request
+    res.sendStatus(400);
     return;
   }
-  next();
-};
 
-const testBattleRound = function (req, res, next) {
-  if (currentBattleRound) {
-    res.redirect("battleRound");
+  const puzzle = await fetchPuzzle(id);
+  if (!puzzle) {
+    res.sendStatus(404);
+    return;
+  } else {
+    delete puzzle._id;
+    delete puzzle.answer;
+    res.json(puzzle);
     return;
   }
-  next();
-};
-
-// debugging middleware
-app.use("*", (req, res, next) => {
-  console.log(req.url, req.baseUrl);
-  next();
 });
 
-//async handling
-const asyncHandler = (func) => (req, res, next) => {
-  Promise.resolve(func(req, res, next)).catch(next);
-};
+app.post("/getMultiplePuzzles", verifyUser, async (req, res) => {
+  console.log("attempting to fetch puzzles");
 
-//routing
-app.get("/public", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/public.html"));
-});
+  const dbquery = req.body.query;
+  const sort = req.body.sort;
+  const projection = req.body.projection;
+  const count = req.body.count;
+  const skip = req.body.skip;
 
-app.get("/", function (req, res) {
-  res.redirect("login");
-});
-
-app.get("/home", verifyUser, testBattleRound, function (req, res) {
-  res.sendFile(path.join(__dirname, "public/home.html"));
-});
-
-app.get("/login", function (req, res) {
-  //@ts-ignore
-  if (req.session.username) {
-    res.redirect("home");
+  const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
+  if (!cursor) {
+    res.sendStatus(404);
+    return;
   }
-  res.sendFile(path.join(__dirname, "public/login.html"));
+  const puzzles = await cursor.toArray();
+
+  if (puzzles) {
+    res.json(puzzles);
+    return;
+  } else {
+    res.sendStatus(404);
+    return;
+  }
 });
 
-app.get("/logout", verifyUser, function (req, res) {
-  req.session.destroy(function () {
-    console.log("User logged out!");
-  });
-  res.redirect("login");
-});
+app.post("/submitPuzzle", verifyUser, async (req, res) => {
+  const username = req.session.username;
+  const id = req.body.id;
+  const answer = req.body.answer;
 
-app.get("/scoreboard", verifyUser, testBattleRound, function (req, res) {
-  res.sendFile(path.join(__dirname, "public/scoreboard.html"));
+  if (!id || !answer || !username) {
+    res.sendStatus(400);
+    return;
+  }
+
+  const userData = await fetchUser(username);
+  if (!userData) {
+    res.sendStatus(400);
+    return;
+  }
+
+  const puzzle = await fetchPuzzle(id);
+  if (!puzzle) {
+    res.sendStatus(404);
+    return;
+  }
+
+  if (!puzzle.answer) {
+    console.log("puzzle is missing answer");
+    res.sendStatus(500);
+    return;
+  }
+
+  if (userData.completed_puzzles[puzzle.name]) {
+    res.json({ alreadyCompleted: true });
+    return;
+  } else {
+    if (puzzle.answer === answer) {
+      const result = onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
+      if (!result) {
+        res.sendStatus(500);
+        return;
+      }
+      res.json({ correct: true });
+      return;
+    } else {
+      res.json({ correct: false });
+      return;
+    }
+  }
 });
+//#endregion
+
+//#region Battle Round
+async function onBattleRoundCredit(username, amount) {
+  try {
+    const result = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount } });
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+function lerp(a, b, alpha) {
+  return a + alpha * (b - a);
+}
 
 app.get("/battleRound", verifyUser, function (req, res) {
   res.sendFile(path.join(__dirname, "public/battleRound.html"));
 });
-
-//actions
-
-//register
-app.post(
-  "/register",
-  asyncHandler(async (req, res) => {})
-);
-
-//#region Login
-app.post(
-  "/login",
-  asyncHandler(async (req, res) => {
-    console.log("attempting login ");
-
-    const username = req.body.username;
-    const password = req.body.password;
-
-    if (!username || !password) {
-      res.sendStatus(400);
-      return;
-    }
-
-    var user = await fetchUser(username);
-    if (!user) {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (user.password === password) {
-      req.session.username = user.username;
-      res.sendStatus(200);
-      return;
-    } else {
-      console.log("invalid login credentials");
-      res.sendStatus(401);
-      return;
-    }
-  })
-);
-//#endregion
-
-//#region Puzzles
-app.get("/puzzles", verifyUser, testBattleRound, function (req, res) {
-  res.sendFile(path.join(__dirname, "public/puzzles.html"));
-});
-
-app.post(
-  "/getPuzzle",
-  verifyUser,
-  asyncHandler(async (req, res) => {
-    const id = req.body.id;
-    if (!id) {
-      // Bad request
-      res.sendStatus(400);
-      return;
-    }
-
-    const puzzle = await fetchPuzzle(id);
-    if (!puzzle) {
-      res.sendStatus(404);
-      return;
-    } else {
-      delete puzzle._id;
-      delete puzzle.answer;
-      res.json(puzzle);
-      return;
-    }
-  })
-);
-
-app.post(
-  "/getMultiplePuzzles",
-  verifyUser,
-  asyncHandler(async (req, res) => {
-    console.log("attempting to fetch puzzles");
-
-    const dbquery = req.body.query;
-    const sort = req.body.sort;
-    const projection = req.body.projection;
-    const count = req.body.count;
-    const skip = req.body.skip;
-
-    const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
-    if (!cursor) {
-      res.sendStatus(404);
-      return;
-    }
-    const puzzles = await cursor.toArray();
-
-    if (puzzles) {
-      res.json(puzzles);
-      return;
-    } else {
-      res.sendStatus(404);
-      return;
-    }
-  })
-);
-
-app.post(
-  "/submitPuzzle",
-  verifyUser,
-  asyncHandler(async (req, res) => {
-    const username = req.session.username;
-    const id = req.body.id;
-    const answer = req.body.answer;
-
-    if (!id || !answer || !username) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const userData = await fetchUser(username);
-    if (!userData) {
-      res.sendStatus(400);
-      return;
-    }
-
-    const puzzle = await fetchPuzzle(id);
-    if (!puzzle) {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (!puzzle.answer) {
-      console.log("puzzle is missing answer");
-      res.sendStatus(500);
-      return;
-    }
-
-    if (userData.completed_puzzles[puzzle.name]) {
-      res.json({ alreadyCompleted: true });
-      return;
-    } else {
-      if (puzzle.answer === answer) {
-        const result = onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
-        if (!result) {
-          res.sendStatus(500);
-          return;
-        }
-        res.json({ correct: true });
-        return;
-      } else {
-        res.json({ correct: false });
-        return;
-      }
-    }
-  })
-);
-//#endregion
-
-//#region Users
-app.post(
-  "/getUser",
-  verifyUser,
-  asyncHandler(async (req, res) => {
-    const username = req.session.username;
-    var user = await fetchUser(username);
-    if (!user) {
-      res.sendStatus(404);
-      return;
-    }
-
-    delete user.password;
-    delete user._id;
-    res.json(user);
-  })
-);
-
-app.post(
-  "/getUsers",
-  verifyUser,
-  asyncHandler(async (req, res) => {
-    const dbquery = req.body.query;
-    const sort = req.body.sort;
-    const projection = req.body.projection;
-    const count = req.body.count;
-    const skip = req.body.skip;
-
-    const users = await fetchUsers(dbquery, sort, projection, count, skip);
-    if (!users) {
-      res.sendStatus(500);
-      return;
-    }
-
-    users.forEach((user) => {
-      delete user._id;
-      delete user.password;
-      delete user.completed_puzzles;
-    });
-    res.json(users);
-  })
-);
-//#endregion
-
-//game state
-var paused = true;
-var currentBattleRound = null;
-
-//battle round
-function lerp(a, b, alpha) {
-  return a + alpha * (b - a);
-}
 
 async function endBattleRound() {
   if (!currentBattleRound) {
@@ -552,208 +549,144 @@ async function startBattleRound(battleRoundId, duration = config.battle_round_du
   return { success: true };
 }
 
-app.post(
-  "/battleRound/getStatus",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
+app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res) => {
+  if (currentBattleRound.users[req.session.username]) {
+    res.json({ alreadyJoined: true, endTime: currentBattleRound.endTime });
+    return;
+  }
 
-    if (!currentBattleRound) {
-      res.json({ notStarted: true });
-      return;
-    }
+  res.json({ alreadyJoined: false, endTime: currentBattleRound.endTime });
+});
 
-    if (currentBattleRound.users[req.session.username]) {
-      res.json({ alreadyJoined: true, endTime: currentBattleRound.endTime });
-      return;
-    }
+app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
+  const bidPercentage = req.body.bid;
+  if (!bidPercentage && bidPercentage !== 0) {
+    res.sendStatus(400);
+    return;
+  }
 
-    res.json({ alreadyJoined: false, endTime: currentBattleRound.endTime });
-  })
-);
+  if (currentBattleRound.users[req.session.username]) {
+    res.json({ success: false, alreadyJoined: true });
+    return;
+  }
 
-app.post(
-  "/battleRound/join",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
+  const user = await fetchUser(req.session.username);
+  if (!user) {
+    res.sendStatus(404);
+    return;
+  }
 
-    const bidPercentage = req.body.bid;
-    if (!bidPercentage && bidPercentage !== 0) {
-      res.sendStatus(400);
-      return;
-    }
+  //@ts-ignore
+  delete user._id;
+  delete user.password;
+  delete user.completed_puzzles;
+  if (!user) {
+    res.sendStatus(403);
+    return;
+  }
 
-    if (!currentBattleRound) {
-      res.json({ success: false, notStarted: true });
-      return;
-    }
+  const bid = Math.max(Math.min(Math.floor(user.puzzle_points * bidPercentage), user.puzzle_points), 0);
 
-    if (currentBattleRound.users[req.session.username]) {
-      res.json({ success: false, alreadyJoined: true });
-      return;
-    }
+  try {
+    const result = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
+    if (result) user.puzzle_points -= bid;
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+    return;
+  }
 
-    const user = await fetchUser(req.session.username);
-    if (!user) {
-      res.sendStatus(404);
-      return;
-    }
+  currentBattleRound.users[req.session.username] = {
+    user: user,
+    bid: bid,
+    completed: {},
+  };
+  res.json({ success: true });
+});
 
-    //@ts-ignore
-    delete user._id;
-    delete user.password;
-    delete user.completed_puzzles;
-    if (!user) {
-      res.sendStatus(403);
-      return;
-    }
+app.post("/battleRound/getPuzzles", verifyUser, testBattleRound, async (req, res) => {
+  const participant = currentBattleRound.users[req.session.username];
+  if (!participant) {
+    res.sendStatus(403);
+    return;
+  }
 
-    const bid = Math.max(Math.min(Math.floor(user.puzzle_points * bidPercentage), user.puzzle_points), 0);
-
-    try {
-      const result = await client
-        .db(mainDbName)
-        .collection(usersColName)
-        .updateOne({ username: req.session.username }, { $set: { puzzle_points: user.puzzle_points - bid } });
-      if (result) user.puzzle_points -= bid;
-    } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
-      return;
-    }
-
-    currentBattleRound.users[req.session.username] = {
-      user: user,
-      bid: bid,
-      completed: {},
-    };
-    res.json({ success: true });
-  })
-);
-
-app.post(
-  "/battleRound/getPuzzles",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
-
-    if (!currentBattleRound) {
-      res.json({ notStarted: true });
-      return;
-    }
-
-    const participant = currentBattleRound.users[req.session.username];
-    if (!participant) {
-      res.sendStatus(403);
-      return;
-    }
-
-    const puzzles = Object.values(currentBattleRound.puzzles);
-    const package = [];
-    for (let puzzle of puzzles) {
-      let clone = { ...puzzle };
-      if (participant.completed[puzzle.name]) {
-        clone.completed = true;
-      }
-      delete clone.answer;
-      package.push(clone);
-    }
-    res.json(package);
-  })
-);
-
-app.post(
-  "/battleRound/getPuzzle",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
-
-    if (!currentBattleRound) {
-      res.json({ notStarted: true });
-      return;
-    }
-
-    const participant = currentBattleRound.users[req.session.username];
-    if (!participant) {
-      res.sendStatus(403);
-      return;
-    }
-
-    const id = req.body.id;
-    if (!id) {
-      res.sendStatus(402);
-      return;
-    }
-
-    const puzzle = currentBattleRound.puzzles[id];
-    if (!puzzle) {
-      res.sendStatus(404);
-    }
-
-    let package = { ...puzzle };
-    delete package.answer;
-    res.json(package);
-  })
-);
-
-app.post(
-  "/battleRound/submitPuzzle",
-  asyncHandler(async (req, res) => {
-    if (!req.session.username) {
-      res.sendStatus(403);
-      return;
-    }
-
-    if (!currentBattleRound) {
-      res.json({ notStarted: true });
-      return;
-    }
-
-    const participant = currentBattleRound.users[req.session.username];
-    if (!participant) {
-      res.sendStatus(403);
-      return;
-    }
-
-    const puzzleid = req.body.id;
-    const answer = req.body.answer;
-    if (!puzzleid || !answer) {
-      res.send(400);
-      return;
-    }
-
-    const puzzle = currentBattleRound.puzzles[puzzleid];
-    if (!puzzle) {
-      res.sendStatus(400);
-      return;
-    }
-
+  const puzzles = Object.values(currentBattleRound.puzzles);
+  const package = [];
+  for (let puzzle of puzzles) {
+    let clone = { ...puzzle };
     if (participant.completed[puzzle.name]) {
-      res.json({ alreadyCompleted: true });
-      return;
+      clone.completed = true;
     }
+    delete clone.answer;
+    package.push(clone);
+  }
+  res.json(package);
+});
 
-    if (puzzle.answer === answer) {
-      participant.completed[puzzle.name] = true;
-      res.json({ correct: true });
-      return;
-    } else {
-      res.json({ correct: false });
-      return;
-    }
-  })
-);
+app.post("/battleRound/getPuzzle", verifyUser, testBattleRound, async (req, res) => {
+  const participant = currentBattleRound.users[req.session.username];
+  if (!participant) {
+    res.sendStatus(403);
+    return;
+  }
 
-//scoreboard
+  const id = req.body.id;
+  if (!id) {
+    res.sendStatus(402);
+    return;
+  }
+
+  const puzzle = currentBattleRound.puzzles[id];
+  if (!puzzle) {
+    res.sendStatus(404);
+  }
+
+  let package = { ...puzzle };
+  delete package.answer;
+  res.json(package);
+});
+
+app.post("/battleRound/submitPuzzle", verifyUser, testBattleRound, async (req, res) => {
+  const participant = currentBattleRound.users[req.session.username];
+  if (!participant) {
+    res.sendStatus(403);
+    return;
+  }
+
+  const puzzleid = req.body.id;
+  const answer = req.body.answer;
+  if (!puzzleid || !answer) {
+    res.send(400);
+    return;
+  }
+
+  const puzzle = currentBattleRound.puzzles[puzzleid];
+  if (!puzzle) {
+    res.sendStatus(400);
+    return;
+  }
+
+  if (participant.completed[puzzle.name]) {
+    res.json({ alreadyCompleted: true });
+    return;
+  }
+
+  if (puzzle.answer === answer) {
+    participant.completed[puzzle.name] = true;
+    res.json({ correct: true });
+    return;
+  } else {
+    res.json({ correct: false });
+    return;
+  }
+});
+//#endregion
+
+// #region Scoreboard
 async function getScoreboard() {
   try {
     const result = await client.db("sample_data").collection("sample_users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
@@ -763,14 +696,6 @@ async function getScoreboard() {
     return null;
   }
 }
-
-app.post(
-  "/getScoreboard",
-  asyncHandler(async (req, res) => {
-    const scoreboard = await getScoreboard();
-    res.json(scoreboard);
-  })
-);
 
 async function updateEvent() {
   if (paused) return;
@@ -791,9 +716,17 @@ function startUpdates() {
 }
 startUpdates();
 
-//#region Admin
-const adminRouter = express.Router();
+app.get("/scoreboard", verifyUser, verifyBattleRound, function (req, res) {
+  res.sendFile(path.join(__dirname, "public/scoreboard.html"));
+});
 
+app.post("/getScoreboard", async (req, res) => {
+  const scoreboard = await getScoreboard();
+  res.json(scoreboard);
+});
+//#endregion
+
+//#region Admin
 const adminCheck = function (req, res, next) {
   const isAdmin = req.session.isAdmin;
   if (isAdmin !== true) {
@@ -804,36 +737,33 @@ const adminCheck = function (req, res, next) {
   next();
 };
 
-app.post(
-  "/adminLogin",
-  asyncHandler(async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+app.post("/adminLogin", async (req, res) => {
+  const username = req.body.username;
+  const password = req.body.password;
 
-    console.log(username, password);
+  console.log(username, password);
 
-    if (!username || !password) {
-      res.sendStatus(400);
+  if (!username || !password) {
+    res.sendStatus(400);
+    return;
+  }
+
+  try {
+    let result = await client.db(mainDbName).collection(adminColName).findOne({ username: username });
+    if (result && result.password == password) {
+      req.session.isAdmin = true; // potentially insecure
+      res.sendStatus(200);
+      return;
+    } else {
+      res.sendStatus(403);
       return;
     }
-
-    try {
-      let result = await client.db(mainDbName).collection(adminColName).findOne({ username: username });
-      if (result && result.password == password) {
-        req.session.isAdmin = true; // potentially insecure
-        res.sendStatus(200);
-        return;
-      } else {
-        res.sendStatus(403);
-        return;
-      }
-    } catch (err) {
-      console.log(err);
-      res.sendStatus(500);
-      return;
-    }
-  })
-);
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+    return;
+  }
+});
 
 app.get("/adminLogin", (req, res) => {
   //@ts-ignore
@@ -849,275 +779,277 @@ app.get("/admin", adminCheck, (req, res) => {
   res.sendFile(path.join(__dirname, "public/admin.html"));
 });
 
-app.post(
-  "/admin/command",
-  adminCheck,
-  asyncHandler(async (req, res) => {
-    const operation = req.body.operation;
-    const operand = req.body.operand;
-    //amount of points added
-    const arguments = req.body.arguments;
-    //id of completed puzzle
+app.post("/admin/command", adminCheck, async (req, res) => {
+  const operation = req.body.operation;
+  const operand = req.body.operand;
+  //amount of points added
+  const arguments = req.body.arguments;
+  //id of completed puzzle
 
-    // console.log(operation, operand, arguments);
-    // return;
+  // console.log(operation, operand, arguments);
+  // return;
 
-    switch (operation) {
-      case "ADD": // increment points by certain amount, add puzzle to completed
-        switch (operand) {
-          case "PUZZLE_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "SCENARIO_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "COMPLETED_PUZZLE":
-            if (!arguments.target || !arguments.id) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .updateOne({ username: arguments.target }, { $set: { [`completed_puzzles.${arguments.id}`]: true } });
-
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          default:
-            res.status(400).send("Invalid operand");
-            return;
-        }
-
-      case "SUB": //decrement points by certain amount, remove puzzle from completed
-        switch (operand) {
-          case "PUZZLE_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: -arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "SCENARIO_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: -arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "COMPLETED_PUZZLE":
-            if (!arguments.target || !arguments.id) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .updateOne({ username: arguments.target }, { $unset: { [`completed_puzzles.${arguments.id}`]: "" } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          default:
+  switch (operation) {
+    case "ADD": // increment points by certain amount, add puzzle to completed
+      switch (operand) {
+        case "PUZZLE_POINTS":
+          if (!arguments.target || !arguments.amount) {
             res.status(400).send("Operation missing arguments");
             return;
-        }
+          }
 
-      case "SET": //set points values, set division,
-        switch (operand) {
-          case "PUZZLE_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
               return;
             }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
 
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $set: { puzzle_points: arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "SCENARIO_POINTS":
-            if (!arguments.target || !arguments.amount) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $set: { scenario_points: arguments.amount } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-
-          case "DIVISION":
-            if (!arguments.target || !arguments.division) {
-              res.status(400).send("Operation missing arguments");
-              return;
-            }
-
-            try {
-              let result = await client
-                .db(mainDbName)
-                .collection(usersColName)
-                .findOneAndUpdate({ username: arguments.target }, { $set: { division: arguments.division } });
-              if (result) {
-                res.status(200).send("Success");
-                return;
-              } else {
-                res.status(404).send("Failed to fetch User");
-                return;
-              }
-            } catch (err) {
-              console.log(err);
-              res.status(500).send("Server Failed to execute operation");
-              return;
-            }
-          default:
+        case "SCENARIO_POINTS":
+          if (!arguments.target || !arguments.amount) {
             res.status(400).send("Operation missing arguments");
             return;
-        }
+          }
 
-      case "START": //starts events (puzzle round, )
-        switch (operand) {
-          default:
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
             return;
-        }
+          }
 
-      case "END": //ends events (puzzle round, battle round)
-        switch (operand) {
-          default:
+        case "COMPLETED_PUZZLE":
+          if (!arguments.target || !arguments.id) {
+            res.status(400).send("Operation missing arguments");
             return;
-        }
+          }
 
-      default:
-        res.status(400).send("Invalid Operation");
-        return;
-    }
-  })
-);
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .updateOne({ username: arguments.target }, { $set: { [`completed_puzzles.${arguments.id}`]: true } });
+
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        default:
+          res.status(400).send("Invalid operand");
+          return;
+      }
+
+    case "SUB": //decrement points by certain amount, remove puzzle from completed
+      switch (operand) {
+        case "PUZZLE_POINTS":
+          if (!arguments.target || !arguments.amount) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $inc: { puzzle_points: -arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        case "SCENARIO_POINTS":
+          if (!arguments.target || !arguments.amount) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $inc: { scenario_points: -arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        case "COMPLETED_PUZZLE":
+          if (!arguments.target || !arguments.id) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .updateOne({ username: arguments.target }, { $unset: { [`completed_puzzles.${arguments.id}`]: "" } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        default:
+          res.status(400).send("Operation missing arguments");
+          return;
+      }
+
+    case "SET": //set points values, set division,
+      switch (operand) {
+        case "PUZZLE_POINTS":
+          if (!arguments.target || !arguments.amount) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $set: { puzzle_points: arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        case "SCENARIO_POINTS":
+          if (!arguments.target || !arguments.amount) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $set: { scenario_points: arguments.amount } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+
+        case "DIVISION":
+          if (!arguments.target || !arguments.division) {
+            res.status(400).send("Operation missing arguments");
+            return;
+          }
+
+          try {
+            let result = await client
+              .db(mainDbName)
+              .collection(usersColName)
+              .findOneAndUpdate({ username: arguments.target }, { $set: { division: arguments.division } });
+            if (result) {
+              res.status(200).send("Success");
+              return;
+            } else {
+              res.status(404).send("Failed to fetch User");
+              return;
+            }
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Server Failed to execute operation");
+            return;
+          }
+        default:
+          res.status(400).send("Operation missing arguments");
+          return;
+      }
+
+    case "START": //starts events (puzzle round, )
+      switch (operand) {
+        case "BATTLE_ROUND":
+          return;
+        case "PUZZLE_ROUND":
+          return;
+        case "SCENARIO_ROUND":
+          return;
+        default:
+          return;
+      }
+
+    case "END": //ends events (puzzle round, battle round)
+      switch (operand) {
+        default:
+          return;
+      }
+
+    default:
+      res.status(400).send("Invalid Operation");
+      return;
+  }
+});
 //#endregion
 
 //socket handling
