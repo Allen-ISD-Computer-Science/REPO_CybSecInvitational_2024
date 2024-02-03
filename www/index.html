@@ -39,6 +39,7 @@
         0% {
             opacity: 0;
         }
+
         100% {
             opacity: 1;
         }
@@ -117,6 +118,11 @@
         animation-duration: 1s;
     }
 
+    .glow-hover:hover p {
+        text-shadow: 0 0 10px #ffffff;
+        animation-duration: 1s;
+    }
+
     .card-img-wrapper img {
         transition: 1.15s;
     }
@@ -127,17 +133,34 @@
 </style>
 
 <body>
-    <!--
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
+    <nav class="navbar navbar-expand-md bg-body-tertiary d-flex flex-row align-items-center sticky-top"
+        style="background-color: #243a6b; color: #ffffff; opacity: 50%; backdrop-filter: blur(5px);">
+        <div class="container-fluid d-flex flex-row align-items-center">
+            <a class="navbar-brand">
+                <p style="color: #ffffff;">Allen Cyber Invitational</p>
+            </a>
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a href="#" aria-current="page" class="nav-link-active">Home</a>
+                    <a class="nav-link active" aria-current="page" href="#">
+                        <p style="color: #ffffff" class="glow-hover">Home</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./login.html">
+                        <p style="color: #c4c4c4;">Login</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./register.html">
+                        <p style="color: #c4c4c4;">Reigster</p>
+                    </a>
                 </li>
             </ul>
         </div>
     </nav>
--->
+
+
+
 
     <div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png)"></div>
     <div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png)"></div>
@@ -148,284 +171,223 @@
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in .9s">
             <img src="./img/ico/EagleOutline.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25">
         </div>
-        <!-- <div class="display-1 align-self-center text-light">Allen Cyber Invitational</div> -->
-        <!-- <img src="./img/cosmos1.png" style="rotate: 180deg;" class="align-self-center w-50"> -->
+
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in 1s">
-            <!-- <img src="./img/cosmos1.png" style="rotate: 0deg;" class="align-self-center w-75"> -->
-            <!-- <img src="./img/LOGO.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25"> -->
+
             <div class="display-1 align-self-center text-light">Allen Cyber Invitational</div>
-            <!-- <img src="./img/cosmos1.png" style="rotate: 180deg;" class="align-self-center w-50"> -->
+
         </div>
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in 1.1s">
-            <!-- <img src="./img/cosmos1.png" style="rotate: 0deg;" class="align-self-center w-75"> -->
-            <!-- <img src="./img/LOGO.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25"> -->
-            <!-- <div class="display-1 align-self-center text-light">Allen Cyber Invitational</div> -->
+
             <img src="./img/cosmos1.png" style="rotate: 180deg;" class="align-self-center w-30">
         </div>
     </div>
 
 
     <!-- Set Constant Heights -->
+    <!--
     <hr style="border-top: 2px solid #ffffff; width: 75%" />
     <div class="container d-flex flex-row justify-content-around">
-        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: xx-large" href="./register.html" role="button">Register</a>
+        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light"
+            style="font-size: xx-large" href="./register.html" role="button">Register</a>
 
-        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: xx-large" href="./login.html" role="button">Log In</a>
+        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light"
+            style="font-size: xx-large" href="./login.html" role="button">Log In</a>
     </div>
     <hr style="border-top: 2px solid #ffffff; width: 75%" class="pb-5" />
 
     <div id="content" class="container-fluid 100vh" style="color: #ffffff">
         <div class="d-flex justify-content-evenly"></div>
+    -->
+    <div class="container">
+        <div class="d-flex flex-row justify-content-around align-items-center"
+            style="margin-bottom: 4rem; animation: fade-in 1s;">
+            <div class="d-flex flex-column justify-content-center align-items-start text-start"
+                style="height: 100%; width: 50%; margin-bottom: 4rem">
+                <h3>Time</h3>
+                <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
+                <p style="width: 100%">April 27th, 2024</p>
+                <p style="width: 100%">8am to 4:30pm</p>
+                <p style="width: 100%; text-align: justify">
+                    Our mission is to create a responsive and interpretive environment for fellow students to
+                    explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding
+                    a multitude of major cyber security concepts (including but not limited to cryptography,
+                    steganography, web exploitation, CLI commands, binary
+                    exploitation and much more) and then apply them in a scenario based challenge. All for no cost
+                    to the student!
+                </p>
+            </div>
+            <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
+            style="height: 15rem; width: 15rem" />
+        </div>
+            
+        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
+            <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
+                <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
+                    style="height: 15rem; width: 15rem" />
+            </div>
+            <div class="d-flex flex-column justify-content-center align-items-end text-end"
+                style="height: 100%; width: 50%; margin-bottom: 4rem">
+                <h3>Place</h3>
+                <hr style="border-top: 2px solid #ffffff; width: 100%" align="right" />
+                <p style="width: 100%; text-align: right">We are currently deciding on a venue for the competition
+                </p>
+                <h2 style="width: 100%; text-align: center">TBD</h2>
+            </div>
+        </div>
 
-        <div class="container">
-            <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
-                <div class="d-flex flex-column justify-content-center align-items-center text-center"
-                    style="height: 100%; width: 100%; margin-bottom: 4rem">
-                    <h3>Follow Us!</h3>
-                    <hr style="border-top: 2px solid #ffffff; width: 100%; margin-bottom: 3rem;" align="left" />
+    <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
+        <div class="d-flex flex-column justify-content-center align-items-start text-start"
+            style="height: 100%; width: 50%; margin-bottom: 4rem">
+            <h3>Our Mission</h3>
+            <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
+            <p style="width: 100%; text-align: justify">
+                Our mission is to create a responsive and interpretive environment for fellow students to
+                explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding
+                a multitude of major cyber security concepts (including but not limited to cryptography,
+                steganography, web exploitation, CLI commands, binary
+                exploitation and much more) and then apply them in a scenario based challenge. All for no cost
+                to the student!
+            </p>
+        </div>
+            <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
+                <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
+                    style="height: 15rem; width: 15rem" />
+            </div>
+        </div>
+        
+        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
+            <div class="d-flex flex-column justify-content-center align-items-center text-center"
+                style="height: 100%; width: 100%; margin-bottom: 4rem">
+                <h3>Follow Us!</h3>
+                <hr style="border-top: 2px solid #ffffff; width: 100%; margin-bottom: 3rem;" align="left" />
+                <div class="d-flex flex-row justify-content-around" style="width: 100%">
 
-                    
-                    <div class="d-flex flex-row justify-content-around" style="width: 100%">
-                        <a>
-                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+                    <a href="https://discord.com/invite/ggv3eNdAqr">
+                        <div class="card border-light bg-transparent glow-hover glow-button"
+                            style="width: 15rem; height: 15rem;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Discord.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                                <a href="https://discord.com/invite/ggv3eNdAqr"
+                                    class="d-flex flex-row justify-content-center"
+                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Discord.png"
+                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4>Discord Link</h4>
+                                <h4 href="https://discord.com/invite/ggv3eNdAqr">Discord Link</h4>
                             </div>
                         </div>
                     </a>
-                        
-                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+
+                    <a href="#">
+                        <div class="card border-light bg-transparent glow-hover glow-button"
+                            style="width: 15rem; height: 15rem;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Instagram.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                                <a href="#" class="d-flex flex-row justify-content-center"
+                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Instagram.png"
+                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
                                 <h4>Instagram Link</h4>
                             </div>
                         </div>
+                    </a>
 
-                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+                    <a href="#">
+                        <div class="card border-light bg-transparent glow-hover glow-button"
+                            style="width: 15rem; height: 15rem;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Linkedin.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                                <a href="#" class="d-flex flex-row justify-content-center"
+                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Linkedin.png"
+                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
                                 <h4>Linkedin Link</h4>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                    </a>
 
-            <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem; animation: fade-in 1s;">
-                <div class="d-flex flex-column justify-content-center align-items-start text-start"
-                    style="height: 100%; width: 50%; margin-bottom: 4rem">
-                    <h3>Time</h3>
-                    <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-                    <p style="width: 100%">April 27th, 2024</p>
-                    <p style="width: 100%">8am to 4:30pm</p>
-                    <p style="width: 100%; text-align: justify">
-                        Our mission is to create a responsive and interpretive environment for fellow students to
-                        explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding
-                        a multitude of major cyber security concepts (including but not limited to cryptography,
-                        steganography, web exploitation, CLI commands, binary
-                        exploitation and much more) and then apply them in a scenario based challenge. All for no cost
-                        to the student!
-                    </p>
-                </div>
-                <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
-                        style="height: 15rem; width: 15rem" />
                 </div>
             </div>
-
-            <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
-                <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
-                        style="height: 15rem; width: 15rem" />
-                </div>
-                <div class="d-flex flex-column justify-content-center align-items-end text-end"
-                    style="height: 100%; width: 50%; margin-bottom: 4rem">
-                    <h3>Place</h3>
-                    <hr style="border-top: 2px solid #ffffff; width: 100%" align="right" />
-                    <p style="width: 100%; text-align: right">We are currently deciding on a venue for the competition
-                    </p>
-                    <h2 style="width: 100%; text-align: center">TBD</h2>
-                </div>
-            </div>
-
-            <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
-                <div class="d-flex flex-column justify-content-center align-items-start text-start"
-                    style="height: 100%; width: 50%; margin-bottom: 4rem">
-                    <h3>Our Mission</h3>
-                    <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-                    <p style="width: 100%; text-align: justify">
-                        Our mission is to create a responsive and interpretive environment for fellow students to
-                        explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding
-                        a multitude of major cyber security concepts (including but not limited to cryptography,
-                        steganography, web exploitation, CLI commands, binary
-                        exploitation and much more) and then apply them in a scenario based challenge. All for no cost
-                        to the student!
-                    </p>
-                </div>
-                <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
-                        style="height: 15rem; width: 15rem" />
-                </div>
-            </div>
-            <!--
-        <div id="carouselId" class="carousel slide" data-bs-ride="carousel">
-          <ol class="carousel-indicators">
-            <li data-bs-target="#carouselId" data-bs-slide-to="0" class="active" aria-current="true" aria-label="First slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="1" aria-label="Second slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="2" aria-label="Third slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="3" aria-label="Fourth slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="4" aria-label="Fifth slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="5" aria-label="Sixth slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="6" aria-label="Seventh slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="1" aria-label="Eighth slide"></li>
-            <li data-bs-target="#carouselId" data-bs-slide-to="2" aria-label="Ninth slide"></li>
-          </ol>
-          <div class="carousel-inner" role="listbox">
-            <div class="carousel-item active">
-              <a href="" style="position: absolute" class="text-center w-100 p-3 h1 text-dark">Abel balling hard</a>
-              <img src="./img/HeadShots/Abel.jpg" class="w-100 d-block rounded" alt="First slide" />
-            </div>
-            <div class="carousel-item">
-              <img src="./img/HeadShots/Aidan.jpg" class="w-100 d-block" alt="Second slide" />
-            </div>
-            <div class="carousel-item">
-              <img src="./img/HeadShots/Blake.jpg" class="w-100 d-block" alt="Third slide" />
-            </div>
-            <div class="carousel-item">
-              <img src="./img/HeadShots/James.jpg" class="w-100 d-block" alt="Fourth slide" />
-            </div>
-
-            <div class="carousel-item">
-              <img src="./img/HeadShots/Richard.jpg" class="w-100 d-block" alt="Fifth slide" />
-            </div>
-            <div class="carousel-item">
-              <img src="./img/HeadShots/Soohan.jpg" class="w-100 d-block" alt="Sixth slide" />
-            </div>
-          </div>
-          <button class="carousel-control-prev" style="background-color: rgba(0, 0, 0, 0); border: 0" type="button" data-bs-target="#carouselId" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          </button>
-          <button class="carousel-control-next" style="background-color: rgba(0, 0, 0, 0); border: 0" type="button" data-bs-target="#carouselId" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          </button>
         </div>
--->
-            <div class="container text-center">
-                <h3><u>Meet The Team</u></h3>
-                <div class="row">
-                    <div class="col">
-                        <img src="./img/HeadShots/James.jpg" class="figure-img img-fluid rounded">
-                        <p>James Dungan</p>
-                    </div>
-                    <div class="col">
-                        <img src="./img/HeadShots/Soohan.jpg" class="figure-img img-fluid rounded">
-                        <p>Soohan Cho</p>
-                    </div>
-                    <div class="col">
-                        <img src="./img/HeadShots/Blake.jpg" class="figure-img img-fluid rounded">
-                        <p>Jonathan Gateley</p>
-                    </div>
+        <div class="container text-center">
+            <h3><u>Meet The Team</u></h3>
+            <div class="row">
+                <div class="col-4">
+                    <img src="./img/HeadShots/James.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">James Dungan</strong><br>Product Manager</p>
+
                 </div>
-                <div class="row">
-                    <div class="col">
-                        <img src="./img/HeadShots/Richard.jpg" class="figure-img img-fluid rounded">
-                        <p>Richard Jang</p>
-                    </div>
-                    <div class="col">
-                        <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
-                        <p>Faraz Piracha</p>
-                    </div>
-                    <div class="col">
-                      <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
-                      <p>Marisa Patel</p>
-                  </div>
-                  <div class="col">
+                <div class="col-4">
+                    <img src="./img/HeadShots/Soohan.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Soohan Cho</strong><br>Project Manager</p>
+
+                </div>
+                <div class="col-4">
+                    <img src="./img/HeadShots/Blake.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Blake Gateley</strong><br>Project Coordinator
+                    </p>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-2">
+                    <img src="./img/HeadShots/Richard.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Richard Jang</strong><br>Junior Coordinator
+                    </p>
+
+                </div>
+                <div class="col-2">
                     <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
-                    <p>Sara Vaughan</p>
+                    <p style="color: #797575"><strong style="color: #fff">Faraz Piracha</strong><br>Database Analysis
+                    </p>
+
                 </div>
-                    <div class="col">
-                        <img src="./img/HeadShots/Abel.jpg" class="figure-img img-fluid rounded">
-                        <p>Abel Semahegn</p>
-                    </div>
-                    <div class="col">
-                        <img src="./img/HeadShots/Aidan.jpg" class="figure-img img-fluid rounded">
-                        <p>Aidan Morris</p>
-                    </div>
+                <div class="col-2">
+                    <img src="./img/HeadShots/Marisa.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Marisa Patel</strong><br>Web Developer</p>
+
                 </div>
-            </div>
+                <div class="col-2">
+                    <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Sara Vaughan</strong><br>Media Coordinator</p>
 
-            <!--
-          <div style="color: #000000">
-            <div class="card" size="width: 10rem;">
-              <img src="./img/ico/HeadShots/James.jpg" alt="James's Headshot" class="card-img-top align-self-center">
-              <div class="card-body align-self-center" style="text-align: center;">
-                <h5 class="card-title">James Dungan</h5>
-                <p class="card-text">Project Manager, Chair, Logistics Coordinator</p>
-              </div>
-            </div>
-            <div class="card" size="width: 10rem;">
-              <img src="./img/ico/HeadShots/James.jpg" alt="James's Headshot" class="card-img-top align-self-center">
-              <div class="card-body align-self-center" style="text-align: center;">
-                <h5 class="card-title">James Dungan</h5>
-                <p class="card-text">Project Manager, Chair, Logistics Coordinator</p>
-              </div>
-            </div>
-          </div>
-        -->
-        </div>
+                </div>
+                <div class="col-2">
+                    <img src="./img/HeadShots/Abel.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Abel Semahegn</strong><br>Junior Developer</p>
 
-        <div class="Sponsors d-flex flex-column justify-content-center align-items-center"
-            style="height: 100%; width: 100%; margin-bottom: 4rem">
-            <h3>Sponsors</h3>
-            <hr style="border-top: 2px solid #ffffff; width: 75%" align="center" />
-            <p class="text-end" style="width: 75%; text-align: center; text-align: justify">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                fugiat nulla pariatur.
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
-                laborum.
-            </p>
-        </div>
+                </div>
+                <div class="col-2">
+                    <img src="./img/HeadShots/Aidan.jpg" class="figure-img img-fluid rounded">
+                    <p style="color: #797575"><strong style="color: #fff">Aidan Morris</strong><br>Junior Manager</p>
 
-        <div class="FAQ d-flex flex-column justify-content-center align-items-center"
-            style="height: 100%; width: 100%; margin-bottom: 4rem">
-            <h3>FAQ</h3>
-            <hr style="border-top: 2px solid #ffffff; width: 75%" align="center" />
-            <div class="d-flex flex-column justify-content-center align-items-start" style="height: 100%; width: 75%">
-                <h4 style="text-align: left">Question</h4>
-                <p style="width: 100%; text-align: left; text-align: justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                </p>
-                <h4 style="text-align: left">Answer</h4>
-                <p style="width: 100%; text-align: left; text-align: justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore
-                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                    cillum dolore eu fugiat nulla pariatur.
-                    Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                    est laborum.
-                </p>
+                </div>
             </div>
         </div>
     </div>
+    <!-- 
+    q: Cost?
+    a: Free.
+
+    q: Food?
+    a: We will provide (you can bring maybe).
+
+    q: previouse exp?
+    a: little knolege is required!
+
+    q: Team Member?
+    a: You will have to sign up with a duo partner. 
+ -->
+    <div class="container px-5">
+        <h1>FAQ!</h1>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-        crossorigin="anonymous"></script>
+        crossorigin="anonymous">
+    </script>
 </body>
 
 </html>
