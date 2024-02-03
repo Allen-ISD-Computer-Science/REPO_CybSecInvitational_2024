@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Promo Site</title>
+    <title>Allen Cyber Invitational</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./css/sb-admin-2.min.css" />
@@ -28,6 +28,20 @@
         background: rgb(0, 15, 93);
         background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(76, 88, 151) 100%);
         background-repeat: no-repeat;
+        animation: fadeInAnimation ease 3s;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        opacity: 0;
+        transition: opacity 5s;
+    }
+
+    @keyframes fadeInAnimation {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
     }
 
     .glow {
@@ -100,10 +114,31 @@
 
     .glow-hover:hover {
         box-shadow: 0 0 30px var(--box-shadow-color);
+        animation-duration: 1s;
+    }
+
+    .card-img-wrapper img {
+        transition: 1.15s;
+    }
+
+    .card:hover .card-img-wrapper img {
+        transform: scale(1.15);
     }
 </style>
 
 <body>
+    <!--
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a href="#" aria-current="page" class="nav-link-active">Home</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+-->
+
     <div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png)"></div>
     <div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png)"></div>
     <div id="background-stars-3" class="star-background" style="background-image: url(./img/stars1.png)"></div>
@@ -111,7 +146,7 @@
     <div class="w-100 vh-100 d-flex flex-column justify-content-center">
         <!-- <img src="./img/cosmos1.png" style="rotate: 0deg;" class="align-self-center w-75"> -->
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in .9s">
-            <img src="./img/LOGO.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25">
+            <img src="./img/ico/EagleOutline.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25">
         </div>
         <!-- <div class="display-1 align-self-center text-light">Allen Cyber Invitational</div> -->
         <!-- <img src="./img/cosmos1.png" style="rotate: 180deg;" class="align-self-center w-50"> -->
@@ -130,26 +165,60 @@
     </div>
 
 
-
+    <!-- Set Constant Heights -->
     <hr style="border-top: 2px solid #ffffff; width: 75%" />
-    <div class="container d-flex justify-content-around">
-        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light"
-            style="font-size: xxx-large" href="register.html" role="button">Register</a>
-          <img src="./img/discord-mark-white.png" style="height: 10%; width: 10%;">
-        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light"
-            style="font-size: xxx-large" href="login.html" role="button">Log In</a>
+    <div class="container d-flex flex-row justify-content-around">
+        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: xx-large" href="./register.html" role="button">Register</a>
+
+        <a name="" id="" class="glow glow-hover glow-button btn btn-outline-primary btn-outline-light" style="font-size: xx-large" href="./login.html" role="button">Log In</a>
     </div>
     <hr style="border-top: 2px solid #ffffff; width: 75%" class="pb-5" />
 
     <div id="content" class="container-fluid 100vh" style="color: #ffffff">
         <div class="d-flex justify-content-evenly"></div>
 
-        <div class="Socials">
-            <!--Insta, Discord, Youtube-->
-        </div>
-
         <div class="container">
             <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
+                <div class="d-flex flex-column justify-content-center align-items-center text-center"
+                    style="height: 100%; width: 100%; margin-bottom: 4rem">
+                    <h3>Follow Us!</h3>
+                    <hr style="border-top: 2px solid #ffffff; width: 100%; margin-bottom: 3rem;" align="left" />
+
+                    
+                    <div class="d-flex flex-row justify-content-around" style="width: 100%">
+                        <a>
+                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Discord.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                            </div>
+                            <div class="card-footer d-flex flex-column bg-transparent">
+                                <h4>Discord Link</h4>
+                            </div>
+                        </div>
+                    </a>
+                        
+                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Instagram.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                            </div>
+                            <div class="card-footer d-flex flex-column bg-transparent">
+                                <h4>Instagram Link</h4>
+                            </div>
+                        </div>
+
+                        <div class="card border-light bg-transparent glow-hover glow-button" style="width: 15rem; height: 15rem;">
+                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                                <a href="#" class="d-flex flex-row justify-content-center" style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Linkedin.png" style="width: 100%;" class="card-img-wrapper card-img-top"></a>
+                            </div>
+                            <div class="card-footer d-flex flex-column bg-transparent">
+                                <h4>Linkedin Link</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem; animation: fade-in 1s;">
                 <div class="d-flex flex-column justify-content-center align-items-start text-start"
                     style="height: 100%; width: 50%; margin-bottom: 4rem">
                     <h3>Time</h3>
@@ -166,14 +235,14 @@
                     </p>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/logo.png" align="right"
+                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
                         style="height: 15rem; width: 15rem" />
                 </div>
             </div>
 
             <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
                 <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/logo.png" align="right"
+                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
                         style="height: 15rem; width: 15rem" />
                 </div>
                 <div class="d-flex flex-column justify-content-center align-items-end text-end"
@@ -201,7 +270,7 @@
                     </p>
                 </div>
                 <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                    <img class="align-self-center" src="./img/logo.png" align="right"
+                    <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
                         style="height: 15rem; width: 15rem" />
                 </div>
             </div>
