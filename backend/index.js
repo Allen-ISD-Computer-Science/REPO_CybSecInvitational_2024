@@ -34,6 +34,7 @@ const adminColName = process.env.ADMINISTRATOR_COLLECTION;
 
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const { generateKey, verify } = require("crypto");
+const { cursorTo } = require("readline");
 const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -79,21 +80,52 @@ app.use("*", (req, res, next) => {
   next();
 });
 
-class Round {
-  /**
-   * @constructor
-   * @property {string} cat
-   */
-  constructor() {
-    this.cat = 0;
-  }
-}
+//#region JDoc Type Definitions
+/**
+ * Puzzle Type Definition
+ * @typedef {object} Puzzle
+ * @prop {string} _id
+ * @prop {string} name
+ * @prop {string} description
+ * @prop {number} point_value
+ * @prop {number} difficulty
+ * @prop {string} category
+ * @prop {string} answer
+ */
 
-let a = new Round();
-a.ca;
+/**
+ * Round Type Definition
+ * @typedef {object} Round
+ * @prop {number} startTime
+ * @prop {number} endTime
+ * @prop {function} callback // called during generic end round function
+ * @prop {NodeJS.Timeout} endTimeout // uses generic end round function
+ * @prop {string} type
+ * @prop {string} id
+ */
+
+/**
+ * Battle Round Type Definition
+ * @typedef {object} BattleRoundProperties
+ * @prop {number} min_bid
+ * @prop {{string?: Puzzle}} puzzles
+ * @prop {{string?: number}} users
+ * @typedef {Round & BattleRoundProperties} BattleRound
+ */
+
+/**
+ * Round Start Result Type Definition
+ * @typedef {object} RoundStartResult
+ * @prop {boolean} success
+ * @prop {0|1|2|3} status //0: Server side failure, 1: Ok, 2: Round already in session
+ */
+
+//#endregion
+
 //event states
 var paused = true;
-var currentBattleRound = null;
+/**@type {Round | BattleRound} */
+var currentRound = null;
 
 //#region State Verification
 const verifyUser = function (req, res, next) {
@@ -104,9 +136,18 @@ const verifyUser = function (req, res, next) {
   next();
 };
 
+// Verifies if current round is session is a puzzle round, redirects if not and if no round is in session
+const verifyPuzzleRound = function (req, res, next) {
+  if (!currentRound || currentRound.type != "PuzzleRound") {
+    res.redirect("home");
+    return;
+  }
+  next();
+};
+
 // Verifies if a battle round currently exists then redirects to battle round page if so
 const verifyBattleRound = function (req, res, next) {
-  if (currentBattleRound) {
+  if (currentRound && currentRound.type == "BattleRound") {
     res.redirect("battleRound");
     return;
   }
@@ -115,7 +156,7 @@ const verifyBattleRound = function (req, res, next) {
 
 // Verifies if a battle round currently exists then returns json data if none does
 const testBattleRound = function (req, res, next) {
-  if (!currentBattleRound) {
+  if (!currentRound || currentRound.type != "BattleRound") {
     res.send({ notStarted: true });
     return;
   }
@@ -239,6 +280,7 @@ app.post("/login", async (req, res) => {
   }
 
   if (user.password === password) {
+    //@ts-ignore
     req.session.username = user.username;
     res.sendStatus(200);
     return;
@@ -252,6 +294,7 @@ app.post("/login", async (req, res) => {
 
 //#region Users
 app.post("/getUser", verifyUser, async (req, res) => {
+  //@ts-ignore
   const username = req.session.username;
   var user = await fetchUser(username);
   if (!user) {
@@ -286,9 +329,61 @@ app.post("/getUsers", verifyUser, async (req, res) => {
 });
 //#endregion
 
+//#region Rounds
+async function endCurrentRound() {
+  console.log("Ending current round");
+  if (!currentRound) return;
+
+  try {
+    clearTimeout(currentRound.endTimeout);
+  } catch (err) {
+    console.log(err);
+  }
+  currentRound.callback().then(() => {
+    currentRound = null;
+  });
+
+  console.log(currentRound);
+}
+
+//#region Puzzle Round
+function endPuzzleRound() {
+  console.log("Ending puzzle round");
+}
+
+/**
+ * @param {string} id
+ * @param {number} duration
+ * @returns {RoundStartResult}
+ */
+function startPuzzleRound(id, duration = config.puzzle_round_duration) {
+  if (currentRound) {
+    console.warn("A round is already in session");
+    return { success: false, status: 2 };
+  }
+
+  console.log("starting puzzle round");
+
+  let time = Date.now();
+  currentRound = {
+    startTime: time,
+    endTime: time + duration,
+    callback: endPuzzleRound,
+    endTimeout: setTimeout(endCurrentRound, duration),
+    type: "PuzzleRound",
+    id: String(id),
+  };
+
+  return { success: true, status: 1 };
+}
+//#endregion
+//#endregion
+
 //#region Puzzles
 async function fetchPuzzle(name) {
   try {
+    /**@type {Puzzle?} */
+    // @ts-ignore
     const result = await client.db(mainDbName).collection(puzzlesColName).findOne({ name: name });
     return result;
   } catch (err) {
@@ -299,8 +394,10 @@ async function fetchPuzzle(name) {
 
 async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
   try {
-    const cursor = await client.db(mainDbName).collection(puzzlesColName).find(query).project(projection).skip(skip).sort(sort).limit(count);
-    return cursor;
+    /**@type {Puzzle[]?} */
+    //@ts-ignore
+    const puzzles = await client.db(mainDbName).collection(puzzlesColName).find(query).project(projection).skip(skip).sort(sort).limit(count).toArray();
+    return puzzles;
   } catch (err) {
     console.log(err);
     return null;
@@ -355,11 +452,11 @@ app.post("/getMultiplePuzzles", verifyUser, async (req, res) => {
   const skip = req.body.skip;
 
   const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
-  if (!cursor) {
+  if (!cursor || cursor.length < 1) {
     res.sendStatus(404);
     return;
   }
-  const puzzles = await cursor.toArray();
+  const puzzles = await cursor;
 
   if (puzzles) {
     res.json(puzzles);
@@ -371,6 +468,7 @@ app.post("/getMultiplePuzzles", verifyUser, async (req, res) => {
 });
 
 app.post("/submitPuzzle", verifyUser, async (req, res) => {
+  //@ts-ignore
   const username = req.session.username;
   const id = req.body.id;
   const answer = req.body.answer;
@@ -441,12 +539,7 @@ app.get("/battleRound", verifyUser, function (req, res) {
 });
 
 async function endBattleRound() {
-  if (!currentBattleRound) {
-    console.log("No Current Battle Round");
-    return false;
-  } else {
-    console.log("Ending Battle Round");
-  }
+  if (currentRound.type != "BattleRound") return;
 
   let usersList = {};
   try {
@@ -462,10 +555,11 @@ async function endBattleRound() {
     console.log(err);
   }
 
-  if (Object.keys(currentBattleRound.users).length <= 0) {
+  // reward points to participants
+  if (Object.keys(currentRound.users).length <= 0) {
     console.warn("No users in battle round");
   } else {
-    let participants = Object.values(currentBattleRound.users);
+    let participants = Object.values(currentRound.users);
 
     participants.forEach((participant, i) => {
       const user = participant.user;
@@ -479,83 +573,92 @@ async function endBattleRound() {
     });
   }
 
-  console.log(usersList);
+  // deduct points from non participants
   Object.values(usersList).forEach(async (user) => {
     try {
       await client
         .db(mainDbName)
         .collection(usersColName)
-        .updateOne({ username: user.username }, { $set: { puzzle_points: user.puzzle_points - Math.floor(Math.max(user.puzzle_points * currentBattleRound.min_bid, 0)) } });
+        .updateOne({ username: user.username }, { $inc: { puzzle_points: -Math.floor(Math.max(user.puzzle_points * currentRound.min_bid, 0)) } });
     } catch (err) {
       console.log(err);
-      return false;
+      return;
     }
   });
 
   io.emit("battle_round_end");
-  currentBattleRound = null;
-  return true;
 }
 
-async function startBattleRound(battleRoundId, duration = config.battle_round_duration) {
-  const battleRound = config.battle_rounds[battleRoundId];
-  if (!battleRound) {
-    console.warn("Battle round of id " + battleRoundId + " not found");
-    return { success: false };
+/**
+ * @param {string} id
+ * @param {number} duration
+ * @returns {Promise<RoundStartResult>}
+ */
+async function startBattleRound(id, duration = config.battle_round_duration) {
+  if (currentRound) {
+    return { success: false, status: 2 };
   }
-  const battleRoundPuzzleIds = battleRound["puzzles"];
+
+  const battleRoundConfig = config.battle_rounds[id];
+  if (!battleRoundConfig) {
+    console.warn("Battle round of id " + id + " not found");
+    return { success: false, status: 0 };
+  }
+  const battleRoundPuzzleIds = battleRoundConfig.puzzles;
   if (!battleRoundPuzzleIds) {
     console.warn("Battle round of missing puzzles");
-    return { success: false };
+    return { success: false, status: 0 };
   }
 
+  /**@type {{string?: Puzzle}} */
   let puzzles = {};
   for (let puzzleId of battleRoundPuzzleIds) {
-    var result = null;
     try {
-      result = await client.db(mainDbName).collection(battleRoundPuzzlesColName).findOne({ name: puzzleId });
+      /**@type {Puzzle} */
+      //@ts-ignore
+      let result = await client.db(mainDbName).collection(battleRoundPuzzlesColName).findOne({ name: puzzleId });
+      if (!result) {
+        console.warn("Failed to fetch puzzle of id " + puzzleId);
+        return { success: false, status: 0 };
+      } else {
+        //@ts-ignore
+        delete result._id;
+        puzzles[result.name] = result;
+      }
     } catch (err) {
       console.log(err);
-      return { success: false };
-    }
-
-    if (!result) {
-      console.warn("Failed to fetch puzzle of id " + puzzleId);
-      return { success: false };
-    } else {
-      //@ts-ignore
-      delete result._id;
-      puzzles[result.name] = result;
-      // puzzles.push(result);
+      return { success: false, status: 0 };
     }
   }
 
-  let now = Date.now();
-  currentBattleRound = {
-    id: battleRoundId,
-    min_bid: battleRound.min_bid,
+  let time = Date.now();
+  /**@type {BattleRound} */
+  let battleRound = {
+    startTime: time,
+    endTime: time + duration,
+    callback: endBattleRound,
+    endTimeout: setTimeout(endCurrentRound, duration),
+    type: "BattleRound",
+    id: id,
+    min_bid: battleRoundConfig.min_bid,
     puzzles: puzzles,
-    startTime: now,
-    endTime: now + config.battle_round_duration,
     users: {},
   };
-
+  currentRound = battleRound;
   io.emit("battle_round_start");
-
-  setTimeout(async () => {
-    endBattleRound();
-  }, config.battle_round_duration);
-
-  return { success: true };
+  return { success: true, status: 1 };
 }
 
+startBattleRound("battle_round_1", 10000);
+
 app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res) => {
-  if (currentBattleRound.users[req.session.username]) {
-    res.json({ alreadyJoined: true, endTime: currentBattleRound.endTime });
+  //@ts-ignore
+  if (currentRound.users[req.session.username]) {
+    res.json({ alreadyJoined: true, endTime: currentRound.endTime });
     return;
   }
 
-  res.json({ alreadyJoined: false, endTime: currentBattleRound.endTime });
+  res.json({ alreadyJoined: false, endTime: currentRound.endTime });
 });
 
 app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
@@ -565,7 +668,7 @@ app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
     return;
   }
 
-  if (currentBattleRound.users[req.session.username]) {
+  if (currentRound.users[req.session.username]) {
     res.json({ success: false, alreadyJoined: true });
     return;
   }
@@ -599,7 +702,7 @@ app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
     return;
   }
 
-  currentBattleRound.users[req.session.username] = {
+  currentRound.users[req.session.username] = {
     user: user,
     bid: bid,
     completed: {},
@@ -608,13 +711,13 @@ app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
 });
 
 app.post("/battleRound/getPuzzles", verifyUser, testBattleRound, async (req, res) => {
-  const participant = currentBattleRound.users[req.session.username];
+  const participant = currentRound.users[req.session.username];
   if (!participant) {
     res.sendStatus(403);
     return;
   }
 
-  const puzzles = Object.values(currentBattleRound.puzzles);
+  const puzzles = Object.values(currentRound.puzzles);
   const package = [];
   for (let puzzle of puzzles) {
     let clone = { ...puzzle };
@@ -628,7 +731,7 @@ app.post("/battleRound/getPuzzles", verifyUser, testBattleRound, async (req, res
 });
 
 app.post("/battleRound/getPuzzle", verifyUser, testBattleRound, async (req, res) => {
-  const participant = currentBattleRound.users[req.session.username];
+  const participant = currentRound.users[req.session.username];
   if (!participant) {
     res.sendStatus(403);
     return;
@@ -640,7 +743,7 @@ app.post("/battleRound/getPuzzle", verifyUser, testBattleRound, async (req, res)
     return;
   }
 
-  const puzzle = currentBattleRound.puzzles[id];
+  const puzzle = currentRound.puzzles[id];
   if (!puzzle) {
     res.sendStatus(404);
   }
@@ -651,7 +754,7 @@ app.post("/battleRound/getPuzzle", verifyUser, testBattleRound, async (req, res)
 });
 
 app.post("/battleRound/submitPuzzle", verifyUser, testBattleRound, async (req, res) => {
-  const participant = currentBattleRound.users[req.session.username];
+  const participant = currentRound.users[req.session.username];
   if (!participant) {
     res.sendStatus(403);
     return;
@@ -664,7 +767,7 @@ app.post("/battleRound/submitPuzzle", verifyUser, testBattleRound, async (req, r
     return;
   }
 
-  const puzzle = currentBattleRound.puzzles[puzzleid];
+  const puzzle = currentRound.puzzles[puzzleid];
   if (!puzzle) {
     res.sendStatus(400);
     return;

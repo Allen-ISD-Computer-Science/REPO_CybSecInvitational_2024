@@ -3,7 +3,9 @@
 
   "internal_tick_rate": 10000,
 
-  "battle_round_duration": 65000,
+  "puzzle_round_duration": 60000,
+
+  "battle_round_duration": 60000,
   "battle_round_min_multiplier": 0.5,
   "battle_round_max_multiplier": 2,
 
