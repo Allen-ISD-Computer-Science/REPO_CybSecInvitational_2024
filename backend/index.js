@@ -187,6 +187,19 @@ app.get("/home", verifyUser, verifyBattleRound, function (req, res) {
 //#endregion
 
 //#region Registration
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "ahsinvitational@gmail.com",
+    pass: process.env.GMAIL_APP_PASSWORD,
+  },
+});
+
 function genRandPassword() {
   return Math.random().toString(36).slice(-8);
 }
@@ -213,7 +226,155 @@ async function addUser(email1, shirt1, email2, shirt2) {
   }
 }
 
-app.post("/register", async (req, res) => {});
+const validateEmail = (email) => {
+  return String(email)
+    .toLowerCase()
+    .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+};
+
+function sendVerificationEmail(email, code) {
+  const message = {
+    from: "ahsinvitational@gmail.com",
+    to: [email],
+    subject: "Hello from Nodemailer",
+    text: `This is a test email sent using Nodemailer. Your code it ${code}`,
+    attachments: [
+      {
+        path: "public/img/logo.png",
+      },
+    ],
+  };
+  transporter.sendMail(message, (error, info) => {
+    if (error) {
+      console.error("Error sending email: ", error);
+    } else {
+      console.log("Email sent: ", info.response);
+    }
+  });
+}
+
+function sendConfirmationEmail(email, username, password) {
+  const message = {
+    from: "ahsinvitational@gmail.com",
+    to: [email],
+    subject: "Hello from Nodemailer",
+    text: ``,
+    attachments: [
+      {
+        path: "public/img/logo.png",
+      },
+    ],
+  };
+  transporter.sendMail(message, (error, info) => {
+    if (error) {
+      console.error("Error sending email: ", error);
+    } else {
+      console.log("Email sent: ", info.response);
+    }
+  });
+}
+
+class VerificationGroup {
+  static pendingGroups = {};
+
+  constructor(emails) {
+    this.tokens = {};
+    for (let email of emails) {
+      if (!validateEmail(email)) throw "Invalid Email Format";
+      if (VerificationGroup.pendingGroups[email]) throw "Email Already Pending Verification";
+
+      let token = new VerificationToken(email);
+      if (token) this.tokens[email] = token;
+      sendVerificationEmail(email, token.code);
+      VerificationGroup.pendingGroups[email] = this;
+    }
+
+    this._timeout = setTimeout(() => {
+      console.log("session ended");
+      this.remove();
+    }, 60000);
+  }
+
+  remove() {
+    clearTimeout(this._timeout);
+    for (const key of Object.keys(this.tokens)) {
+      delete VerificationGroup.pendingGroups[key];
+    }
+  }
+
+  onGroupResolved() {
+    console.log("resolved group verification");
+    this.remove();
+  }
+
+  attemptValidation(email, code) {
+    console.log("attempting validation", email, code);
+    let token = this.tokens[email];
+    if (!token) return false;
+    if (token.code !== code) return false;
+    token.verified = true;
+
+    let resolved = true;
+    for (const [key, token] of Object.entries(this.tokens)) {
+      if (!token.verified) {
+        resolved = false;
+        break;
+      }
+    }
+    if (resolved) {
+      this.onGroupResolved();
+    }
+    return true;
+  }
+}
+
+class VerificationToken {
+  constructor(email) {
+    this.email = email;
+    this.code = Math.floor(100000 + Math.random() * 900000);
+    this.verified = false;
+  }
+}
+
+app.post("/register", async (req, res) => {
+  const email1 = String(req.body.email1);
+  const email2 = String(req.body.email2);
+  const firstName1 = String(req.body.firstName1);
+  const lastName1 = String(req.body.lastName1);
+  const firstName2 = String(req.body.firstName2);
+  const lastName2 = String(req.body.lastName2);
+
+  if (!validateEmail(email1) || !validateEmail(email2)) {
+    res.sendStatus(400);
+    return;
+  }
+
+  if (!email1 || !email2 || !firstName1 || !lastName1 || !firstName2 || !lastName2) {
+    res.sendStatus(400);
+    return;
+  }
+
+  let alreadyJoined = false;
+  try {
+    let result = client
+      .db(mainDbName)
+      .collection(usersColName)
+      .findOne({ $or: [{ emails: email1 }, { emails: email2 }] });
+    if (result) {
+      alreadyJoined = true;
+    }
+  } catch (err) {
+    console.log(err);
+    res.sendStatus(500);
+    return;
+  }
+
+  if (alreadyJoined) {
+    res.status(400).send("Email already in existing group");
+  }
+
+  new VerificationGroup([email1, email2]);
+});
 //#endregion
 
 //#region Login
