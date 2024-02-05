@@ -87,38 +87,38 @@
                     <h6>Team Member #2</h6>
                     <div class="form-group row">
                       <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" />
+                        <input id="register_2_first_name" type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" />
                       </div>
                       <div class="col-sm-6">
-                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" />
+                        <input id="register_2_last_name" type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" />
                       </div>
                     </div>
                     <div class="form-group">
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" />
+                      <input id="register_2_email" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Email Address" />
                     </div>
                     <div class="form-group">
-                      <input type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Confirm Email Address" />
+                      <input id="register_2_email_confirm" type="email" class="form-control form-control-user" id="exampleInputEmail" placeholder="Confirm Email Address" />
                     </div>
 
                     <div class="d-flex mb-3">
-                      <select class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option selected>Select School</option>
-                        <option value="School 1">School 1</option>
-                        <option value="School 2">School 2</option>
-                        <option value="School 3">School 3</option>
+                      <select id="register_2_school" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
+                        <option value="" selected>Select School</option>
+                        <option value="School1">School 1</option>
+                        <option value="School2">School 2</option>
+                        <option value="School3">School 3</option>
                       </select>
 
-                      <select class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option selected>Select Grade Level</option>
-                        <option value="Grade 9">9th Grade</option>
-                        <option value="Grade 10">10th Grade</option>
-                        <option value="Grade 11">11th Grade</option>
-                        <option value="Grade 12">12th Grade</option>
+                      <select id="register_2_grade" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
+                        <option value="" selected>Select Grade Level</option>
+                        <option value="Grade9">9th Grade</option>
+                        <option value="Grade10">10th Grade</option>
+                        <option value="Grade11">11th Grade</option>
+                        <option value="Grade12">12th Grade</option>
                       </select>
-
-                      <select class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option selected>Select Shirt Size</option>
+                      <select id="register_2_shirt_size" class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
+                        <option value="" selected>Select Shirt Size</option>
                         <option value="S">S</option>
+                        <option value="M">M</option>
                         <option value="L">L</option>
                         <option value="XL">XL</option>
                       </select>
@@ -152,18 +152,5 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.min.js"></script>
     <script src="js/register.js"></script>
-    <script>
-      document.getElementById("removeMemberButton").addEventListener("click", () => {
-        document.getElementById("addMemberButton").style.display = "inline";
-        document.getElementById("removeMemberButton").style.display = "none";
-        document.getElementById("addMember").style.display = "none";
-      });
-
-      document.getElementById("addMemberButton").addEventListener("click", () => {
-        document.getElementById("addMemberButton").style.display = "none";
-        document.getElementById("removeMemberButton").style.display = "inline";
-        document.getElementById("addMember").style.display = "inline";
-      });
-    </script>
   </body>
 </html>

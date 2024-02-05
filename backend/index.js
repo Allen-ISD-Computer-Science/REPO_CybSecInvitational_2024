@@ -236,7 +236,7 @@ const validateEmail = (email) => {
     .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 };
 
-function sendVerificationEmail(email, code) {
+async function sendVerificationEmail(email, code) {
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
@@ -312,7 +312,7 @@ class VerificationGroup {
     this._timeout = setTimeout(() => {
       console.log("session ended");
       this.remove();
-    }, 60000);
+    }, 300000);
     console.log(this);
   }
 
@@ -327,12 +327,14 @@ class VerificationGroup {
   onGroupResolved() {
     console.log("resolved group verification");
     //add new user, send confirmation email
+    console.log(this.tokens);
     this.remove();
   }
 
   attemptValidation(email, code) {
     console.log("attempting validation", email, code);
     let token = this.tokens[email];
+    console.log(token);
     if (!token) return false;
     if (token.code !== code) return false;
     token.verified = true;
@@ -366,7 +368,7 @@ class VerificationToken {
 
 app.post("/registerVerify", (req, res) => {
   const email = String(req.body.email);
-  const code = String(req.body.code);
+  const code = Number(req.body.code);
 
   if (!email || !code) {
     res.sendStatus(400);
@@ -374,6 +376,7 @@ app.post("/registerVerify", (req, res) => {
   }
 
   const result = VerificationGroup.attemptVerification(email, code);
+  console.log(result);
   if (result) {
     res.sendStatus(200);
     return;
