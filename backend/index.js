@@ -187,6 +187,10 @@ app.get("/home", verifyUser, verifyBattleRound, function (req, res) {
 //#endregion
 
 //#region Registration
+app.get("/register", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/register.html"));
+});
+
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
@@ -274,25 +278,42 @@ function sendConfirmationEmail(email, username, password) {
   });
 }
 
+/**
+ * @typedef {object} Registrant
+ * @param {string} email
+ * @param {string} firstName
+ * @param {string} lastName
+ * @param {string} school
+ * @param {string} gradeLevel
+ * @param {string} firstName
+ */
+
 class VerificationGroup {
   static pendingGroups = {};
 
-  constructor(emails) {
-    this.tokens = {};
-    for (let email of emails) {
-      if (!validateEmail(email)) throw "Invalid Email Format";
-      if (VerificationGroup.pendingGroups[email]) throw "Email Already Pending Verification";
+  static attemptVerification(email, code) {
+    let group = VerificationGroup.pendingGroups[email];
+    if (!group) return false;
+    return group.attemptValidation(email, code);
+  }
 
-      let token = new VerificationToken(email);
-      if (token) this.tokens[email] = token;
-      sendVerificationEmail(email, token.code);
-      VerificationGroup.pendingGroups[email] = this;
+  constructor(registrants) {
+    this.tokens = {};
+    for (let registrant of registrants) {
+      if (!validateEmail(registrant.email)) throw "Invalid Email Format";
+      if (VerificationGroup.pendingGroups[registrant.email]) throw "Email Already Pending Verification";
+
+      let token = new VerificationToken(registrant);
+      if (token) this.tokens[registrant.email] = token;
+      sendVerificationEmail(registrant.email, token.code);
+      VerificationGroup.pendingGroups[registrant.email] = this;
     }
 
     this._timeout = setTimeout(() => {
       console.log("session ended");
       this.remove();
     }, 60000);
+    console.log(this);
   }
 
   remove() {
@@ -300,10 +321,12 @@ class VerificationGroup {
     for (const key of Object.keys(this.tokens)) {
       delete VerificationGroup.pendingGroups[key];
     }
+    console.log(VerificationGroup.pendingGroups);
   }
 
   onGroupResolved() {
     console.log("resolved group verification");
+    //add new user, send confirmation email
     this.remove();
   }
 
@@ -329,39 +352,73 @@ class VerificationGroup {
 }
 
 class VerificationToken {
-  constructor(email) {
-    this.email = email;
+  constructor(registrant) {
+    this.email = registrant.email;
+    this.firstName = registrant.firstName;
+    this.lastName = registrant.lastName;
+    this.school = registrant.school;
+    this.gradeLevel = registrant.gradeLevel;
+    this.shirtSize = registrant.shirtSize;
     this.code = Math.floor(100000 + Math.random() * 900000);
     this.verified = false;
   }
 }
 
+app.post("/registerVerify", (req, res) => {
+  const email = String(req.body.email);
+  const code = String(req.body.code);
+
+  if (!email || !code) {
+    res.sendStatus(400);
+    return;
+  }
+
+  const result = VerificationGroup.attemptVerification(email, code);
+  if (result) {
+    res.sendStatus(200);
+    return;
+  } else {
+    res.sendStatus(404);
+    return;
+  }
+});
+
 app.post("/register", async (req, res) => {
-  const email1 = String(req.body.email1);
-  const email2 = String(req.body.email2);
-  const firstName1 = String(req.body.firstName1);
-  const lastName1 = String(req.body.lastName1);
-  const firstName2 = String(req.body.firstName2);
-  const lastName2 = String(req.body.lastName2);
-
-  if (!validateEmail(email1) || !validateEmail(email2)) {
-    res.sendStatus(400);
-    return;
-  }
-
-  if (!email1 || !email2 || !firstName1 || !lastName1 || !firstName2 || !lastName2) {
-    res.sendStatus(400);
-    return;
-  }
-
-  let alreadyJoined = false;
+  /**@type {Registrant[]} */
+  let registrants = [];
+  const registrantsBody = req.body.registrants;
   try {
-    let result = client
-      .db(mainDbName)
-      .collection(usersColName)
-      .findOne({ $or: [{ emails: email1 }, { emails: email2 }] });
-    if (result) {
-      alreadyJoined = true;
+    if (registrantsBody.length > 2) {
+      //limit group size
+      res.sendStatus(400);
+      return;
+    }
+
+    for (let registrant of registrantsBody) {
+      const email = String(registrant.email);
+      const firstName = String(registrant.firstName);
+      const lastName = String(registrant.lastName);
+      const school = String(registrant.school);
+      const gradeLevel = String(registrant.gradeLevel);
+      const shirtSize = String(registrant.shirtSize);
+      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize) {
+        res.status(400).send("Missing Parameters");
+        return;
+      }
+
+      if (!validateEmail(email)) {
+        res.sendStatus(400);
+        return;
+      }
+
+      registrants.push({
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        school: school,
+        gradeLevel: gradeLevel,
+        shirtSize: shirtSize,
+      });
     }
   } catch (err) {
     console.log(err);
@@ -369,11 +426,31 @@ app.post("/register", async (req, res) => {
     return;
   }
 
-  if (alreadyJoined) {
-    res.status(400).send("Email already in existing group");
+  // console.log(registrants);
+  // return;
+
+  let emails = registrants.map((registrant) => {
+    return { emails: registrant.email };
+  });
+
+  try {
+    let result = await client.db(mainDbName).collection(usersColName).findOne({ $or: emails });
+    console.log(result);
+    if (result) {
+      res.sendStatus(400);
+      return;
+    }
+  } catch (err) {
+    res.sendStatus(500);
+    return;
   }
 
-  new VerificationGroup([email1, email2]);
+  try {
+    console.log(new VerificationGroup(registrants));
+  } catch (err) {
+    res.sendStatus(400);
+    return;
+  }
 });
 //#endregion
 
@@ -809,8 +886,6 @@ async function startBattleRound(id, duration = config.battle_round_duration) {
   io.emit("battle_round_start");
   return { success: true, status: 1 };
 }
-
-startBattleRound("battle_round_1", 10000);
 
 app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res) => {
   //@ts-ignore
