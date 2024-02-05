@@ -34,6 +34,7 @@
         animation-fill-mode: forwards;
         opacity: 0;
         transition: opacity 5s;
+        color: #ffffff;
     }
 
     @keyframes fadeInAnimation {
@@ -119,9 +120,8 @@
         animation-duration: 1s;
     }
 
-    .glow-hover:hover p {
+    .glowP-hover:hover {
         text-shadow: 0 0 10px #ffffff;
-        animation-duration: 1s;
     }
 
     .card-img-wrapper img {
@@ -133,6 +133,10 @@
     }
 </style>
 
+    <div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png)"></div>
+    <div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png)"></div>
+    <div id="background-stars-3" class="star-background" style="background-image: url(./img/stars1.png)"></div>
+
     <nav class="navbar navbar-expand-md bg-body-tertiary d-flex flex-row align-items-center sticky-top"
         style="background-color: #353535; color: #ffffff; opacity: 50%; backdrop-filter: blur(15px);">
         <div class="container-fluid d-flex flex-row align-items-center">
@@ -142,17 +146,17 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">
-                        <p style="color: #ffffff; margin: 0px 0px 0px;" class="glow-hover">Home</p>
+                        <p style="color: #ffffff; margin: 0px 0px 0px; text-shadow: 0 0 5px #ffffff" class="glowP-hover">Home</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./login.html">
-                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glow-hover">Login</p>
+                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Login</p>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./register.html">
-                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glow-hover">Register</p>
+                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Register</p>
                     </a>
                 </li>
             </ul>
@@ -160,31 +164,22 @@
     </nav>
 
 
-
-
-    <div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-    <div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-    <div id="background-stars-3" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-
     <div class="w-100 vh-100 d-flex flex-column justify-content-center">
-        <!-- <img src="./img/cosmos1.png" style="rotate: 0deg;" class="align-self-center w-75"> -->
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in .9s">
             <img src="./img/ico/EagleOutline.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25">
         </div>
-
-        <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in 1s">
-
-            <div class="display-1 align-self-center text-light">Allen Cyber Invitational</div>
-
+        <div class="w-100 d-flex flex-column justify-content-center align-senf-center" style="animation: fade-in 1s">
+            <div class="glow display-1 d-flex flex-column justify-content-center align-items-center text-light">
+                <h1 class="display-1">Allen Cyber Invitational</h1>
+            </div>
         </div>
         <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in 1.1s">
-
             <img src="./img/cosmos1.png" style="rotate: 180deg;" class="align-self-center w-30">
         </div>
-        
     </div>
 
 
+    
     <!-- Set Constant Heights -->
     <!--
     <hr style="border-top: 2px solid #ffffff; width: 75%" />
@@ -200,22 +195,15 @@
     <div id="content" class="container-fluid 100vh" style="color: #ffffff">
         <div class="d-flex justify-content-evenly"></div>
     -->
+
     <div class="container">
-        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
+        <div class="d-flex flex-row justify-content-between align-items-center" style="margin-bottom: 4rem">
             <div class="d-flex flex-column justify-content-center align-items-start text-start"
                 style="height: 100%; width: 50%; margin-bottom: 4rem">
                 <h3>Time</h3>
                 <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
                 <p style="width: 100%">April 27th, 2024</p>
                 <p style="width: 100%">8am to 4:30pm</p>
-                <p style="width: 100%; text-align: justify">
-                    Our mission is to create a responsive and interpretive environment for fellow students to
-                    explore cyber security concepts and ideas. Participants will solve Linux based puzzles regarding
-                    a multitude of major cyber security concepts (including but not limited to cryptography,
-                    steganography, web exploitation, CLI commands, binary
-                    exploitation and much more) and then apply them in a scenario based challenge. All for no cost
-                    to the student!
-                </p>
             </div>
             <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
             style="height: 15rem; width: 15rem" />
@@ -250,11 +238,11 @@
                 to the student!
             </p>
         </div>
-            <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
-                <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
-                    style="height: 15rem; width: 15rem" />
-            </div>
+        <div class="d-flex justify-content-center align-items-center" style="width: 50%; height: 100%">
+            <img class="align-self-center" src="./img/ico/OriginLogo.png" align="right"
+                style="height: 15rem; width: 15rem" />
         </div>
+    </div>
         
         <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
             <div class="d-flex flex-column justify-content-center align-items-center text-center"
@@ -273,7 +261,7 @@
                                         style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4 href="https://discord.com/invite/ggv3eNdAqr">Discord Link</h4>
+                                <h4 href="https://discord.com/invite/ggv3eNdAqr">Discord</h4>
                             </div>
                         </div>
                     </a>
@@ -287,7 +275,7 @@
                                         style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4>Instagram Link</h4>
+                                <h4>Instagram</h4>
                             </div>
                         </div>
                     </a>
@@ -296,12 +284,12 @@
                         <div class="card border-light bg-transparent glow-hover glow-button"
                             style="width: 15rem; height: 15rem;">
                             <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="#" class="d-flex flex-row justify-content-center"
+                                <a href="mailto:info.ahscyber@gmail.com" class="d-flex flex-row justify-content-center"
                                     style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Gmail.png"
                                         style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4>Gmail Link</h4>
+                                <h4>Gmail</h4>
                             </div>
                         </div>
                     </a>
@@ -315,12 +303,11 @@
                                         style="width: 100%;" class="card-img-wrapper card-img-top"></a>
                             </div>
                             <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4>Linkedin Link</h4>
+                                <h4>Linkedin</h4>
                             </div>
                         </div>
                     </a>
 
-                    <!-- GMAIL -->
                 </div>
             </div>
         </div>
@@ -331,17 +318,17 @@
             <div class="row">
                 <div class="col-4">
                     <img src="./img/HeadShots/James.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">James Dungan</strong><br>Product Manager</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">James Dungan</strong><br>Product Manager</p>
 
                 </div>
                 <div class="col-4">
                     <img src="./img/HeadShots/Soohan.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Soohan Cho</strong><br>Project Manager</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">Soohan Cho</strong><br>Project Manager</p>
 
                 </div>
                 <div class="col-4">
                     <img src="./img/HeadShots/Blake.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Blake Gateley</strong><br>Project Coordinator
+                    <p style="color: #bebebe"><strong style="color: #fff">Blake Gateley</strong><br>Project Coordinator
                     </p>
 
                 </div>
@@ -349,44 +336,77 @@
             <div class="row">
                 <div class="col-2">
                     <img src="./img/HeadShots/Richard.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Richard Jang</strong><br>Junior Coordinator
+                    <p style="color: #bebebe"><strong style="color: #fff">Richard Jang</strong><br>Junior Coordinator
                     </p>
 
                 </div>
                 <div class="col-2">
                     <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Faraz Piracha</strong><br>Database Analysis
+                    <p style="color: #bebebe"><strong style="color: #fff">Faraz Piracha</strong><br>Database Analysis
                     </p>
 
                 </div>
                 <div class="col-2">
                     <img src="./img/HeadShots/Marisa.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Marisa Patel</strong><br>Web Developer</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">Marisa Patel</strong><br>Web Developer</p>
 
                 </div>
                 <div class="col-2">
                     <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Sara Vaughan</strong><br>Media Coordinator</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">Sara Vaughan</strong><br>Media Coordinator</p>
 
                 </div>
                 <div class="col-2">
                     <img src="./img/HeadShots/Abel.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Abel Semahegn</strong><br>Junior Developer</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">Abel Semahegn</strong><br>Junior Developer</p>
 
                 </div>
                 <div class="col-2">
                     <img src="./img/HeadShots/Aidan.jpg" class="figure-img img-fluid rounded">
-                    <p style="color: #797575"><strong style="color: #fff">Aidan Morris</strong><br>Junior Manager</p>
+                    <p style="color: #bebebe"><strong style="color: #fff">Aidan Morris</strong><br>Junior Manager</p>
 
                 </div>
             </div>
         </div>
     
-        <div class="concontainer text-center">
+        <div class="container text-center">
             <h3 class="text-center" style="color: #ffffff;">FAQ</h3>
             <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-            
-            <h2>How much will it cost me to partitcipate?</h2>
+            <div class="d-flex flex-column justify-content-start align-items-start" style="text-align: start;">
+                <h4>How much will it cost to partitcipate?</h4>
+                <p>
+                    There is absolutely no entry fee! The STEM field can be quite expensive at times, 
+                    and we would like to alleviate some of the financial burden for students taking
+                    their first steps into the field. This is made possible by our wonderful sponosors
+                    listed above.
+                </p>
+                <br>
+
+                <h4>Will competitors have to provide their own food?</h4>
+                <p>
+                    We will cater food during the event, but the food options will be quite limited default
+                    to dietary restrictions. Outside food may be brought in, but AHS Invitational will not
+                    cover the fee. We also ask that you clean up after yourself.
+                </p>
+                <br>
+
+                <h4>Do I need previous experience to compete?</h4>
+                <p>
+                    No previous experience is required. Students will get their intorduction to vital
+                    topics during the competition, which they will then use to solve CTF based puzzles.
+                </p>
+                <br>
+
+                <h4>What type of competition is this?</h4>
+                <p>
+                    The details of the competiton will be explained during the introduction ceremony,
+                    but competitiors will need a team member to compete. Feel free to register with someone
+                    you know, but if you do not have a team member in mind, check the box labeled "Assign me
+                    a random team member" while registering.
+                </p>
+                <br>
+
+            </div>
             <!-- 
             q: What will it cost?
             a: Everyth
@@ -400,6 +420,12 @@
             q: Team Member?
             a: You will have to sign up with a duo partner. 
         -->
+        </div>
+
+        <div>
+            <footer>
+
+            </footer>
         </div>
 
     </div>
