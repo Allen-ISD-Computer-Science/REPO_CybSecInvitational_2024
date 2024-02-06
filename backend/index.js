@@ -211,19 +211,29 @@ function genRandHex(size) {
   return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
 }
 
-async function addUser(email1, shirt1, email2, shirt2) {
+async function addUser(participants) {
+  console.log(participants);
   try {
     const user = {
       division: 0,
       username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
       password: genRandPassword(),
       completed_puzzles: {},
-      emails: [email1, email2],
-      shirtSizes: [shirt1, shirt2],
+      members: participants,
+      emails: [],
       puzzle_points: 0,
       scenario_points: 0,
     };
-    return await client.db(mainDbName).collection(usersColName).insertOne(user);
+
+    for (let participant of participants) {
+      user.emails.push(participant.email);
+    }
+
+    let result = await client.db(mainDbName).collection(usersColName).insertOne(user);
+    if (result.acknowledged) {
+      return user;
+    }
+    return null;
   } catch (err) {
     console.log(err);
     return null;
@@ -258,11 +268,12 @@ async function sendVerificationEmail(email, code) {
 }
 
 function sendConfirmationEmail(email, username, password) {
+  console.log("sending confirmation", email, username, password);
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
     subject: "Hello from Nodemailer",
-    text: ``,
+    text: `Your team's credentials are Username: ${username} , Password: ${password}`,
     attachments: [
       {
         path: "public/img/logo.png",
@@ -313,7 +324,6 @@ class VerificationGroup {
       console.log("session ended");
       this.remove();
     }, 300000);
-    console.log(this);
   }
 
   remove() {
@@ -321,20 +331,29 @@ class VerificationGroup {
     for (const key of Object.keys(this.tokens)) {
       delete VerificationGroup.pendingGroups[key];
     }
-    console.log(VerificationGroup.pendingGroups);
   }
 
-  onGroupResolved() {
+  async onGroupResolved() {
     console.log("resolved group verification");
-    //add new user, send confirmation email
-    console.log(this.tokens);
+
+    let participants = Object.values(this.tokens).map((value) => {
+      delete value.verified;
+      delete value.code;
+      return value;
+    });
+    addUser(participants).then((result) => {
+      console.log("added user successfully!", result);
+      if (!result || !result.members) return;
+      for (let member of result.members) {
+        sendConfirmationEmail(member.email, result.username, result.password);
+      }
+    });
+
     this.remove();
   }
 
   attemptValidation(email, code) {
-    console.log("attempting validation", email, code);
     let token = this.tokens[email];
-    console.log(token);
     if (!token) return false;
     if (token.code !== code) return false;
     token.verified = true;
@@ -376,7 +395,6 @@ app.post("/registerVerify", (req, res) => {
   }
 
   const result = VerificationGroup.attemptVerification(email, code);
-  console.log(result);
   if (result) {
     res.sendStatus(200);
     return;
@@ -429,16 +447,12 @@ app.post("/register", async (req, res) => {
     return;
   }
 
-  // console.log(registrants);
-  // return;
-
   let emails = registrants.map((registrant) => {
     return { emails: registrant.email };
   });
 
   try {
     let result = await client.db(mainDbName).collection(usersColName).findOne({ $or: emails });
-    console.log(result);
     if (result) {
       res.sendStatus(400);
       return;
@@ -449,7 +463,7 @@ app.post("/register", async (req, res) => {
   }
 
   try {
-    console.log(new VerificationGroup(registrants));
+    new VerificationGroup(registrants);
   } catch (err) {
     res.sendStatus(400);
     return;
