@@ -237,7 +237,7 @@
             <p style="width: 100%; font-size: 2rem;">8am to 4:30pm</p>
         </div>
         <div>
-            <div class="container rounded fixed" style="background: rgba( 255, 255, 255, 0.25 );
+            <div class="container rounded" style="background: rgba( 255, 255, 255, 0.25 );
             box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
             backdrop-filter: blur( 10.5px );
             -webkit-backdrop-filter: blur( 10.5px );
@@ -270,7 +270,7 @@
                   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
             
                   // Display the countdown in the specified format
-                  document.getElementById("countdown").innerHTML = days + " : " + hours + " : " + minutes + " : " + seconds + "<br><span class=\"unit\">(d:h:m:s)</span>";
+                  document.getElementById("countdown").innerHTML = "<h1 class=\"glow\">"+days + " : " + hours + " : " + minutes + " : " + seconds +"</h1>"+"<span class=\"unit\">(d:h:m:s)</span>";
             
                   // If the countdown is over, display a message
                   if (distance < 0) {
