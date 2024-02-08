@@ -17,7 +17,34 @@
   </head>
 
   <body class="bg-gradient-primary bg-dark">
-    <div class="container h-100">
+    <div class="w-100">
+      <nav class="navbar navbar-expand-md bg-body-tertiary d-flex flex-row align-items-center sticky-top"
+      style="background-color: #353535; color: #ffffff; opacity: 50%; backdrop-filter: blur(15px);">
+        <div class="container-fluid d-flex flex-row align-items-center">
+            <a class="navbar-brand">
+                <p style="color: #ffffff; margin: 0px 0px 0px;">Allen Cyber Invitational</p>
+            </a>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">
+                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Home</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" aria-current="page">
+                        <p style="color: #ffffff; margin: 0px 0px 0px; text-shadow: 0 0 5px #ffffff" class="glowP-hover">Login</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./register.html">
+                        <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Register</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    </div>
+    <div class="container h-100">  
       <!-- Outer Row -->
       <div class="row justify-content-center">
         <div class="col-xl-5 col-lg-6 col-md-9">
@@ -44,7 +71,7 @@
                 </form>
                 <hr>
                 <div class="text-center">
-                  <a class="small" href="register.html">Not registered? Register team!</a>
+                  <a class="small" href="login.html">Forgot Username/Password?</a>
               </div>
               </div>
               <div id="invalidAlert" class="alert alert-danger ml-5 mr-5 mb-5">Invalid Password or Username</div>
