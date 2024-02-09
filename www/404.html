@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <title>Allen Cyber Invitational</title>
+        <meta name="description" content="" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="stylesheet" href="./css/sb-admin-2.min.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
+        <link href="./img/ico/InvLogo.png" rel="icon" type="image/x-icon" />
+        <link href="./css/styles.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    </head>
+
+    <body>
+        <style>
+            body {
+                background: rgb(0, 15, 93);
+                background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgb(0, 5, 32) 100%);
+                background-repeat: no-repeat;
+                animation: fadeInAnimation ease 3s;
+                animation-iteration-count: 1;
+                animation-fill-mode: forwards;
+                opacity: 0;
+                transition: opacity 5s;
+                color: #ffffff;
+            }
+
+            @keyframes fadeInAnimation {
+                0% {
+                    opacity: 0;
+                }
+
+                100% {
+                    opacity: 1;
+                }
+            }
+
+            .star-background {
+                position: absolute;
+                width: 100%;
+                height: 200vh;
+
+                pointer-events: none;
+                cursor: default;
+
+                -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
+            }
+
+            #background-stars-1 {
+                animation: shimmer 1s ease-in-out infinite alternate;
+            }
+
+            #background-stars-2 {
+                background-position: 25% 25%;
+                background-size: 50%;
+                animation: shimmer 3s ease-in-out infinite alternate;
+            }
+
+            #background-stars-3 {
+                background-position: 50% 50%;
+                background-size: 20%;
+                animation: shimmer 5s ease-in-out infinite alternate;
+            }
+
+            @-webkit-keyframes shimmer {
+                from {
+                    opacity: 0.25;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @-webkit-keyframes fade-in {
+                from {
+                    translate: 0 3rem;
+                    opacity: 0;
+                }
+
+                to {
+                    translate: 0 0px;
+                    opacity: 1;
+                }
+            }
+
+            .footer {
+                bottom: 0;
+                width: 100%;
+                background-color: white;
+                text-align: center;
+                padding: 10px 0;
+                opacity: 50%;
+                background-color: #353535;
+            }
+
+            .glowP-hover:hover {
+                text-shadow: 0 0 10px #ffffff;
+                transition: 0.3s;
+            }
+
+        </style>
+
+        <div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png); height: 100vh;"></div>
+        <div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png); height: 100vh;"></div>
+        <div id="background-stars-3" class="star-background" style="background-image: url(./img/stars1.png); height: 100vh;"></div>
+
+        <div class="d-flex flex-row justify-content-center align-items-center" style="height: 100vh; width: 100%;">
+            <div class="card d-flex flex-column justify-content-center align-items-center" style="background-color: #202020; width: 50%; height: 50%;">
+                <h1 style="font-size: 7rem; margin-bottom: 3rem;">404</h1>
+                <h4 style="margin-bottom: 1rem;">The page you are looking for does not exist!</h4>
+                <h4 style="margin-bottom: 1rem;">Login and Registration will begin at a later date.</h4>
+                <a href="./index.html" class="btn btn-outline-primary" style="width: 30%; margin-top: 3rem;">Home</a>
+            </div>
+        </div>
+
+        <div class="w-100 fixed-top">
+            <nav class="navbar navbar-expand-md bg-body-tertiary d-flex flex-row align-items-center sticky-top"
+            style="background-color: #353535; color: #ffffff; opacity: 50%; backdrop-filter: blur(15px);">
+            <div class="container-fluid d-flex flex-row align-items-center">
+                <a class="navbar-brand">
+                    <p style="color: #ffffff; margin: 0px 0px 0px;">Allen Cyber Invitational</p>
+                </a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 collapse">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./index.html">
+                            <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Home</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Login</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <p style="color: #c4c4c4; margin: 0px 0px 0px;" class="glowP-hover">Register</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            </nav>
+        </div>
+
+        <footer class="footer fixed-bottom">
+            <div class="container">
+                <span class="footer-text">@Allen Cyber Invitational 2023-2024</span>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+    </body>
+</html>
