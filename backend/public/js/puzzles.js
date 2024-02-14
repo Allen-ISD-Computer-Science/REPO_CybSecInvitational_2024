@@ -14,38 +14,32 @@ async function fetchPuzzle(id) {
   return response.json();
 }
 
-const puzzleSearchInput = document.getElementById("puzzle-search-input");
-async function queryPuzzles(category, difficulty, skip) {
-  console.log(skip);
-  const body = {
-    query: { category: category, difficulty: difficulty },
-    sort: { name: 1 },
-    projection: {},
-    count: 12,
-    skip: skip,
-  };
-
-  if (puzzleSearchInput.value) {
-    body.query.name = puzzleSearchInput.value;
-  }
-
-  if (!category) {
-    delete body.query.category;
-  }
-  if (difficulty !== 0 && !difficulty) {
-    delete body.query.difficulty;
-  }
-
-  const response = await fetch("getMultiplePuzzles", {
+async function fetchAllPuzzles() {
+  const response = await fetch("getAllPuzzles", {
     method: "POST",
-    body: JSON.stringify(body),
+    header: {
+      "Content-type": "application/json; charset=UTF-8",
+    },
+  });
+  try {
+    const json = await response.json();
+    return json;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+async function submitPuzzle(id, answer) {
+  const response = await fetch("submitPuzzle", {
+    method: "POST",
+    body: JSON.stringify({ id: id, answer: answer }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
 
   if (!response.ok) {
-    console.log("failed to fetch puzzles");
     return;
   }
 
@@ -53,23 +47,146 @@ async function queryPuzzles(category, difficulty, skip) {
   return data;
 }
 
-const currentPageLabel = document.getElementById("current-page");
-const prevPageButton = document.getElementById("previous-page-button");
-const nextPageButton = document.getElementById("next-page-button");
+let allPuzzles = null;
+let fuse = null;
+let initialized = false;
+async function init() {
+  let puzzles = await fetchAllPuzzles();
+  if (!puzzles) {
+    throw "Failed to fetch puzzles!";
+  }
 
-var pageDebounce = false;
-prevPageButton.onclick = function (evt) {
-  evt.preventDefault();
-  pageNum -= 1;
-  pageNum = Math.max(0, pageNum);
-  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
+  puzzles = Object.values(puzzles);
+  allPuzzles = [...puzzles];
+
+  puzzles.map((value) => {
+    switch (value.difficulty) {
+      case 0:
+        value.difficulty = "Easy";
+        break;
+      case 1:
+        value.difficulty = "Medium";
+        break;
+      case 2:
+        value.difficulty = "Hard";
+        break;
+      case 3:
+        value.difficulty = "Master";
+        break;
+      default:
+        value.difficulty = "Undefined";
+        break;
+    }
+  });
+
+  const fuseOptions = {
+    // isCaseSensitive: false,
+    // includeScore: false,
+    // shouldSort: true,
+    // includeMatches: false,
+    // findAllMatches: false,
+    // minMatchCharLength: 1,
+    // location: 0,
+    // threshold: 0.6,
+    // distance: 100,
+    // useExtendedSearch: false,
+    // ignoreLocation: false,
+    // ignoreFieldNorm: false,
+    // fieldNormWeight: 1,
+    keys: ["name", "point_value", "difficulty", "category"],
+  };
+
+  fuse = new Fuse(puzzles, fuseOptions);
+  currentPageNumber = 0;
+  initialized = true;
+}
+init().then(() => {
+  if (user) {
+    render();
+  } else {
+    document.addEventListener("user-loaded", render);
+  }
+});
+
+function queryPuzzles(searchPattern) {
+  if (!fuse) return;
+  let result = fuse.search(searchPattern);
+  return result;
+}
+
+var currentPageNumber = 2;
+
+const pageHolder = document.getElementById("puzzlePage");
+
+const puzzleSearchInput = document.getElementById("puzzle-search-input");
+const categoryInput = document.getElementById("category-select");
+const difficultyInput = document.getElementById("difficulty-select");
+
+function renderPage(puzzles) {
+  if (categoryInput.value != "Any" && categoryInput.value != "Category") {
+    puzzles = puzzles.filter((value) => {
+      return value.category == categoryInput.value;
+    });
+  }
+
+  if (difficultyInput.value != "Any" && difficultyInput.value != "Difficulty") {
+    puzzles = puzzles.filter((value) => {
+      return value.difficulty == difficultyInput.value;
+    });
+  }
+
+  if (puzzles.length <= 0 || !puzzles) {
+    pageHolder.innerHTML = `<div class="container text-center text-lg pt-5 pb-5">No Puzzles Found <i class="fas fa-frown"></i></div>`;
+    return;
+  }
+
+  let inner = `<div class="row">`;
+  puzzles.slice(Math.max(0, currentPageNumber * 12), currentPageNumber * 12 + 12).forEach((value) => {
+    inner += generateCard(value);
+  });
+
+  inner += "</div>";
+  pageHolder.innerHTML = inner;
+
+  const buttons = document.getElementsByClassName("puzzle-card-button");
+  for (let button of buttons) {
+    button.onclick = function () {
+      onPuzzleButtonClick(button);
+    };
+  }
+
+  renderPageNumbers(Math.ceil(puzzles.length / 12));
+}
+
+function render() {
+  if (!puzzleSearchInput.value) {
+    renderPage(allPuzzles);
+    return;
+  }
+
+  /**@type {Array} */
+  let query = queryPuzzles(puzzleSearchInput.value);
+
+  let puzzles = query.map((value) => {
+    return value.item;
+  });
+
+  renderPage(puzzles);
+}
+
+categoryInput.oninput = () => {
+  currentPageNumber = 0;
+  render();
 };
-nextPageButton.onclick = function (evt) {
-  evt.preventDefault();
-  pageNum += 1;
-  pageNum = Math.min(pageNum, pageNum); //add some way to get max # of pages
-  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
+difficultyInput.oninput = () => {
+  currentPageNumber = 0;
+  render();
 };
+
+puzzleSearchInput.addEventListener("input", () => {
+  currentPageNumber = 0;
+  render();
+});
 
 function generateCard(puzzle) {
   const name = puzzle.name;
@@ -82,19 +199,19 @@ function generateCard(puzzle) {
   var diffString = "";
 
   switch (difficulty) {
-    case 0:
+    case "Easy":
       diffColor = "success";
       diffString = "Easy";
       break;
-    case 1:
+    case "Medium":
       diffColor = "warning";
       diffString = "Medium";
       break;
-    case 2:
+    case "Hard":
       diffColor = "danger";
       diffString = "Hard";
       break;
-    case 3:
+    case "Master":
       diffColor = "dark";
       diffString = "Master";
       break;
@@ -127,107 +244,6 @@ function generateCard(puzzle) {
               </div>
               `;
 }
-const pageHolder = document.getElementById("puzzlePage");
-async function generatePage(category, difficulty, pageNum) {
-  currentPageLabel.innerHTML = String(pageNum + 1);
-  pageHolder.innerHTML = `<div class="container-fluid d-flex justify-content-center p-5">
-  <img src="img/sharp_reloading.svg" />
-  </div>`;
-
-  const puzzles = await queryPuzzles(category, difficulty, Math.floor(pageNum) * 12);
-  if (!puzzles || puzzles.length <= 0) {
-    pageHolder.innerHTML = `<div class="container text-center text-lg pt-5 pb-5">No Puzzles Found <i class="fas fa-frown"></i></div>`;
-    return;
-  }
-
-  var page = "";
-
-  var count = 0;
-  puzzles.forEach((puzzle) => {
-    if (count == 0) {
-      page += `<div class="row">`;
-    }
-    page += generateCard(puzzle);
-    if (count == 3) {
-      page += "</div>";
-    }
-    count += 1;
-    if (count > 3) count = 0;
-  });
-
-  if (count != 0) {
-    page += "</div>";
-  }
-
-  pageHolder.innerHTML = page;
-
-  const buttons = document.getElementsByClassName("puzzle-card-button");
-  for (let button of buttons) {
-    button.onclick = function () {
-      onPuzzleButtonClick(button);
-    };
-  }
-}
-
-var puzzleCategory = null;
-var puzzleDifficulty = null;
-var pageNum = 0;
-
-const categoryDropdown = document.getElementById("category-dropdown");
-const categoryOptions = document.getElementsByClassName("puzzle-category-option");
-for (let element of categoryOptions) {
-  element.onclick = function () {
-    puzzleCategory = element.dataset.option;
-    categoryDropdown.textContent = element.textContent;
-  };
-}
-
-function navigateToPage() {
-  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
-}
-
-const difficultyDropdown = document.getElementById("difficulty-dropdown");
-const difficultyOptions = document.getElementsByClassName("puzzle-difficulty-option");
-for (let element of difficultyOptions) {
-  element.onclick = function () {
-    difficultyDropdown.textContent = element.textContent;
-
-    switch (element.dataset.option) {
-      case "Easy":
-        puzzleDifficulty = 0;
-        break;
-      case "Medium":
-        puzzleDifficulty = 1;
-        break;
-      case "Hard":
-        puzzleDifficulty = 2;
-        break;
-      case "Master":
-        puzzleDifficulty = 3;
-        break;
-      default:
-        puzzleDifficulty = null;
-        break;
-    }
-  };
-}
-
-var searchDebounce = false;
-const searchButton = document.getElementById("puzzle-search");
-searchButton.onclick = function () {
-  if (searchDebounce) return;
-
-  searchDebounce = true;
-  pageNum = 0;
-  generatePage(puzzleCategory, puzzleDifficulty, pageNum);
-  setTimeout(() => {
-    searchDebounce = false;
-  }, 1500);
-};
-
-document.addEventListener("user-loaded", () => {
-  generatePage(null, null, 0);
-});
 
 const puzzleAlert = document.getElementById("puzzle-submit-alert-holder");
 const puzzleModalHeader = document.getElementById("puzzle-header");
@@ -249,23 +265,6 @@ async function generatePuzzleModal(id) {
 
 async function onPuzzleButtonClick(button) {
   generatePuzzleModal(button.dataset.puzzlename);
-}
-
-async function submitPuzzle(id, answer) {
-  const response = await fetch("submitPuzzle", {
-    method: "POST",
-    body: JSON.stringify({ id: id, answer: answer }),
-    headers: {
-      "Content-type": "application/json; charset=UTF-8",
-    },
-  });
-
-  if (!response.ok) {
-    return;
-  }
-
-  const data = await response.json();
-  return data;
 }
 
 var submitDebounce = false;
@@ -299,3 +298,47 @@ puzzleSubmitButton.onclick = async function (evt) {
     return;
   }
 };
+
+const currentPageBefore = document.getElementById("current-page-before");
+const currentPage = document.getElementById("current-page");
+const currentPageAfter = document.getElementById("current-page-after");
+
+const previousPage = document.getElementById("previous-page-button");
+const nextPage = document.getElementById("next-page-button");
+
+function renderPageNumbers(maxPages) {
+  const currentNum = currentPageNumber + 1;
+  const prevNum = currentNum - 1;
+  const nextNum = currentNum + 1;
+
+  currentPage.textContent = String(currentNum);
+
+  if (prevNum <= 0) {
+    currentPageBefore.parentElement.classList.add("disabled");
+    currentPageBefore.textContent = "";
+    previousPage.parentElement.classList.add("disabled");
+  } else {
+    currentPageBefore.parentElement.classList.remove("disabled");
+    currentPageBefore.textContent = String(prevNum);
+    previousPage.parentElement.classList.remove("disabled");
+  }
+
+  if (nextNum > maxPages) {
+    currentPageAfter.parentElement.classList.add("disabled");
+    currentPageAfter.textContent = "";
+    nextPage.parentElement.classList.add("disabled");
+  } else {
+    currentPageAfter.parentElement.classList.remove("disabled");
+    currentPageAfter.textContent = String(nextNum);
+    nextPage.parentElement.classList.remove("disabled");
+  }
+
+  previousPage.onclick = () => {
+    currentPageNumber -= 1;
+    render();
+  };
+  nextPage.onclick = () => {
+    currentPageNumber += 1;
+    render();
+  };
+}

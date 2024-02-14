@@ -265,17 +265,6 @@ async function sendVerificationEmail(email, code) {
     `,
   };
 
-  // const message = {
-  //   from: "ahsinvitational@gmail.com",
-  //   to: [email],
-  //   subject: "Hello from Nodemailer",
-  //   text: `This is a test email sent using Nodemailer. Your code it ${code}`,
-  //   attachments: [
-  //     {
-  //       path: "public/img/logo.png",
-  //     },
-  //   ],
-  // };
   transporter.sendMail(message, (error, info) => {
     if (error) {
       console.error("Error sending email: ", error);
@@ -286,18 +275,21 @@ async function sendVerificationEmail(email, code) {
 }
 
 function sendConfirmationEmail(email, username, password) {
-  console.log("sending confirmation", email, username, password);
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
-    subject: "Hello from Nodemailer",
-    text: `Your team's credentials are Username: ${username} , Password: ${password}`,
-    attachments: [
-      {
-        path: "public/img/logo.png",
-      },
-    ],
+    subject: "AHS Cyber Invitational - Account Created",
+    text: `An AHS Cyber Invitational account has created under this email\nIf you have not created an AHS Cyber Invitational account using this email, please ignore this message\nUsername: ${username}\nPassword: ${password}`,
+    html: `
+    <h1>AHS Cyber Invitational</h1>
+    <p>An AHS Cyber Invitational account has created under this email</p>
+    <p>If you have not created an AHS Cyber Invitational account using this email, please ignore this message</p>
+    <br />
+    <p>Username: ${username}</p>
+    <p>Password: ${password}</p>
+    `,
   };
+
   transporter.sendMail(message, (error, info) => {
     if (error) {
       console.error("Error sending email: ", error);
@@ -659,11 +651,44 @@ function startPuzzleRound(id, duration = config.puzzle_round_duration) {
 //#endregion
 
 //#region Puzzles
-async function fetchPuzzle(name) {
+
+var puzzles = {};
+
+function fetchPuzzle(name) {
+  return puzzles[name];
+}
+
+async function replicatePuzzles() {
+  //fetch all puzzles that currently exist
   try {
-    /**@type {Puzzle?} */
-    // @ts-ignore
-    const result = await client.db(mainDbName).collection(puzzlesColName).findOne({ name: name });
+    const result = await client
+      .db(mainDbName)
+      .collection(puzzlesColName)
+      .find({}, { projection: { _id: 0, name: 1, point_value: 1, difficulty: 1, category: 1 } })
+      .toArray();
+
+    if (!result) throw "Failed to replicate puzzles";
+
+    let repVal = {};
+    result.forEach((puzzle) => {
+      repVal[puzzle.name] = puzzle;
+    });
+    puzzles = repVal;
+  } catch (err) {
+    console.log(err);
+    return;
+  }
+}
+replicatePuzzles();
+
+async function fetchPuzzleDetail(name) {
+  try {
+    const result = await client
+      .db(mainDbName)
+      .collection(puzzlesColName)
+      .findOne({ name: name }, { projection: { _id: 0, answer: 0 } });
+
+    if (!result) throw "Failed to fetch puzzle!";
     return result;
   } catch (err) {
     console.log(err);
@@ -671,12 +696,15 @@ async function fetchPuzzle(name) {
   }
 }
 
-async function fetchPuzzles(query = {}, sort = {}, projection = {}, count = 1, skip = 0) {
+async function isPuzzleAnswerCorrect(name, answer) {
   try {
-    /**@type {Puzzle[]?} */
-    //@ts-ignore
-    const puzzles = await client.db(mainDbName).collection(puzzlesColName).find(query).project(projection).skip(skip).sort(sort).limit(count).toArray();
-    return puzzles;
+    const result = await client
+      .db(mainDbName)
+      .collection(puzzlesColName)
+      .findOne({ name: name }, { projection: { answer: 1 } });
+
+    if (!result) throw "Failed to fetch puzzle!";
+    return result.answer === answer;
   } catch (err) {
     console.log(err);
     return null;
@@ -705,45 +733,22 @@ app.post("/getPuzzle", verifyUser, async (req, res) => {
   const id = req.body.id;
   if (!id) {
     // Bad request
-    res.sendStatus(400);
+    res.status(400).send("Missing puzzle id!");
     return;
   }
 
-  const puzzle = await fetchPuzzle(id);
+  const puzzle = await fetchPuzzleDetail(id);
   if (!puzzle) {
-    res.sendStatus(404);
+    res.status(404).send("Puzzle not found!");
     return;
   } else {
-    delete puzzle._id;
-    delete puzzle.answer;
     res.json(puzzle);
     return;
   }
 });
 
-app.post("/getMultiplePuzzles", verifyUser, async (req, res) => {
-  console.log("attempting to fetch puzzles");
-
-  const dbquery = req.body.query;
-  const sort = req.body.sort;
-  const projection = req.body.projection;
-  const count = req.body.count;
-  const skip = req.body.skip;
-
-  const cursor = await fetchPuzzles(Object(dbquery), Object(sort), Object({ ...projection, answer: 0, _id: 0, description: 0 }), Number(count), Number(skip));
-  if (!cursor || cursor.length < 1) {
-    res.sendStatus(404);
-    return;
-  }
-  const puzzles = await cursor;
-
-  if (puzzles) {
-    res.json(puzzles);
-    return;
-  } else {
-    res.sendStatus(404);
-    return;
-  }
+app.post("/getAllPuzzles", verifyUser, async (req, res) => {
+  res.json(puzzles);
 });
 
 app.post("/submitPuzzle", verifyUser, async (req, res) => {
@@ -753,44 +758,28 @@ app.post("/submitPuzzle", verifyUser, async (req, res) => {
   const answer = req.body.answer;
 
   if (!id || !answer || !username) {
-    res.sendStatus(400);
+    res.status(400).send("Missing parameters!");
     return;
   }
 
   const userData = await fetchUser(username);
   if (!userData) {
-    res.sendStatus(400);
+    res.status(400).send("User not found!");
     return;
   }
 
-  const puzzle = await fetchPuzzle(id);
+  const puzzle = fetchPuzzle(id);
   if (!puzzle) {
-    res.sendStatus(404);
-    return;
+    res.status(404).send("Puzzle not found!");
   }
 
-  if (!puzzle.answer) {
-    console.log("puzzle is missing answer");
-    res.sendStatus(500);
-    return;
-  }
-
-  if (userData.completed_puzzles[puzzle.name]) {
-    res.json({ alreadyCompleted: true });
+  if (isPuzzleAnswerCorrect(id, answer)) {
+    onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
+    res.json({ correct: true });
     return;
   } else {
-    if (puzzle.answer === answer) {
-      const result = onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
-      if (!result) {
-        res.sendStatus(500);
-        return;
-      }
-      res.json({ correct: true });
-      return;
-    } else {
-      res.json({ correct: false });
-      return;
-    }
+    res.json({ correct: false });
+    return;
   }
 });
 //#endregion
