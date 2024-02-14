@@ -10,6 +10,7 @@ if (location.href.includes("/vapor/soohan-cho")) {
 }
 
 const userLoaded = new CustomEvent("user-loaded");
+const userUpdated = new CustomEvent("user-updated");
 
 var user = null;
 
@@ -38,6 +39,7 @@ function updateUserUI(user) {
 socket.on("update_event", async () => {
   user = await fetchUser();
   updateUserUI(user);
+  document.dispatchEvent(userUpdated);
 });
 
 async function init() {
