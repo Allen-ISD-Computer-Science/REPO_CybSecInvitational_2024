@@ -30,6 +30,7 @@ async function sendRequest() {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
+  return response;
 }
 
 const register1FirstName = document.getElementById("register_1_first_name");
@@ -50,33 +51,88 @@ const register2ShirtSize = document.getElementById("register_2_shirt_size");
 
 const registerSubmit = document.getElementById("register_submit");
 
-registerSubmit.onclick = function (evt) {
+const problemAlert = document.getElementById("problem_alert");
+function alertProblem(message) {
+  problemAlert.textContent = message;
+  problemAlert.style.display = "block";
+}
+
+function isRegister1Valid() {
+  return register1FirstName.value && register1LastName.value && register1Email.value && register1EmailConfirm.value && register1School.value && register1Grade.value && register1ShirtSize.value;
+}
+
+function isRegister2Valid() {
+  return register2FirstName.value && register2LastName.value && register2Email.value && register2EmailConfirm.value && register2School.value && register2Grade.value && register2ShirtSize.value;
+}
+
+function isSecondMember() {
+  return register2FirstName.value || register2LastName.value || register2Email.value || register2EmailConfirm.value || register2School.value || register2Grade.value || register2ShirtSize.value;
+}
+
+function resetMember2() {
+  register2FirstName.value = "";
+  register2LastName.value = "";
+  register2Email.value = "";
+  register2EmailConfirm.value = "";
+  register2School.value = "";
+  register2Grade.value = "";
+  register2ShirtSize.value = "";
+}
+
+var sent = false;
+registerSubmit.onclick = async (evt) => {
+  if (sent) return;
   evt.preventDefault();
 
-  if (register1Email.value != register1EmailConfirm.value) return;
-  if (!register1FirstName.value) return;
-  if (!register1LastName.value) return;
-  if (!register1Email.value) return;
-  if (!register1EmailConfirm.value) return;
-  if (!register1School.value) return;
-  if (!register1Grade.value) return;
-  if (!register1ShirtSize.value) return;
+  if (isSecondMember()) {
+    secondMember = true;
+  } else {
+    secondMember = false;
+  }
 
-  console.log(register1FirstName.value, register1LastName.value, register1Email.value, register1EmailConfirm.value, register1School.value, register1Grade.value, register1ShirtSize.value);
+  if (!isRegister1Valid()) {
+    alertProblem("Missing parameters for member 1!");
+    return;
+  }
 
-  sendRequest();
+  if (register1Email.value != register1EmailConfirm.value) {
+    alertProblem("Confirm Emails are not the same for member 1!");
+    return;
+  }
+
+  if (secondMember && !isRegister2Valid()) {
+    alertProblem("Missing parameters for member 2!");
+    return;
+  } else if (secondMember && register2Email.value != register2EmailConfirm.value) {
+    alertProblem("Confirm Emails are not the same for member 2!");
+    return;
+  }
+
+  if (register1Email == register2Email) {
+    alertProblem("Multiple members can not have the same email!");
+    return;
+  }
+
+  sent = true; //debounce
+  let response = await sendRequest();
+  console.log(response);
+  if (!response.ok) {
+    alertProblem(await response.text());
+  } else if (response.ok) {
+    window.location.href = "/confirm";
+  }
+  sent = false;
 };
 
-let secondMember = false;
 document.getElementById("removeMemberButton").addEventListener("click", () => {
-  secondMember = false;
+  resetMember2();
+
   document.getElementById("addMemberButton").style.display = "inline";
   document.getElementById("removeMemberButton").style.display = "none";
   document.getElementById("addMember").style.display = "none";
 });
 
 document.getElementById("addMemberButton").addEventListener("click", () => {
-  secondMember = true;
   document.getElementById("addMemberButton").style.display = "none";
   document.getElementById("removeMemberButton").style.display = "inline";
   document.getElementById("addMember").style.display = "inline";

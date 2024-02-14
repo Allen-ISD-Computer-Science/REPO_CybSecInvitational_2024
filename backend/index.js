@@ -191,6 +191,10 @@ app.get("/register", (req, res) => {
   res.sendFile(path.join(__dirname, "public/register.html"));
 });
 
+app.get("/confirm", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/confirm.html"));
+});
+
 const nodemailer = require("nodemailer");
 
 const transporter = nodemailer.createTransport({
@@ -250,14 +254,28 @@ async function sendVerificationEmail(email, code) {
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
-    subject: "Hello from Nodemailer",
-    text: `This is a test email sent using Nodemailer. Your code it ${code}`,
-    attachments: [
-      {
-        path: "public/img/logo.png",
-      },
-    ],
+    subject: "AHS Cyber Invitational - Email Verification Code",
+    text: `An AHS Cyber Invitational account has attempted to be created using this email\nIf you have not attempted to create an AHS Cyber Invitational account using this email, please ignore this message\nYour verification code is: ${code}`,
+    html: `
+    <h1>AHS Cyber Invitational</h1>
+    <p>An AHS Cyber Invitational account has attempted to be created using this email</p>
+    <p>If you have not attempted to create an AHS Cyber Invitational account using this email, please ignore this message</p>
+    <br />
+    <p>Your verification code is: ${code}</p>
+    `,
   };
+
+  // const message = {
+  //   from: "ahsinvitational@gmail.com",
+  //   to: [email],
+  //   subject: "Hello from Nodemailer",
+  //   text: `This is a test email sent using Nodemailer. Your code it ${code}`,
+  //   attachments: [
+  //     {
+  //       path: "public/img/logo.png",
+  //     },
+  //   ],
+  // };
   transporter.sendMail(message, (error, info) => {
     if (error) {
       console.error("Error sending email: ", error);
@@ -311,8 +329,8 @@ class VerificationGroup {
   constructor(registrants) {
     this.tokens = {};
     for (let registrant of registrants) {
-      if (!validateEmail(registrant.email)) throw "Invalid Email Format";
-      if (VerificationGroup.pendingGroups[registrant.email]) throw "Email Already Pending Verification";
+      if (!validateEmail(registrant.email)) throw "Invalid Email Format!";
+      if (VerificationGroup.pendingGroups[registrant.email]) throw "Email Already Pending Verification!";
 
       let token = new VerificationToken(registrant);
       if (token) this.tokens[registrant.email] = token;
@@ -350,6 +368,7 @@ class VerificationGroup {
     });
 
     this.remove();
+    console.log(VerificationGroup.pendingGroups);
   }
 
   attemptValidation(email, code) {
@@ -416,6 +435,8 @@ app.post("/register", async (req, res) => {
     }
 
     for (let registrant of registrantsBody) {
+      console.log(registrant);
+
       const email = String(registrant.email);
       const firstName = String(registrant.firstName);
       const lastName = String(registrant.lastName);
@@ -423,12 +444,12 @@ app.post("/register", async (req, res) => {
       const gradeLevel = String(registrant.gradeLevel);
       const shirtSize = String(registrant.shirtSize);
       if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize) {
-        res.status(400).send("Missing Parameters");
+        res.status(400).send("Missing Parameters!");
         return;
       }
 
       if (!validateEmail(email)) {
-        res.sendStatus(400);
+        res.status(400).send("Invalid Email Format!");
         return;
       }
 
@@ -454,19 +475,22 @@ app.post("/register", async (req, res) => {
   try {
     let result = await client.db(mainDbName).collection(usersColName).findOne({ $or: emails });
     if (result) {
-      res.sendStatus(400);
+      res.status(400).send("Account with Email already exists!");
       return;
     }
   } catch (err) {
-    res.sendStatus(500);
+    res.status(500).send("Server Side Error!");
     return;
   }
 
   try {
-    new VerificationGroup(registrants);
+    await new VerificationGroup(registrants);
   } catch (err) {
-    res.sendStatus(400);
+    console.log(err);
+    res.status(400).send(err);
     return;
+  } finally {
+    res.sendStatus(200);
   }
 });
 //#endregion
