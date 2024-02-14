@@ -342,3 +342,7 @@ function renderPageNumbers(maxPages) {
     render();
   };
 }
+
+socket.on("update_event", async () => {
+  render();
+});
