@@ -124,16 +124,20 @@ registerSubmit.onclick = async (evt) => {
   sent = false;
 };
 
+const addMemberButton = document.getElementById("addMemberButton");
+const removeMemberButton = document.getElementById("removeMemberButton");
+const addMemberMenu = document.getElementById("addMember");
+
 document.getElementById("removeMemberButton").addEventListener("click", () => {
   resetMember2();
 
-  document.getElementById("addMemberButton").style.display = "inline";
-  document.getElementById("removeMemberButton").style.display = "none";
-  document.getElementById("addMember").style.display = "none";
+  addMemberButton.classList.replace("d-none", "d-flex");
+  removeMemberButton.classList.replace("d-flex", "d-none");
+  addMemberMenu.classList.replace("d-inline", "d-none");
 });
 
 document.getElementById("addMemberButton").addEventListener("click", () => {
-  document.getElementById("addMemberButton").style.display = "none";
-  document.getElementById("removeMemberButton").style.display = "inline";
-  document.getElementById("addMember").style.display = "inline";
+  addMemberButton.classList.replace("d-flex", "d-none");
+  removeMemberButton.classList.replace("d-none", "d-flex");
+  addMemberMenu.classList.replace("d-none", "d-inline");
 });
