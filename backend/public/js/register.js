@@ -119,7 +119,7 @@ registerSubmit.onclick = async (evt) => {
   if (!response.ok) {
     alertProblem(await response.text());
   } else if (response.ok) {
-    window.location.href = "/confirm";
+    window.location.href = "confirm";
   }
   sent = false;
 };

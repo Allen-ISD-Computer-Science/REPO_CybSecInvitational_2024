@@ -44,7 +44,7 @@ submitButton.onclick = async (evt) => {
     spinner.style.display = "none";
     label.style.display = "none";
     check.style.display = "inline-block";
-    window.location.href = "/login";
+    window.location.href = "login";
   } else if (!response.ok) {
     problemAlert.style.display = "block";
     problemAlert.textContent = "Failed :(";
