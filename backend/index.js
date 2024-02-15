@@ -1430,9 +1430,29 @@ app.post("/admin/command", adminCheck, async (req, res) => {
       switch (operand) {
         case "BATTLE_ROUND":
           const roundId = arguments.id;
-          const duration = arguments.duration;
 
-          startBattleRound();
+          if (!roundId) {
+            res.status(400).send("Missing Round Id!");
+            return;
+          }
+
+          let duration = null;
+          if (arguments.duration) {
+            const durationNum = Number(arguments.duration);
+            if (!durationNum) {
+              res.status(400).send("Duration value is not a Number!");
+              return;
+            } else {
+              duration = durationNum;
+            }
+          }
+
+          if (duration) {
+            startBattleRound(roundId, duration);
+          } else {
+            startBattleRound(roundId);
+          }
+
           return;
         case "PUZZLE_ROUND":
           return;
@@ -1445,6 +1465,54 @@ app.post("/admin/command", adminCheck, async (req, res) => {
 
     case "END": //ends events (puzzle round, battle round)
       switch (operand) {
+        case "PUZZLE_ROUND":
+          if (currentRound?.type != "PuzzleRound") {
+            res.status(400).send("Current Round is not a Puzzle Round!");
+            return;
+          }
+          try {
+            endCurrentRound();
+            res.sendStatus(200);
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+          }
+          return;
+        case "BATTLE_ROUND":
+          if (currentRound?.type != "BattleRound") {
+            res.status(400).send("Current Round is not a Battle Round!");
+            return;
+          }
+          try {
+            endCurrentRound();
+            res.sendStatus(200);
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+          }
+          return;
+        case "SCENARIO_ROUND":
+          if (currentRound?.type != "ScenarioRound") {
+            res.status(400).send("Current Round is not a Scenario Round!");
+            return;
+          }
+          try {
+            endCurrentRound();
+            res.sendStatus(200);
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+          }
+          return;
+        case "ROUND":
+          try {
+            endCurrentRound();
+            res.sendStatus(200);
+          } catch (err) {
+            console.log(err);
+            res.status(500).send("Internal Server Error!");
+          }
+          return;
         default:
           return;
       }

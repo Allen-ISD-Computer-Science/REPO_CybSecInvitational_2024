@@ -229,24 +229,24 @@
                     <option value="" hidden>Type</option>
                     <option value="PUZZLE_ROUND">Puzzle Round</option>
                     <option value="BATTLE_ROUND">Battle Round</option>
-                    <option value="SCENARIO_ROUND">Scenario Round</option>
+                    <option value="SCENARIO_ROUND ">Scenario Round</option>
                   </select>
 
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_round_id">
                     <option value="" hidden>Event Name</option>
                     <option>SEEDING_ROUND</option>
                     <option>PUZZLE_ROUND_1</option>
-                    <option>BATTLE_ROUND_1</option>
+                    <option value="battle_round_1">BATTLE_ROUND_1</option>
                     <option>PUZZLE_ROUND_2</option>
                     <option>BATTLE_ROUND_2</option>
                     <option>PUZZLE_ROUND_3</option>
                     <option>BATTLE_ROUND_3</option>
                     <option>SCENARIO</option>
                   </select>
-                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Duration" />
-                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_round_duration" placeholder="Duration" />
+                  <button id="admin_round_start" type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
 
-                  <button type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
+                  <button id="admin_round_end" type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
                 </div>
               </div>
 

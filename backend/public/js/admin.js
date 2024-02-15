@@ -82,3 +82,24 @@ divisionSubmit.addEventListener("click", async (evt) => {
     division: Number(division),
   });
 });
+
+const roundTypeSelection = document.getElementById("admin_round_type");
+const roundIdSelection = document.getElementById("admin_round_id");
+const roundDuration = document.getElementById("admin_round_duration");
+const roundStart = document.getElementById("admin_round_start");
+const roundEnd = document.getElementById("admin_round_end");
+
+roundStart.addEventListener("click", async (evt) => {
+  evt.preventDefault();
+
+  let id = roundIdSelection.value;
+  let duration = roundDuration.value;
+  let type = roundTypeSelection.value;
+
+  if (!id || !duration || !type) return;
+
+  let result = await submitOperation("START", type, {
+    id: id,
+    duration: duration,
+  });
+});
