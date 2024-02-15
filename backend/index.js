@@ -1168,7 +1168,6 @@ app.get("/adminLogin", (req, res) => {
 });
 
 app.get("/admin", adminCheck, (req, res) => {
-  console.log("sending file");
   res.sendFile(path.join(__dirname, "public/admin.html"));
 });
 
@@ -1258,7 +1257,7 @@ app.post("/admin/command", adminCheck, async (req, res) => {
           }
 
         default:
-          res.status(400).send("Invalid operand");
+          res.status(400).send("Invalid Operand!");
           return;
       }
 
@@ -1337,7 +1336,7 @@ app.post("/admin/command", adminCheck, async (req, res) => {
           }
 
         default:
-          res.status(400).send("Operation missing arguments");
+          res.status(400).send("Invalid Operand!");
           return;
       }
 
@@ -1397,6 +1396,14 @@ app.post("/admin/command", adminCheck, async (req, res) => {
             return;
           }
 
+          arguments.division = Number(arguments.division);
+          console.log(typeof arguments.division, arguments.division);
+
+          if (arguments.division !== 0 && arguments.division !== 1 && arguments.division !== 2) {
+            res.status(400).send("Division is not a Number!");
+            return;
+          }
+
           try {
             let result = await client
               .db(mainDbName)
@@ -1415,19 +1422,24 @@ app.post("/admin/command", adminCheck, async (req, res) => {
             return;
           }
         default:
-          res.status(400).send("Operation missing arguments");
+          res.status(400).send("Invalid Operand!");
           return;
       }
 
     case "START": //starts events (puzzle round, )
       switch (operand) {
         case "BATTLE_ROUND":
+          const roundId = arguments.id;
+          const duration = arguments.duration;
+
+          startBattleRound();
           return;
         case "PUZZLE_ROUND":
           return;
         case "SCENARIO_ROUND":
           return;
         default:
+          res.status(400).send("Invalid Operand!");
           return;
       }
 

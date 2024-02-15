@@ -157,10 +157,9 @@
                 <label for="" class="form-label">Output</label>
 
                 <div class="border rounded py-2 px-3" style="color: #6e707e; border: 1px solid #d1d3e2; background-color: rgb(255, 255, 255)">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lorem nibh, tristique a facilisis sed, eleifend sit amet mauris. Duis ut feugiat magna, sed congue turpis.
-                  Aliquam molestie augue at orci facilisis ultrices. Nulla erat diam, eleifend eu lacinia vel, tempus vel ante. Mauris elementum odio ut augue rutrum tincidunt. Nullam laoreet viverra
-                  lacinia. Suspendisse varius sapien sit amet mattis ultricies. Sed ultricies tincidunt eros, quis rhoncus ipsum pellentesque vel. Morbi ultricies velit et lacus tempor tempus. In sit
-                  amet finibus nisl, a interdum purus. Vestibulum vitae risus lobortis, laoreet tellus vitae, imperdiet nisi. Fusce eget faucibus nisi.
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lorem nibh, tristique a facilisis sed, eleifend sit amet mauris. Duis ut feugiat magna, sed congue turpis. Aliquam molestie augue at orci facilisis ultrices. Nulla erat diam, eleifend eu lacinia vel, tempus vel ante. Mauris elementum odio ut augue rutrum
+                  tincidunt. Nullam laoreet viverra lacinia. Suspendisse varius sapien sit amet mattis ultricies. Sed ultricies tincidunt eros, quis rhoncus ipsum pellentesque vel. Morbi ultricies velit et lacus tempor tempus. In sit amet finibus nisl, a interdum purus. Vestibulum vitae risus lobortis, laoreet tellus vitae, imperdiet nisi. Fusce
+                  eget faucibus nisi.
                 </div>
               </div>
 
@@ -213,20 +212,27 @@
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
                     <option value="" hidden>Select Section</option>
-                    <option>Silver</option>
-                    <option>Gold</option>
-                    <option>Platinum</option>
+                    <option value="0">Silver</option>
+                    <option value="1">Gold</option>
+                    <option value="2">Platinum</option>
                   </select>
                   <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Target" />
-                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                  <button type="button" id="admin_division_submit" class="btn btn-primary mb-2">Submit</button>
                 </div>
                 <!-- End of Add Points UI -->
               </div>
               <div class="mb-5">
                 <h3>Event Management</h3>
-                <label class="form-label">Events</label>
+                <label class="form-label">Start Event</label>
                 <div class="d-flex flex-wrap">
-                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_round_type">
+                    <option value="" hidden>Type</option>
+                    <option value="PUZZLE_ROUND">Puzzle Round</option>
+                    <option value="BATTLE_ROUND">Battle Round</option>
+                    <option value="SCENARIO_ROUND">Scenario Round</option>
+                  </select>
+
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_round_id">
                     <option value="" hidden>Event Name</option>
                     <option>SEEDING_ROUND</option>
                     <option>PUZZLE_ROUND_1</option>
@@ -239,6 +245,7 @@
                   </select>
                   <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Duration" />
                   <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
+
                   <button type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
                 </div>
               </div>
@@ -282,11 +289,7 @@
     </a>
 
     <!-- Custom scripts for all pages-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>

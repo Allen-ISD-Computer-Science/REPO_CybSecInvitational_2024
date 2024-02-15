@@ -62,3 +62,23 @@ completedPuzzlesSubmit.addEventListener("click", async (evt) => {
     id: puzzleId,
   });
 });
+
+const divisionSelection = document.getElementById("admin_division_selection");
+const divisionTarget = document.getElementById("admin_division_target");
+const divisionSubmit = document.getElementById("admin_division_submit");
+
+divisionSubmit.addEventListener("click", async (evt) => {
+  evt.preventDefault();
+
+  let division = divisionSelection.value;
+  let target = divisionTarget.value;
+
+  if (!division || !target) return;
+
+  console.log(Number(division));
+
+  let result = await submitOperation("SET", "DIVISION", {
+    target: target,
+    division: Number(division),
+  });
+});
