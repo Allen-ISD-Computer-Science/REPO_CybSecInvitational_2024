@@ -36,7 +36,8 @@ function updateUserUI(user) {
   pointsTextLabel.textContent = `points : ${user.puzzle_points + user.scenario_points}`;
 }
 
-socket.on("update_event", async () => {
+socket.on("update_event", async (data) => {
+  console.log(data);
   user = await fetchUser();
   updateUserUI(user);
   document.dispatchEvent(userUpdated);

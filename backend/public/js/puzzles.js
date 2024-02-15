@@ -56,7 +56,6 @@ async function init() {
     throw "Failed to fetch puzzles!";
   }
 
-  puzzles = Object.values(puzzles);
   allPuzzles = [...puzzles];
 
   puzzles.map((value) => {

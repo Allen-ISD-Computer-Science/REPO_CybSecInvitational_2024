@@ -136,15 +136,6 @@ const verifyUser = function (req, res, next) {
   next();
 };
 
-// Verifies if current round is session is a puzzle round, redirects if not and if no round is in session
-const verifyPuzzleRound = function (req, res, next) {
-  if (!currentRound || currentRound.type != "PuzzleRound") {
-    res.redirect("home");
-    return;
-  }
-  next();
-};
-
 // Verifies if a battle round currently exists then redirects to battle round page if so
 const verifyBattleRound = function (req, res, next) {
   if (currentRound && currentRound.type == "BattleRound") {
@@ -154,10 +145,19 @@ const verifyBattleRound = function (req, res, next) {
   next();
 };
 
-// Verifies if a battle round currently exists then returns json data if none does
+// Verifies if a puzzle round is currently in session then returns data if not
+const testPuzzleRound = function (req, res, next) {
+  if (!currentRound || currentRound.type != "PuzzleRound") {
+    res.status(403).send("Puzzle Round hasn't started!");
+    return;
+  }
+  next();
+};
+
+// Verifies if a battle round is currently in session then returns data if not
 const testBattleRound = function (req, res, next) {
   if (!currentRound || currentRound.type != "BattleRound") {
-    res.send({ notStarted: true });
+    res.status(403).send("Battle Round hasn't started!");
     return;
   }
   next();
@@ -610,9 +610,11 @@ async function endCurrentRound() {
   } catch (err) {
     console.log(err);
   }
-  currentRound.callback().then(() => {
-    currentRound = null;
-  });
+
+  console.log(currentRound);
+
+  currentRound.callback();
+  currentRound = null;
 
   console.log(currentRound);
 }
@@ -628,31 +630,40 @@ function endPuzzleRound() {
  * @returns {RoundStartResult}
  */
 function startPuzzleRound(id, duration = config.puzzle_round_duration) {
-  if (currentRound) {
+  if (currentRound !== null) {
     console.warn("A round is already in session");
     return { success: false, status: 2 };
   }
 
-  console.log("starting puzzle round");
+  console.log(`starting puzzle round, duration ${duration}`);
 
   let time = Date.now();
-  currentRound = {
+  /**@type {Round} */
+  let puzzleRound = {
     startTime: time,
     endTime: time + duration,
     callback: endPuzzleRound,
-    endTimeout: setTimeout(endCurrentRound, duration),
+    endTimeout: setTimeout(endCurrentRound, Number(duration)),
     type: "PuzzleRound",
-    id: String(id),
+    id: id,
   };
+  currentRound = puzzleRound;
 
   return { success: true, status: 1 };
 }
+
+console.log("starting");
+startPuzzleRound("testPuzzleRound");
+
 //#endregion
 //#endregion
 
 //#region Puzzles
 
 var puzzles = {};
+
+// simplified version of puzzles (excludes answers, and descriptions)
+var puzzlesList = [];
 
 function fetchPuzzle(name) {
   return puzzles[name];
@@ -664,7 +675,7 @@ async function replicatePuzzles() {
     const result = await client
       .db(mainDbName)
       .collection(puzzlesColName)
-      .find({}, { projection: { _id: 0, name: 1, point_value: 1, difficulty: 1, category: 1 } })
+      .find({}, { projection: { _id: 0 } })
       .toArray();
 
     if (!result) throw "Failed to replicate puzzles";
@@ -672,6 +683,11 @@ async function replicatePuzzles() {
     let repVal = {};
     result.forEach((puzzle) => {
       repVal[puzzle.name] = puzzle;
+      let clone = { ...puzzle };
+      delete clone.answer;
+      delete clone.description;
+
+      puzzlesList.push(clone);
     });
     puzzles = repVal;
   } catch (err) {
@@ -682,18 +698,7 @@ async function replicatePuzzles() {
 replicatePuzzles();
 
 async function fetchPuzzleDetail(name) {
-  try {
-    const result = await client
-      .db(mainDbName)
-      .collection(puzzlesColName)
-      .findOne({ name: name }, { projection: { _id: 0, answer: 0 } });
-
-    if (!result) throw "Failed to fetch puzzle!";
-    return result;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
+  return puzzles[name];
 }
 
 async function isPuzzleAnswerCorrect(name, answer) {
@@ -726,7 +731,11 @@ async function onPuzzleCorrect(username, amount, id) {
 }
 
 app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
-  res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  if (!currentRound || currentRound.type != "PuzzleRound") {
+    res.redirect("home");
+  } else {
+    res.sendFile(path.join(__dirname, "public/puzzles.html"));
+  }
 });
 
 app.post("/getPuzzle", verifyUser, async (req, res) => {
@@ -747,11 +756,11 @@ app.post("/getPuzzle", verifyUser, async (req, res) => {
   }
 });
 
-app.post("/getAllPuzzles", verifyUser, async (req, res) => {
-  res.json(puzzles);
+app.post("/getAllPuzzles", verifyUser, testPuzzleRound, async (req, res) => {
+  res.json(puzzlesList);
 });
 
-app.post("/submitPuzzle", verifyUser, async (req, res) => {
+app.post("/submitPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   //@ts-ignore
   const username = req.session.username;
   const id = req.body.id;
@@ -773,7 +782,7 @@ app.post("/submitPuzzle", verifyUser, async (req, res) => {
     res.status(404).send("Puzzle not found!");
   }
 
-  if (isPuzzleAnswerCorrect(id, answer)) {
+  if (await isPuzzleAnswerCorrect(id, answer)) {
     onPuzzleCorrect(username, puzzle.point_value, puzzle.name);
     res.json({ correct: true });
     return;
@@ -803,11 +812,17 @@ function lerp(a, b, alpha) {
 }
 
 app.get("/battleRound", verifyUser, function (req, res) {
-  res.sendFile(path.join(__dirname, "public/battleRound.html"));
+  if (!currentRound || currentRound.type != "BattleRound") {
+    res.redirect("home");
+  } else {
+    res.sendFile(path.join(__dirname, "public/battleRound.html"));
+  }
 });
 
 async function endBattleRound() {
-  if (currentRound.type != "BattleRound") return;
+  let round = currentRound;
+
+  if (round.type != "BattleRound") return;
 
   let usersList = {};
   try {
@@ -824,10 +839,10 @@ async function endBattleRound() {
   }
 
   // reward points to participants
-  if (Object.keys(currentRound.users).length <= 0) {
+  if (Object.keys(round.users).length <= 0) {
     console.warn("No users in battle round");
   } else {
-    let participants = Object.values(currentRound.users);
+    let participants = Object.values(round.users);
 
     participants.forEach((participant, i) => {
       const user = participant.user;
@@ -1069,7 +1084,17 @@ async function getScoreboard() {
 async function updateEvent() {
   if (paused) return;
   console.log("updating scoreboard");
-  io.emit("update_event", await getScoreboard());
+  let scoreboardData = await getScoreboard();
+
+  let currentRoundData = { ...currentRound };
+  delete currentRoundData.endTimeout;
+
+  let package = {
+    scoreboard: scoreboardData,
+    currentRound: currentRoundData,
+  };
+
+  io.emit("update_event", package);
   setTimeout(updateEvent, config.internal_tick_rate); // in milliseconds
 }
 

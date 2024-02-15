@@ -55,9 +55,9 @@ function updateUI(scoreboard) {
 }
 
 socket.on("update_event", async (data) => {
-    console.log("updating")
+  console.log("updating");
 
-    scoreboard = data;
+  scoreboard = data.scoreboard;
   updateUI(scoreboard);
 });
 
