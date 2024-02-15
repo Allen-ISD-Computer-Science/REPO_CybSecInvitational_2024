@@ -36,10 +36,10 @@ function updateUI(scoreboard) {
       case 0:
         user.division = "Silver";
         break;
-      case 0:
+      case 1:
         user.division = "Gold";
         break;
-      case 0:
+      case 2:
         user.division = "Platinum";
         break;
       default:

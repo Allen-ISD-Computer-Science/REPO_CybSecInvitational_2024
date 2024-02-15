@@ -649,12 +649,9 @@ function startPuzzleRound(id, duration = config.puzzle_round_duration) {
   };
   currentRound = puzzleRound;
 
+  io.emit("round_start", { type: "PuzzleRound", endTime: currentRound.endTime });
   return { success: true, status: 1 };
 }
-
-console.log("starting");
-startPuzzleRound("testPuzzleRound");
-
 //#endregion
 //#endregion
 
@@ -738,7 +735,7 @@ app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
   }
 });
 
-app.post("/getPuzzle", verifyUser, async (req, res) => {
+app.post("/getPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   const id = req.body.id;
   if (!id) {
     // Bad request
@@ -862,14 +859,15 @@ async function endBattleRound() {
       await client
         .db(mainDbName)
         .collection(usersColName)
-        .updateOne({ username: user.username }, { $inc: { puzzle_points: -Math.floor(Math.max(user.puzzle_points * currentRound.min_bid, 0)) } });
+        .updateOne({ username: user.username }, { $inc: { puzzle_points: -Math.floor(Math.max(user.puzzle_points * round.min_bid, 0)) } });
     } catch (err) {
       console.log(err);
       return;
     }
+    ``;
   });
 
-  io.emit("battle_round_end");
+  io.emit("round_end", { type: "BattleRound" });
 }
 
 /**
@@ -928,7 +926,8 @@ async function startBattleRound(id, duration = config.battle_round_duration) {
     users: {},
   };
   currentRound = battleRound;
-  io.emit("battle_round_start");
+
+  io.emit("round_start", { type: "BattleRound", endTime: currentRound.endTime });
   return { success: true, status: 1 };
 }
 
@@ -1073,7 +1072,7 @@ app.post("/battleRound/submitPuzzle", verifyUser, testBattleRound, async (req, r
 // #region Scoreboard
 async function getScoreboard() {
   try {
-    const result = await client.db("sample_data").collection("sample_users").find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
+    const result = await client.db(mainDbName).collection(usersColName).find({}).project({ _id: 0, password: 0, completed_puzzles: 0 });
     return result.toArray();
   } catch (err) {
     console.log(err);
@@ -1180,7 +1179,6 @@ app.post("/admin/command", adminCheck, async (req, res) => {
   const arguments = req.body.arguments;
   //id of completed puzzle
 
-  // console.log(operation, operand, arguments);
   // return;
 
   switch (operation) {

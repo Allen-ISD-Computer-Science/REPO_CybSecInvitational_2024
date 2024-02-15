@@ -1,5 +1,3 @@
-console.log(location.href);
-
 var socket = null;
 if (location.href.includes("/vapor/soohan-cho")) {
   socket = io({
@@ -49,3 +47,16 @@ async function init() {
   document.dispatchEvent(userLoaded);
 }
 init();
+
+socket.on("round_start", (data) => {
+  switch (data?.type) {
+    case "BattleRound":
+      window.location.replace("battleRound");
+      break;
+    case "PuzzleRound":
+      window.location.replace("puzzles");
+      break;
+    default:
+      break;
+  }
+});

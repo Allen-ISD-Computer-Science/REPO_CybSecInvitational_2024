@@ -151,7 +151,19 @@
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
               <h1 class="h3 mb-0 text-gray-800">Admin Panel</h1>
             </div>
+
             <div class="container-fluid">
+              <div class="mb-3 h-100">
+                <label for="" class="form-label">Output</label>
+
+                <div class="border rounded py-2 px-3" style="color: #6e707e; border: 1px solid #d1d3e2; background-color: rgb(255, 255, 255)">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lorem nibh, tristique a facilisis sed, eleifend sit amet mauris. Duis ut feugiat magna, sed congue turpis.
+                  Aliquam molestie augue at orci facilisis ultrices. Nulla erat diam, eleifend eu lacinia vel, tempus vel ante. Mauris elementum odio ut augue rutrum tincidunt. Nullam laoreet viverra
+                  lacinia. Suspendisse varius sapien sit amet mattis ultricies. Sed ultricies tincidunt eros, quis rhoncus ipsum pellentesque vel. Morbi ultricies velit et lacus tempor tempus. In sit
+                  amet finibus nisl, a interdum purus. Vestibulum vitae risus lobortis, laoreet tellus vitae, imperdiet nisi. Fusce eget faucibus nisi.
+                </div>
+              </div>
+
               <div class="d-flex flex-column">
                 <div class="mb-3">
                   <label for="admin_command_bar" class="form-label">Command Bar</label>
@@ -166,12 +178,12 @@
                 <label class="form-label">Points</label>
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_section">
-                    <option hidden>Select Section</option>
+                    <option value="" hidden>Select Section</option>
                     <option>PUZZLE_POINTS</option>
                     <option>SCENARIO_POINTS</option>
                   </select>
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_operation">
-                    <option hidden>Select Operation</option>
+                    <option value="" hidden>Select Operation</option>
                     <option>ADD</option>
                     <option>SUB</option>
                     <option>SET</option>
@@ -186,13 +198,13 @@
                 <label class="form-label">Completed Puzzles</label>
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_puzzles_operation">
-                    <option hidden>Select Operation</option>
+                    <option value="" hidden>Select Operation</option>
                     <option>ADD</option>
                     <option>SUB</option>
                   </select>
                   <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_puzzles_id" placeholder="Puzzle Id" />
                   <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_puzzles_target" placeholder="Target" />
-                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                  <button type="button" id="admin_puzzles_submit" class="btn btn-primary mb-2">Submit</button>
                 </div>
                 <!-- End of Add Points UI -->
 
@@ -200,7 +212,7 @@
                 <label class="form-label">Division</label>
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
-                    <option hidden>Select Section</option>
+                    <option value="" hidden>Select Section</option>
                     <option>Silver</option>
                     <option>Gold</option>
                     <option>Platinum</option>
@@ -215,7 +227,7 @@
                 <label class="form-label">Events</label>
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
-                    <option hidden>Event Name</option>
+                    <option value="" hidden>Event Name</option>
                     <option>SEEDING_ROUND</option>
                     <option>PUZZLE_ROUND_1</option>
                     <option>BATTLE_ROUND_1</option>
@@ -236,7 +248,7 @@
                 <label class="form-label">Alerts</label>
                 <div class="d-flex flex-wrap">
                   <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
-                    <option hidden>Level</option>
+                    <option value="" hidden>Level</option>
                     <option class="text-primary">Normal</option>
                     <option class="text-warning">Warning</option>
                     <option class="text-danger">Danger</option>
@@ -279,15 +291,7 @@
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-    <!-- <script src="js/scripts.js"></script> -->
     <!-- socket handling -->
-
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
     <script src="js/admin.js"></script>
   </body>

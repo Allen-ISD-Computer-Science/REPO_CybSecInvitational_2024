@@ -12,6 +12,7 @@ async function submitOperation(operation, operand, arguments) {
       arguments: arguments,
     }),
   });
+  console.log(response);
 
   return response;
 }
@@ -22,7 +23,7 @@ const pointsAmount = document.getElementById("admin_points_amount");
 const pointsTarget = document.getElementById("admin_points_target");
 const pointsSubmit = document.getElementById("admin_points_submit");
 
-pointsSubmit.onclick = async (evt) => {
+pointsSubmit.addEventListener("click", async (evt) => {
   evt.preventDefault();
 
   let section = pointsSection.value;
@@ -40,4 +41,24 @@ pointsSubmit.onclick = async (evt) => {
   });
 
   console.log(result);
-};
+});
+
+const completedPuzzlesOperation = document.getElementById("admin_puzzles_operation");
+const completedPuzzlesId = document.getElementById("admin_puzzles_id");
+const completedPuzzlesTarget = document.getElementById("admin_puzzles_target");
+const completedPuzzlesSubmit = document.getElementById("admin_puzzles_submit");
+
+completedPuzzlesSubmit.addEventListener("click", async (evt) => {
+  evt.preventDefault();
+
+  let target = completedPuzzlesTarget.value;
+  let puzzleId = completedPuzzlesId.value;
+  let operation = completedPuzzlesOperation.value;
+
+  if (!puzzleId || !target || !operation) return; //incomplete command
+
+  let result = await submitOperation(operation, "COMPLETED_PUZZLE", {
+    target: target,
+    id: puzzleId,
+  });
+});
