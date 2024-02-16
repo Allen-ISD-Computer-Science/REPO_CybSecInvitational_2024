@@ -21,130 +21,10 @@
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
-      <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
-          <div class="sidebar-brand-icon">
-            <img src="./img/logo.png" alt="Logo" width="100%" height="100%" />
-          </div>
-          <div class="sidebar-brand-text mx-3">AHS Invitational</div>
-        </a>
-
-        <!-- Logout -->
-        <hr class="sidebar-divider" />
-        <a href="logout" class="mr-3 ml-3 mt-0 mb-3 d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-sign-out-alt fa-sm text-white-50"></i> Logout </a>
-        <hr class="sidebar-divider" />
-        <!--Logout end-->
-
-        <div class="sidebar-heading">Main</div>
-
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-          <a class="nav-link p-3" href="home">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a
-          >
-        </li>
-
-        <!-- Nav Item - Scoreboard -->
-        <li class="nav-item">
-          <a class="nav-link pt-0" href="scoreboard">
-            <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Scoreboard</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider" />
-
-        <!-- Puzzle Round -->
-        <div class="sidebar-heading">Puzzle Round</div>
-
-        <li class="nav-item">
-          <a class="nav-link p-3" href="puzzles">
-            <i class="fas fa-fw fa-puzzle-piece"></i>
-            <span>Puzzles</span></a
-          >
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link pt-0" href="battleRound">
-            <i class="fas fa-fw fa-triangle-exclamation"></i>
-            <span>Battle Round</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider" />
-
-        <!-- Scenario Round -->
-        <div class="sidebar-heading">Scenario Round</div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a class="nav-link p-3" href="home">
-            <i class="fas fa-fw fa-signal"></i>
-            <span>Status</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block" />
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-          <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-      </ul>
-
-      <!-- End of Sidebar -->
-
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
-        <div id="content">
-          <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow pr-0">
-            <!-- Sidebar Toggle (Topbar) -->
-            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-              <i class="fa fa-bars"></i>
-            </button>
-
-            <!-- Time Data -->
-            <div class="w-25 mr-5">
-              <h6 class="text-nowrap">Time Remaining</h6>
-              <div class="progress">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-
-            <div class="w-25 mr-5">
-              <h6 class="text-nowrap">Battle Round Time Remaining</h6>
-              <div class="progress">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <!-- End of Time Data -->
-
-            <!-- Point and Name -->
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-dark" id="points-text-label">Points: ...</span>
-                </div>
-              </li>
-              <div class="vr d-none d-lg-block bg-gray-300" style="width: 0.1rem"></div>
-              <li class="nav-item">
-                <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small" id="username-text-label">...</span>
-                </div>
-              </li>
-            </ul>
-            <!-- End of Point and Name -->
-          </nav>
-          <!-- End of Topbar -->
-
+        <div id="content" class="mt-4">
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
@@ -254,14 +134,14 @@
                 <h3>Miscellaneous</h3>
                 <label class="form-label">Alerts</label>
                 <div class="d-flex flex-wrap">
-                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_alert_selection">
                     <option value="" hidden>Level</option>
-                    <option class="text-primary">Normal</option>
-                    <option class="text-warning">Warning</option>
-                    <option class="text-danger">Danger</option>
+                    <option value="MESSAGE">Normal</option>
+                    <option value="WARNING">Warning</option>
+                    <option value="DANGER">Danger</option>
                   </select>
-                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Message" />
-                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Submit</button>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_alert_message" placeholder="Message" />
+                  <button type="button" id="admin_alert_send" class="btn btn-primary mb-2 mr-2">Send</button>
                 </div>
               </div>
             </div>

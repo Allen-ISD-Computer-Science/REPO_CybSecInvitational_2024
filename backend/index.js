@@ -117,6 +117,7 @@ app.use("*", (req, res, next) => {
  * Round Start Result Type Definition
  * @typedef {object} RoundStartResult
  * @prop {boolean} success
+ * @prop {string?} message
  * @prop {0|1|2|3} status //0: Server side failure, 1: Ok, 2: Round already in session
  */
 
@@ -622,6 +623,7 @@ async function endCurrentRound() {
 //#region Puzzle Round
 function endPuzzleRound() {
   console.log("Ending puzzle round");
+  io.emit("round_end", { type: "PuzzleRound" });
 }
 
 /**
@@ -632,7 +634,7 @@ function endPuzzleRound() {
 function startPuzzleRound(id, duration = config.puzzle_round_duration) {
   if (currentRound !== null) {
     console.warn("A round is already in session");
-    return { success: false, status: 2 };
+    return { success: false, status: 2, message: "Round already in session!" };
   }
 
   console.log(`starting puzzle round, duration ${duration}`);
@@ -877,18 +879,18 @@ async function endBattleRound() {
  */
 async function startBattleRound(id, duration = config.battle_round_duration) {
   if (currentRound) {
-    return { success: false, status: 2 };
+    return { success: false, status: 2, message: "Round already in session!" };
   }
 
   const battleRoundConfig = config.battle_rounds[id];
   if (!battleRoundConfig) {
     console.warn("Battle round of id " + id + " not found");
-    return { success: false, status: 0 };
+    return { success: false, status: 0, message: "BattleRound if id not found!" };
   }
   const battleRoundPuzzleIds = battleRoundConfig.puzzles;
   if (!battleRoundPuzzleIds) {
     console.warn("Battle round of missing puzzles");
-    return { success: false, status: 0 };
+    return { success: false, status: 0, message: "BattleRound missing Puzzles!" };
   }
 
   /**@type {{string?: Puzzle}} */
@@ -900,7 +902,7 @@ async function startBattleRound(id, duration = config.battle_round_duration) {
       let result = await client.db(mainDbName).collection(battleRoundPuzzlesColName).findOne({ name: puzzleId });
       if (!result) {
         console.warn("Failed to fetch puzzle of id " + puzzleId);
-        return { success: false, status: 0 };
+        return { success: false, status: 0, message: "Failed to fetch BattleRound Puzzles!" };
       } else {
         //@ts-ignore
         delete result._id;
@@ -1429,32 +1431,68 @@ app.post("/admin/command", adminCheck, async (req, res) => {
     case "START": //starts events (puzzle round, )
       switch (operand) {
         case "BATTLE_ROUND":
-          const roundId = arguments.id;
+          const battleRoundId = arguments.id;
 
-          if (!roundId) {
+          if (!battleRoundId) {
             res.status(400).send("Missing Round Id!");
             return;
           }
 
-          let duration = null;
+          let battleRoundDuration = null;
           if (arguments.duration) {
             const durationNum = Number(arguments.duration);
             if (!durationNum) {
               res.status(400).send("Duration value is not a Number!");
               return;
             } else {
-              duration = durationNum;
+              battleRoundDuration = durationNum;
             }
           }
 
-          if (duration) {
-            startBattleRound(roundId, duration);
+          let battleRoundStartResult = null;
+          if (battleRoundDuration) {
+            battleRoundStartResult = await startBattleRound(battleRoundId, battleRoundDuration);
           } else {
-            startBattleRound(roundId);
+            battleRoundStartResult = await startBattleRound(battleRoundId);
           }
 
+          if (battleRoundStartResult.status == 0 || battleRoundStartResult.status == 2) {
+            res.status(400).send(battleRoundStartResult.message);
+          } else if (battleRoundStartResult.status == 1) {
+            res.sendStatus(200);
+          }
           return;
         case "PUZZLE_ROUND":
+          const puzzleRoundId = arguments.id;
+
+          if (!puzzleRoundId) {
+            res.status(400).send("Missing Round Id!");
+            return;
+          }
+
+          let puzzleRoundDuration = null;
+          if (arguments.duration) {
+            const durationNum = Number(arguments.duration);
+            if (!durationNum) {
+              res.status(400).send("Duration value is not a Number!");
+              return;
+            } else {
+              puzzleRoundDuration = durationNum;
+            }
+          }
+
+          let puzzleRoundStartResult = null;
+          if (puzzleRoundDuration) {
+            puzzleRoundStartResult = await startPuzzleRound(puzzleRoundId, puzzleRoundDuration);
+          } else {
+            puzzleRoundStartResult = await startPuzzleRound(puzzleRoundId);
+          }
+
+          if (puzzleRoundStartResult.status == 0 || puzzleRoundStartResult.status == 2) {
+            res.status(400).send(puzzleRoundStartResult.message);
+          } else if (puzzleRoundStartResult.status == 1) {
+            res.sendStatus(200);
+          }
           return;
         case "SCENARIO_ROUND":
           return;
@@ -1514,11 +1552,38 @@ app.post("/admin/command", adminCheck, async (req, res) => {
           }
           return;
         default:
+          res.status(400).send("Invalid Operand!");
           return;
       }
 
+    case "ALERT":
+      let message = arguments.message;
+      if (!message) {
+        res.status(400).send("Missing Arguments!");
+        return;
+      }
+
+      switch (operand) {
+        case "MESSAGE":
+          io.emit("alert", { level: 0, message: message });
+          res.sendStatus(200);
+          break;
+        case "WARNING":
+          io.emit("alert", { level: 1, message: message });
+          res.sendStatus(200);
+          break;
+        case "DANGER":
+          io.emit("alert", { level: 2, message: message });
+          res.sendStatus(200);
+          break;
+        default:
+          res.status(400).send("Invalid Operand!");
+          break;
+      }
+      break;
+
     default:
-      res.status(400).send("Invalid Operation");
+      res.status(400).send("Invalid Operation!");
       return;
   }
 });

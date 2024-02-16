@@ -110,6 +110,10 @@ var myLineChart = new Chart(ctx, {
 let history = localStorage.getItem("point_history");
 !history ? (pointHistory = []) : (pointHistory = JSON.parse(history));
 
+function clearLocalStorage() {
+  localStorage.removeItem("point_history");
+}
+
 function addDataPoint() {
   pointHistory.push({
     time: Date.now(),
@@ -158,7 +162,7 @@ var count = 0;
 document.addEventListener("user-updated", () => {
   count += 1;
   console.log(count);
-  if (count < 4) {
+  if (count < 10) {
     return;
   }
   count = 0;

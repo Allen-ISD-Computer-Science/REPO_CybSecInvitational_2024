@@ -103,3 +103,24 @@ roundStart.addEventListener("click", async (evt) => {
     duration: duration,
   });
 });
+
+roundEnd.addEventListener("click", async (evt) => {
+  evt.preventDefault();
+
+  let result = await submitOperation("END", "ROUND", {});
+});
+
+const alertLevelSelection = document.getElementById("admin_alert_selection");
+const alertMessage = document.getElementById("admin_alert_message");
+const alertSend = document.getElementById("admin_alert_send");
+
+alertSend.addEventListener("click", async (evt) => {
+  evt.preventDefault();
+
+  let message = alertMessage.value;
+  let level = alertLevelSelection.value;
+
+  if (!message || !level) return;
+
+  let result = await submitOperation("ALERT", level, { message: message });
+});
