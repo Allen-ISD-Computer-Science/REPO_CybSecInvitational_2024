@@ -65,6 +65,47 @@ async function fetchUser() {
   return data;
 }
 
+const label = document.getElementById("current_round_label");
+const timer = document.getElementById("current_round_timer");
+
+let timerInterval = null;
+let currentEndTime = null;
+
+function pad(number, length) {
+  return ("000" + number).slice(-length);
+}
+
+function updateTimer() {
+  let currentTime = Date.now();
+  let timeLeft = new Date(currentEndTime - currentTime);
+
+  if (timeLeft <= 0) return;
+
+  let timeStr = "";
+
+  timeStr += pad(timeLeft.getUTCHours(), 2) + ":";
+  timeStr += pad(timeLeft.getUTCMinutes(), 2) + ":";
+  timeStr += pad(timeLeft.getUTCSeconds(), 2) + " ";
+  timeStr += "<small>" + pad(timeLeft.getUTCMilliseconds(), 3) + "</small>";
+
+  timer.innerHTML = timeStr;
+  requestAnimationFrame(updateTimer);
+}
+
+function updateCurrentRoundUI(data) {
+  if (!data) {
+    label.textContent = "";
+    timer.innerHTML = "";
+
+    return;
+  }
+
+  currentEndTime = data.endTime;
+  console.log(data);
+  label.textContent = data.type;
+  updateTimer();
+}
+
 const usernameTextLabel = document.getElementById("username-text-label");
 const pointsTextLabel = document.getElementById("points-text-label");
 
@@ -77,6 +118,8 @@ function updateUserUI(user) {
 }
 
 socket.on("update_event", async (data) => {
+  updateCurrentRoundUI(data.currentRound);
+
   console.log(data);
   user = await fetchUser();
   updateUserUI(user);
