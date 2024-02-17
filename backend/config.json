@@ -3,13 +3,27 @@
 
   "internal_tick_rate": 10000,
 
-  "battle_round_duration": 65000,
+  "puzzle_round_duration": 60000,
+
+  "battle_round_duration": 60000,
   "battle_round_min_multiplier": 0.5,
   "battle_round_max_multiplier": 2,
 
   "battle_rounds": {
     "battle_round_1": {
       "puzzles": ["battleRound1Puzzle1", "battleRound1Puzzle2", "battleRound1Puzzle3", "battleRound1Puzzle4"],
+      "min_bid": 0.1
+    },
+    "battle_round_2": {
+      "puzzles": ["battleRound2Puzzle1", "battleRound2Puzzle2", "battleRound2Puzzle3", "battleRound2Puzzle4"],
+      "min_bid": 0.1
+    },
+    "battle_round_3": {
+      "puzzles": ["battleRound3Puzzle1", "battleRound3Puzzle2", "battleRound3Puzzle3", "battleRound3Puzzle4"],
+      "min_bid": 0.1
+    },
+    "battle_round_4": {
+      "puzzles": ["battleRound4Puzzle1", "battleRound4Puzzle2", "battleRound4Puzzle3", "battleRound4Puzzle4"],
       "min_bid": 0.1
     }
   }

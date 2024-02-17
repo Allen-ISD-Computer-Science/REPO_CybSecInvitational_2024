@@ -295,11 +295,7 @@ document.addEventListener("user-loaded", async () => {
   }
 });
 
-socket.on("battle_round_start", () => {
-  console.log("battle round started");
-});
-
-socket.on("battle_round_end", () => {
+socket.on("round_end", () => {
   window.location.replace("home");
   console.log("battle round ended");
 });
