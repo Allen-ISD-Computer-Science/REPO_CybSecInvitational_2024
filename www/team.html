@@ -220,12 +220,14 @@
 </div>
 
 <div class="container">
-    <div class="container text-center">
-        <h3 class="glow display-1">2023-2024 Team</h3>
-        <hr style="border-top: 5px solid #ffffff; width: 100%; margin-bottom: 4rem;" align="left" />
+
+    <!-- Show when display less than medium -->
+    <div class="d-md-block d-none">
+        <h3 class="glow display-1 text-center">2023-2024 Team</h3>
+        <hr style="border-top: 5px solid #ffffff; width: 100%; margin-bottom: 4rem;"/>
+
 
         <div class="d-flex flex-column justify-content-center align-items-center">
-            <!-- Click to open description of team member -->
             <div class="card" style="width: 75%; margin-bottom: 3rem;">
                 <div class="card-img-top">
                     <img src="./img/HeadShots/James.jpg" style="width: 100%;">
@@ -243,8 +245,12 @@
                     <h5>Blake Gateley</h5>
                 </div>
             </div>
-
         </div>
+    </div>
+
+    <!-- Show when display is large -->
+    <div>
+
     </div>
 </div>
 
