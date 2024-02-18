@@ -9,10 +9,9 @@
 }
 
 body {
-  background: rgb(0, 15, 93);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(76, 88, 151) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0) 0%, rgba(0, 15, 93) 100%);
+  background-color:rgba(0, 15, 93);
   background-repeat: no-repeat;
-  transition: opacity 5s;
   color: #ffffff;
 }
 
@@ -63,6 +62,8 @@ body {
 
   pointer-events: none;
   cursor: default;
+
+  height: 100%;
 
   -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
 }
@@ -131,3 +132,49 @@ body {
   font-size: 18px;
   color: #bebebe;
 }
+
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.row.display-flex > [class*='col'] {
+  flex-grow: 1;
+}
+
+@keyframes scrollAnimation {
+  from {
+    top: 5rem;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.scroll-icon {
+  animation-delay: 2s;
+  animation: scrollAnimation;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+}
+
+.blink {
+  animation: blink-animation .5s infinite alternate;
+  -webkit-animation: blink-animation .5s infinite alternate;
+}
+@keyframes blink-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes blink-animation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+

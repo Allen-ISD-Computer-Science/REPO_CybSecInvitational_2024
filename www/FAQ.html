@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html class="h-100 w-100">
+<html class="w-100 m-0 p-0" data-bs-theme="dark">
 
 <head>
     <meta charset="utf-8" />
@@ -28,34 +28,16 @@
         rel="stylesheet" />
 </head>
 
-<body class="h-100 w-100 p-0 m-0 overflow-visible">
-    <!-- !!!Css has been moved to main.css!!! -->
+<body class="w-100 p-0 m-0">
 
     <!-- Backdrop -->
-    <div >
-        <div id="background-stars-1" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
-        </div>
-        <div id="background-stars-2" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
-        </div>
-        <div id="background-stars-3" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
-        </div>
-    </div>
+    <div id="background-stars-1 " class="h-100 w-100 star-background"
+        style="background-image: url(./img/stars1.png); z-index: -10;"></div>
+    <div id="background-stars-2" class="h-100 w-100 star-background"
+        style="background-image: url(./img/stars1.png); z-index: -10;"></div>
+    <div id="background-stars-3" class="h-100 w-100 star-background"
+        style="background-image: url(./img/stars1.png); z-index: -10;"></div>
     <!-- End of Backdrop -->
-
-    <!-- Content -->
-    <div class="w-100 d-flex flex-column justify-content-center align-items-center h-100">
-
-        <div class="card text-center d-flex align-items-center p-4"
-            style="background-color: #202020; color: #ffffff; max-width: 20rem;">
-            <div class="h-100 w-100 container d-flex flex-column justify-content-center align-items-center">
-                <div class="mb-5 pb-5 display-1">404</div>
-                <div class="h5 mb-4">Login and Registration will begin at a later date.</div>
-                <a href="./index.html" class="btn btn-outline-primary w-50" >Home</a>
-            </div>
-        </div>
-
-    </div>
-    <!-- End of Content-->
 
     <!-- Top Nav Bar -->
     <div class="w-100 d-flex flex-row align-items-center fixed-top p-1"
@@ -87,6 +69,99 @@
     </div>
     <!-- End of Top Nav Bar -->
 
+
+    <!-- Content -->
+
+    <div class="container w-100 vh-100 overflow-x-hidden d-flex flex-row align-items-center justify-content-evenly">
+        <div class="h-100 d-none d-md-flex flex-row justify-content-start align-items-center">
+            <div class="d-flex flex-column justify-content-start align-items-start">
+                <div class="h3">
+                    Frequently <br />
+                    Asked <br />
+                    Questions
+                </div>
+            </div>
+
+            <div class="d-flex h-75 ml-3 mr-5">
+                <div class="vr"></div>
+            </div>
+        </div>
+        <div class="w-md-50 w-100">
+            <div class="d-md-none mb-5">
+                <div class="h3 text-center">Frequently Asked Questions
+                </div>
+                <hr />
+            </div>
+
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            How much will it cost to participate?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            There is absolutely no entry fee! The STEM field can be quite expensive at times,
+                            and we would like to alleviate some of the financial burden for students taking
+                            their first steps into the field. This is made possible by our wonderful sponosors
+                            listed above.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Will competitors have to provide their own food?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            We will cater food during the event, but the food options will be quite limited default
+                            to dietary restrictions. Outside food may be brought in, but AHS Invitational will not
+                            cover the fee. We also ask that you clean up after yourself.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Do I need previous experience to compete?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            No previous experience is required. Students will get their intorduction to vital topics
+                            during the competition, which they will then use to solve CTF based puzzles.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            What type of competition is this?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            The details of the competiton will be explained during the introduction ceremony, but
+                            competitiors will need a team member to compete. Feel free to register with someone you
+                            know, but if you do not have a team member in mind, check the box labeled "Assign me a
+                            random team member" while registering.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- End of Content -->
+
+
     <!-- Off Canvas Nav -->
     <div class="offcanvas offcanvas-end text-light bg-dark" tabindex="-1" id="offcanvasNavbar"
         aria-labelledby="offcanvasNavbarLabel">
@@ -100,15 +175,20 @@
         <div class="offcanvas-body text-light">
             <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./index.html">
+                    <a class="nav-link" href="./index.html">
                         <h5>Home</h5>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="./team.html">
                         <h5>Meet The Team</h5>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./FAQ.html">
+                        <h5>FAQ</h5>
+                    </a>
+                </li> 
                 <li class="nav-item">
                     <a class="nav-link" href="./404.html">
                         <h5>Login</h5>

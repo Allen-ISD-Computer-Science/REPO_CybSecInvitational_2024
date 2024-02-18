@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
+<html class="h-100 w-100">
 
 <head>
     <meta charset="utf-8" />
@@ -12,533 +12,250 @@
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./css/sb-admin-2.min.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css" />
-    <link
-        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
-        rel="stylesheet" />
     <link href="./img/ico/InvLogo.png" rel="icon" type="image/x-icon" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+        rel="stylesheet" />
 </head>
 
-<body>
-<style>
-    :root {
-        --box-shadow-color: #ffffff;
-    }
+<body class="h-100 w-100 p-0 m-0 overflow-visible">
 
-    body {
-        background: rgb(0, 15, 93);
-        background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 15, 93, 1) 45%, rgb(76, 88, 151) 100%);
-        background-repeat: no-repeat;
-        animation: fadeInAnimation ease 3s;
-        animation-iteration-count: 1;
-        animation-fill-mode: forwards;
-        opacity: 0;
-        transition: opacity 5s;
-        color: #ffffff;
-    }
 
-    @keyframes fadeInAnimation {
-        0% {
-            opacity: 0;
-        }
+    <!-- Backdrop -->
+    <div id="background-stars-1" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
+    </div>
+    <div id="background-stars-2" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
+    </div>
+    <div id="background-stars-3" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)">
+    </div>
+    <!-- End of Backdrop -->
 
-        100% {
-            opacity: 1;
-        }
-    }
-
-    .glow {
-        color: #ffffff;
-        animation: glow 10s ease-in-out infinite alternate;
-    }
-
-    @-webkit-keyframes glow {
-        from {
-            text-shadow: 0 0 0 #ffffff, 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 15px #ffffff;
-        }
-
-        to {
-            text-shadow: 0 0 10px #ffffff, 0 0 15px #ffffff, 0 0 20px #ffffff, 0 0 25px #ffffff;
-        }
-    }
-
-    .star-background {
-        position: absolute;
-        width: 100%;
-        height: 200vh;
-
-        pointer-events: none;
-        cursor: default;
-
-        -webkit-mask-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 1)), to(rgba(0, 0, 0, 0)));
-    }
-
-    #background-stars-1 {
-        animation: shimmer 1s ease-in-out infinite alternate;
-    }
-
-    #background-stars-2 {
-        background-position: 25% 25%;
-        background-size: 50%;
-        animation: shimmer 3s ease-in-out infinite alternate;
-    }
-
-    #background-stars-3 {
-        background-position: 50% 50%;
-        background-size: 20%;
-        animation: shimmer 5s ease-in-out infinite alternate;
-    }
-
-    @-webkit-keyframes shimmer {
-        from {
-            opacity: 0.25;
-        }
-
-        to {
-            opacity: 1;
-        }
-    }
-
-    @-webkit-keyframes fade-in {
-        from {
-            translate: 0 3rem;
-            opacity: 0;
-        }
-
-        to {
-            translate: 0 0px;
-            opacity: 1;
-        }
-    }
-
-    .glow-button {
-        box-shadow: 0 0 10px var(--box-shadow-color);
-        transition: box-shadow .3s ease;
-    }
-
-    .glow-button:hover {
-        box-shadow: 0 0 30px var(--box-shadow-color);
-    }
-
-    .glowP-hover:hover {
-        text-shadow: 0 0 10px #ffffff;
-        transition: 0.3s;
-    }
-
-    .card-img-wrapper img {
-        transition: 1.15s;
-    }
-
-    .card:hover .card-img-wrapper img {
-        transform: scale(1.15);
-    }
-
-    .footer {
-        bottom: 0;
-        width: 100%;
-        background-color: white;
-        text-align: center;
-        padding: 10px 0;
-        opacity: 50%;
-        background-color: #353535;
-    }
-
-    .footer-text {
-        color: white;
-        font-size: 12px;
-        opacity: 100%;
-        font-weight: bold;
-    }
-    #countdown {
-      font-size: 36px;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-    .unit {
-      font-size: 18px;
-      color: #bebebe;
-    }
-</style>
-
-<div id="background-stars-1" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-<div id="background-stars-2" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-<div id="background-stars-3" class="star-background" style="background-image: url(./img/stars1.png)"></div>
-
-<div class="w-100 vh-100 d-flex flex-column justify-content-evenly">
-    <div>
-        <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in .9s">
-            <img src="./img/ico/EagleOutline.png" style="rotate: 0deg; top: 25%;" class="align-self-center pb-5 w-25">
+    <!-- Top Nav Bar -->
+    <div class="w-100 d-flex flex-row align-items-center fixed-top p-1"
+        style="background-color: rgba(33, 37, 41, 0.75)">
+        <img src="./img/ico/InvLogo.png" alt="AllenCyberInvitational" width="30" height="30">
+        <div class="p-2 mr-auto d-md-block d-none">
+            <div class="dm-sans text-light mb-0 h5">Allen Cyber Invitational</div>
         </div>
-        <div class="w-100 d-flex flex-column justify-content-center align-senf-center" style="animation: fade-in 1s">
-            <div class="glow display-1 d-flex flex-column justify-content-center align-items-center text-light">
-                <h1 class="display-1" align="center">Allen Cyber Invitational</h1>
+
+        <div class="p-2 ml-sm mr-auto d-md-none">
+            <div class="text-center bold">
+                <div class="countdown mb-0 h5 glow"></div>
             </div>
         </div>
-        <div class="w-100 d-flex flex-column justify-content-center" style="animation: fade-in 1.1s">
-            <img src="./img/cosmos1.png" style="rotate: 180deg; width: 50vw;" class="align-self-center">
+
+        <div class="p-2 position-absolute top-50 start-50 translate-middle d-md-block d-none">
+            <div class="text-center bold">
+                <div class="countdown mb-0 h5 glow"></div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row">
+            <a class="btn btn-dark mr-1 d-md-block d-none" href="#" role="button">Login</a>
+            <a class="btn btn-dark mr-1" href="#" role="button">Register</a>
+            <a class="btn btn-dark mr-1" href="#" role="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar">
+                <i class="bi bi-list scroll-icon"></i>
+            </a>
         </div>
     </div>
+    <!-- End of Top Nav Bar -->
 
-    <div>
-        <div>
-            <div class="container rounded" style="background: rgba( 255, 255, 255, 0.25 );
-            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-            backdrop-filter: blur( 10.5px );
-            -webkit-backdrop-filter: blur( 10.5px );
-            border-radius: 10px;
-            border: 1px solid rgba( 255, 255, 255, 0.18 );">
-                <h1 class="text-center bold">Launch Date</h1>
-                <div id="countdown" class="text-center bold"></div>
-            </div>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Title Card -->
+    <div class="w-100 vh-100 d-flex flex-column justify-content-center align-items-center">
+        <img src="/www/img/ico/Svg_Cyber_logo.svg" style="rotate: 0deg; animation: fade-in 1.1s"
+            class="align-self-center w-25" />
+        <h1 class="dm-sans display-1 align-self-center text-center" style="animation: fade-in 1.1s">Allen Cyber Invitational</h1>
+        <img src="./img/cosmos1.png" style="rotate: 180deg; width: 30vw; animation: fade-in 1.1s"
+            class="align-self-center" />
+        <div class=" mt-5 blink d-flex flex-column align-items-center">
+            <p class="mb-0">scroll down</p>
+            <i class="bi bi-caret-down-fill h1" style="animation: alternate;"></i>
+        </div>
+    </div>
+    <!-- End of Title Card -->
+
+
+    <!-- Content -->
+
+    <div class="container d-flex flex-row justify-content-center align-items-center"
+        style="margin-bottom: 4rem; color: #ffffff;">
         
-            <script>
-                // Set the end date for the countdown (in UTC to ensure compatibility with all timezones)
-                var endDate = new Date('2024-04-27T00:00:00Z').getTime();
-            
-                // Update the countdown every second
-                var x = setInterval(function() {
-                // Get the current time in Chicago
-                var now = new Date().toLocaleString("en-US", {timeZone: "America/Chicago"});
-                var currentTime = new Date(now).getTime();
-            
-                // Calculate the time remaining
-                var distance = endDate - currentTime;
-            
-                // Calculate days, hours, minutes, and seconds
-                function formatTime(time){
-                    if (String(time).length == 1) {
-                        return "0" + String(time);
-                    } else {
-                        return String(time);
-                    }
-                }
-                var days = formatTime(Math.floor(distance / (1000 * 60 * 60 * 24)));
-                var hours = formatTime(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-                var minutes = formatTime(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
-                var seconds = formatTime(Math.floor((distance % (1000 * 60)) / 1000));
-            
-                // Display the countdown in the specified format
-                document.getElementById("countdown").innerHTML = "<h1 class=\"glow\">"+days + " : " + hours + " : " + minutes + " : " + seconds +"</h1>"+"<span class=\"unit\">(d:h:m:s)</span>";
-            
-                // If the countdown is over, display a message
-                if (distance < 0) {
-                    clearInterval(x);
-                    document.getElementById("countdown").innerHTML = "EVENT STARTED";
-                }
-                }, 1000);
-            </script>
-    
-        </div>
-    </div>
-</div>
 
-<div style="background-color: #353535; width: 100vw; margin-bottom: 7rem; opacity: .8;">
-    <div class="d-flex flex-row justify-content-between align-items-center" style="width: 90%; margin-left: 5%; margin-right: 5%;">
-        <nav class="navbar fixed-top" style="background-color: #353535; color: white;">
-            <div class="container-fluid">
-                <h1 class="navbar-brand" style="color: #ffffff;">Allen Cyber Invitational</h1>
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
-                    <img src="./img/ico/Menu.png" style="width: 3rem; border: none;">
-                </button>
-                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel" style="background-color: #141A22; color: #ffffff;">
-                    <div class="offcanvas-header">
-                        <h3 class="offcanvas-title" id="offcanvasNavbarLabel">Allen Cyber Invitational</h3>
-                        <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
-                            <img src="./img/ico/Close.png" style="width: 3rem; border: none;">
-                        </button>
-                    </div>
-                    <div class="offcanvas-body" style="color: #ffffff;">
-                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="./index.html"><h5 style="color: #ffffff;">Home</h5></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#"><h5 style="color: #ffffff;">Meet The Team</h5></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="./404.html"><h5 style="color: #ffffff;">Login</h5></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="./404.html"><h5 style="color: #ffffff;">Register</h5></a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </div>
-    <div style="margin-top: 8rem;"></div>
-</div>
-
-<div class="container">
-    <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem">
-        <div class="d-flex flex-column justify-content-center align-items-start text-start"
+        <div class="d-flex flex-column justify-content-center align-items-center text-center"
             style="height: 100%; width: 100%; margin-bottom: 4rem">
-            <h3 style="font-size: 3rem;">What is it?</h3>
-            <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-            <p style="width: 100%; text-align: justify">
-                The Allen Cyber Invitational is a student-created annual cybersecurity competition that is open to all
-                high school students in the DFW area. Students will be challenged in many facets of cybersecurity such
-                as cryptography, exploitation (Binary & Web) , shell commands, and system hardening. Teams will first
-                participate in a seeding round where they will need to complete a series of CTF-based challenges. Based
-                on each team's performance in the seeding round, they will be divided into three divisions (Platinum,
-                Gold, and Silver). After divisions are made, teams will be presented with a collection of puzzles to
-                complete to earn points for their team. After 40 minutes, teams will have to participate in a battle
-                round, where they will wager points for a big payout if they complete a difficult challenge. This will
-                repeat 3 more times. Each division will have breaks during certain puzzle and battle rounds. Then
-                students will have lunch and listen to a speaker. Competitors will then be presented with an immersive
-                and realistic ISS-themed scenario, where they will have to harden the space station’s systems against
-                threats. Awards will then be given to the winning teams in each division.
+            <div class="h2">Follow Us!</div>
+            <hr style="border-top: 2px solid #ffffff; width: 100%; margin-bottom: 3rem;" />
+            <div class="d-flex flex-row justify-content-around" style="width: 100%">
 
-            </p>
-        </div>
-    </div>
-    <div class="d-flex flex-row justify-content-between align-items-center" style="margin-bottom: 4rem">
-        <div class="d-flex flex-column justify-content-center align-items-start text-start"
-            style="height: 100%; width: 50%; margin-bottom: 4rem">
-            <h3 style="font-size: 3rem;">Time</h3>
-            <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-            <p style="width: 100%; font-size: 2rem;">April 27th, 2024</p>
-            <p style="width: 100%; font-size: 2rem;">8am to 4:30pm</p>
-        </div>
-        <div>
-            <div class="container rounded" style="background: rgba( 255, 255, 255, 0.25 );
-            box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
-            backdrop-filter: blur( 10.5px );
-            -webkit-backdrop-filter: blur( 10.5px );
-            border-radius: 10px;
-            border: 1px solid rgba( 255, 255, 255, 0.18 );">
-                <h1 class="text-center bold">Launch Date</h1>
-                <div id="countdown" class="text-center bold"></div>
-        </div>
-        
-        <!-- Bootstrap JS -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-        
-        <script>
-            // Set the end date for the countdown (in UTC to ensure compatibility with all timezones)
-            var endDate = new Date('2024-04-27T00:00:00Z').getTime();
-        
-            // Update the countdown every second
-            var x = setInterval(function() {
-            // Get the current time in Chicago
-            var now = new Date().toLocaleString("en-US", {timeZone: "America/Chicago"});
-            var currentTime = new Date(now).getTime();
-        
-            // Calculate the time remaining
-            var distance = endDate - currentTime;
-        
-            // Calculate days, hours, minutes, and seconds
-            function formatTime(time){
-                if (String(time).length == 1) {
-                    return "0" + String(time);
-                } else {
-                    return String(time);
-                }
-            }
-            var days = formatTime(Math.floor(distance / (1000 * 60 * 60 * 24)));
-            var hours = formatTime(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
-            var minutes = formatTime(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)));
-            var seconds = formatTime(Math.floor((distance % (1000 * 60)) / 1000));
-        
-            // Display the countdown in the specified format
-            document.getElementById("countdown").innerHTML = "<h1 class=\"glow\">"+days + " : " + hours + " : " + minutes + " : " + seconds +"</h1>"+"<span class=\"unit\">(d:h:m:s)</span>";
-        
-            // If the countdown is over, display a message
-            if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("countdown").innerHTML = "EVENT STARTED";
-            }
-            }, 1000);
-        </script>
+                <a class="display-1 text-light" href="https://discord.com/invite/ggv3eNdAqr">
+                    <i class="bi bi-discord"></i>
+                </a>
 
-        </div>
-    </div>
+                <a class="display-1 text-light"
+                    href="https://www.instagram.com/allencyberinvitational?igsh=d291NWZpNm9xdWs1">
+                    <i class="bi bi-instagram"></i>
+                </a>
 
-    <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 5rem">
-        <div class="d-flex justify-content-center align-items-center overflow-y-auto" style="width: 50%; height: 100%">
-            <img class="align-self-center rounded glow-button" src="./img/RecCenter.png" align="right"
-                style="width: 90%; height: 90%;" />
-        </div>
-        <div class="d-flex flex-column justify-content-center align-items-end text-end"
-            style="height: 100%; width: 50%; margin-bottom: 4rem">
-            <h3 style="font-size: 3rem;">Place</h3>
-            <hr style="border-top: 2px solid #ffffff; width: 100%" align="right" />
-            <p style="width: 100%; text-align: center; font-size: 2rem;">
-                Allen Stephen G. Terrell Recreation Center
-            </p>
-        </div>
-    </div>
-
-
-    <div class="container text-center" style="margin-bottom: 4rem;">
-        <h3 class="text-center" style="color: #ffffff; font-size: 3rem;">FAQ</h3>
-        <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-        <div class="d-flex flex-column justify-content-start align-items-start" style="text-align: start;">
-            <h4>How much will it cost to participate?</h4>
-            <p>
-                There is absolutely no entry fee! The STEM field can be quite expensive at times,
-                and we would like to alleviate some of the financial burden for students taking
-                their first steps into the field. This is made possible by our wonderful sponosors
-                listed above.
-            </p>
-            <br>
-
-            <h4>Will competitors have to provide their own food?</h4>
-            <p>
-                We will cater food during the event, but the food options will be quite limited default
-                to dietary restrictions. Outside food may be brought in, but AHS Invitational will not
-                cover the fee. We also ask that you clean up after yourself.
-            </p>
-            <br>
-
-            <h4>Do I need previous experience to compete?</h4>
-            <p>
-                No previous experience is required. Students will get their intorduction to vital
-                topics during the competition, which they will then use to solve CTF based puzzles.
-            </p>
-            <br>
-
-            <h4>What type of competition is this?</h4>
-            <p>
-                The details of the competiton will be explained during the introduction ceremony,
-                but competitiors will need a team member to compete. Feel free to register with someone
-                you know, but if you do not have a team member in mind, check the box labeled "Assign me
-                a random team member" while registering.
-            </p>
-            <br>
-
-        </div>
-    </div>
-
-    <div>
-        <!-- CARD FOR SOCIAL LINKS -->
-        <div class="d-flex flex-row justify-content-center align-items-center" style="margin-bottom: 4rem; color: #ffffff;">
-            <div class="d-flex flex-column justify-content-center align-items-center text-center"
-                style="height: 100%; width: 100%; margin-bottom: 4rem">
-                <h3 style="font-size: 3rem;">Follow Us!</h3>
-                <hr style="border-top: 2px solid #ffffff; width: 100%; margin-bottom: 3rem;" align="left" />
-                <div class="d-flex flex-row justify-content-around" style="width: 100%">
-
-                    <a href="https://discord.com/invite/ggv3eNdAqr">
-                        <div class="card border-light bg-transparent glow-hover glow-button"
-                            style="width: 15rem; height: 15rem;">
-                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="https://discord.com/invite/ggv3eNdAqr"
-                                    class="d-flex flex-row justify-content-center stretched-link"
-                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Discord.png"
-                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
-                            </div>
-                            <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4 href="https://discord.com/invite/ggv3eNdAqr" style="color: #ffffff;">Discord</h4>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="card border-light bg-transparent glow-hover glow-button"
-                            style="width: 15rem; height: 15rem;">
-                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="#" class="d-flex flex-row justify-content-center stretched-link"
-                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Instagram.png"
-                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
-                            </div>
-                            <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4 style="color: #ffffff;">Instagram</h4>
-                            </div>
-                        </div>
-                    </a>
-
-                    <a href="#">
-                        <div class="card border-light bg-transparent glow-hover glow-button"
-                            style="width: 15rem; height: 15rem;">
-                            <div class="card-body d-flex flex-column align-items-center justify-content-center">
-                                <a href="mailto:info.ahscyber@gmail.com" class="d-flex flex-row justify-content-center stretched-link"
-                                    style="width: 50%; animation-duration: 1s;"><img src="./img/ico/Gmail.png"
-                                        style="width: 100%;" class="card-img-wrapper card-img-top"></a>
-                            </div>
-                            <div class="card-footer d-flex flex-column bg-transparent">
-                                <h4 style="color: #ffffff;">Gmail</h4>
-                            </div>
-                        </div>
-                    </a>
-
-                </div>
+                <a class="display-1 text-light glowP-hover" href="mailto: info.ahscyber@gmail.com">
+                    <i class="bi bi-envelope"></i>
+                </a>
             </div>
         </div>
     </div>
-    <div class="container text-center">
-        <h3 style="font-size: 3rem;">Meet The Team</h3>
-        <hr style="border-top: 2px solid #ffffff; width: 100%" align="left" />
-        <div class="row">
-            <div class="col-4">
-                <img src="./img/HeadShots/James.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">James Dungan</strong><br>Product Manager</p>
 
-            </div>
-            <div class="col-4">
-                <img src="./img/HeadShots/Soohan.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Soohan Cho</strong><br>Project Manager</p>
-
-            </div>
-            <div class="col-4">
-                <img src="./img/HeadShots/Blake.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Blake Gateley</strong><br>Project Coordinator
-                </p>
-
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-2">
-                <img src="./img/HeadShots/Richard.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Richard Jang</strong><br>Junior Coordinator
-                </p>
-
-            </div>
-            <div class="col-2">
-                <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Faraz Piracha</strong><br>Database Analysis
-                </p>
-
-            </div>
-            <div class="col-2">
-                <img src="./img/HeadShots/Marisa.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Marisa Patel</strong><br>Web Developer</p>
-
-            </div>
-            <div class="col-2">
-                <img src="./img/HeadShots/Feraz.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Sara Vaughan</strong><br>Media Coordinator</p>
-
-            </div>
-            <div class="col-2">
-                <img src="./img/HeadShots/Abel.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Abel Semahegn</strong><br>Junior Developer</p>
-
-            </div>
-            <div class="col-2">
-                <img src="./img/HeadShots/Aidan.jpg" class="figure-img img-fluid rounded glow-hover glow-button">
-                <p style="color: #bebebe"><strong style="color: #fff">Aidan Morris</strong><br>Junior Manager</p>
-
-            </div>
-        </div>
-    </div>
-</div>
-<footer class="footer">
     <div class="container">
-        <span class="footer-text">@Allen Cyber Invitational 2023-2024</span>
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="mb-3 h2">Mission</div>
+            <hr style="border-top: 2px solid #ffffff; width: 100%;" />
+            
+            <div class="mb-5 px-5" style="text-indent: 2rem;">
+                Create a responsive and interpretive environment for fellow students to explore cyber 
+                security concepts and ideas. Participants will solve Linux based puzzles regarding a 
+                multitude of major cyber security concepts (including but not limited to cryptography, 
+                steganography, web exploitation, cli commands, binary exploitation and much more) and 
+                then apply them in a scenario based challenge.
+            </div>
+        </div>
+
+        <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="mb-3 h2">About The Competition</div>
+            <hr style="border-top: 2px solid #ffffff; width: 100%;" />
+            
+            <div class="mb-5 px-5" style="text-indent: 2rem;">
+                The Allen Cyber Invitational is a student-created annual cybersecurity competition 
+                that is open to all high school students in the DFW area. Students will be challenged 
+                in many facets of cybersecurity such as cryptography, exploitation (Binary & Web) , 
+                shell commands, and system hardening. Teams will first participate in a seeding round 
+                where they will need to complete a series of CTF-based challenges. Based on each team's 
+                performance in the seeding round, they will be divided into three divisions (Platinum, 
+                Gold, and Silver). After divisions are made, teams will be presented with a collection 
+                of puzzles to complete to earn points for their team. After 40 minutes, teams will have 
+                to participate in a battle round, where they will wager points for a big payout if they 
+                complete a difficult challenge. This will repeat 3 more times. Each division will have 
+                breaks during certain puzzle and battle rounds. Then students will have lunch and listen 
+                to a speaker. Competitors will then be presented with an immersive and realistic ISS-themed 
+                scenario, where they will have to harden the space station’s systems against threats. Awards 
+                will then be given to the winning teams in each division.
+            </div>
+        </div>
+
+        <iframe frameborder="0" style="width:100%;height:497px;" src="https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&edit=_blank&layers=1&nav=1&title=Timeline.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D11V29mlNylhfqkrF9EplKzkpLT0C0KEpY%26export%3Ddownload"></iframe>
+<script type="text/javascript" src="https://viewer.diagrams.net/js/viewer-static.min.js"></script>
     </div>
-</footer>
+
+    <!-- End of Content -->
 
 
+    <!-- Off Canvas Nav -->
+    <div class="offcanvas offcanvas-end text-light bg-dark" tabindex="-1" id="offcanvasNavbar"
+        aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h3 class="offcanvas-title" id="offcanvasNavbarLabel">Allen Cyber Invitational</h3>
+            <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
+                <img src="./img/ico/Close.png" style="width: 3rem; border: none" />
+            </button>
+        </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+        <div class="offcanvas-body text-light">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">
+                        <h5>Home</h5>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./team.html">
+                        <h5>Meet The Team</h5>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./FAQ.html">
+                        <h5>FAQ</h5>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./404.html">
+                        <h5>Login</h5>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./404.html">
+                        <h5>Register</h5>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- End of Off Canvas Nav -->
+
+    <!-- Footer -->
+    <div class="container-fluid bg-dark mt-5">
+        <footer class="container pt-3 pb-5 d-flex flex-column justify-content-center">
+            <hr />
+            <div class="d-flex flex-row justify-content-between">
+                <div class="m-0 h3 dm-sans">Allen Cyber Invitational</div>
+                <div class="">© 2024 Allen Cyber Invitational</div>
+            </div>
+        </footer>
+    </div>
+    <!-- End of Footer -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Set the end date for the countdown (in UTC to ensure compatibility with all timezones)
+        var endDate = new Date("2024-04-27T08:00:00Z").getTime();
+        // var endDate = Date.now() + 604_800_000;
+
+        // Update the countdown every second
+        function formatTime(time, amount) {
+            return ("00" + time).slice(-amount);
+        }
+
+        const countdowns = document.getElementsByClassName("countdown");
+
+        let prevTime = Date.now();
+        function updateTime() {
+            let timeLeft = endDate - Date.now();
+
+            let days = Math.floor(timeLeft / (86_400 * 1000));
+            timeLeft %= 86_400 * 1000;
+            let hours = Math.floor(timeLeft / (3_600 * 1000));
+            timeLeft %= 3_600 * 1000;
+            let minutes = Math.floor(timeLeft / (60 * 1000));
+            timeLeft %= 60 * 1000;
+            let seconds = Math.floor(timeLeft / 1000);
+            timeLeft %= 1000;
+
+            for (let countdown of countdowns) {
+                if (timeLeft < 0) {
+                    countdown.innerHTML = "EVENT STARTED !!!";
+                    countdown.classList.add("text-danger");
+                    countdown.style.animation = "glow-danger 10s ease-in-out infinite alternate";
+                    return;
+                }
+
+                var now = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+
+                // Display the countdown in the specified format
+                countdown.innerHTML = formatTime(days, 2) + " : " + formatTime(hours, 2) + " : " + formatTime(minutes, 2) + " : " + formatTime(seconds, 2) + " : " + formatTime(timeLeft, 3);
+            }
+
+            window.requestAnimationFrame(updateTime);
+        }
+
+        updateTime();
     </script>
 </body>
 
