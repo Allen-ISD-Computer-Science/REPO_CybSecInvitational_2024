@@ -3,7 +3,7 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html class="h-100 w-100">
+<html class="w-100">
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,103 +22,116 @@
     />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="css/main.css" />
+    <script src="./js/time.js"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
+
 </head>
 
-<body class="h-100 w-100 p-0 m-0 overflow-visible">
-
+<body class="w-100 p-0 m-0 overflow-visible">
+    <div data-bs-spy="scroll" data-bs-smooth-scroll="true">
     <!-- Backdrop -->
-    <div id="background-stars-1" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
-    <div id="background-stars-2" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
-    <div id="background-stars-3" class="h-100 w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
+    <div id="background-stars-1" class="w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
+    <div id="background-stars-2" class="w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
+    <div id="background-stars-3" class="w-100 star-background" style="background-image: url(./img/stars1.png)"></div>
     <!-- End of Backdrop -->
 
     <!-- Top Nav Bar -->
     <div class="w-100 d-flex flex-row align-items-center fixed-top p-1" style="background-color: rgba(33, 37, 41, 0.75)">
-    <div class="p-2 mr-auto d-md-block d-none">
-        <div class="dm-sans text-light mb-0 h5">Allen Cyber Invitational</div>
-    </div>
-
-    <div class="p-2 ml-sm mr-auto d-md-none">
-        <div class="text-center bold">
-        <div class="countdown mb-0 h5 glow"></div>
+        <img class="d-md-block d-none" src="./img/ico/InvLogo.png" width="30" height="30">
+        <div class="p-2 mr-auto d-md-block d-none">
+            <div class="dm-sans text-light mb-0 h5" style="text-shadow: 0 0 10px #ffffff;">Allen Cyber Invitational</div>
         </div>
-    </div>
 
-    <div class="p-2 position-absolute top-50 start-50 translate-middle d-md-block d-none">
-        <div class="text-center bold">
-        <div class="countdown mb-0 h5 glow"></div>
+        <div class="p-2 ml-sm mr-auto d-md-none">
+            <div class="text-center bold">
+                <div class="countdown mb-0 h5 glow"></div>
+            </div>
         </div>
-    </div>
 
-    <div class="d-flex flex-row">
-        <a class="btn btn-dark mr-1 d-md-block d-none" href="#" role="button">Login</a>
-        <a class="btn btn-dark mr-1" href="#" role="button">Register</a>
-        <a class="btn btn-dark mr-1" href="#" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
-        <i class="bi bi-list"></i>
-        </a>
-    </div>
+        <div class="p-2 position-absolute top-50 start-50 translate-middle d-md-block d-none">
+            <div class="text-center bold">
+                <div class="countdown mb-0 h5 glow"></div>
+            </div>
+        </div>
+
+        <div class="d-flex flex-row">
+            <a class="btn btn-dark mr-1 d-md-block d-none" href="./404.html" role="button">Login</a>
+            <a class="btn btn-dark mr-1" href="./404.html" role="button">Register</a>
+            <a class="btn btn-dark mr-1" href="#" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar">
+                <i class="bi bi-list"></i>
+            </a>
+        </div>
     </div>
     <!-- End of Top Nav Bar -->
 
     <!-- Title Card -->
-    <div class="w-100 vh-100 d-flex flex-column justify-content-center">
-    <img src="./img/ico/EagleOutline.png" style="rotate: 0deg; top: 25%; animation: fade-in 1.1s" class="align-self-center pb-5 w-25" />
-    <h1 class="dm-sans display-1 align-self-center" style="animation: fade-in 1.1s">Template Title</h1>
-    <img src="./img/cosmos1.png" style="rotate: 180deg; width: 50vw; animation: fade-in 1.1s" class="align-self-center" />
+    <div class="w-100 vh-100 d-flex flex-column justify-content-center FadeIn">
+        <img src="./img/ico/Svg_Cyber_logo.svg" style="rotate: 0deg; top: 25%; max-width: 300px;" class="align-self-center pb-5 w-25" />
+        <h1 class="dm-sans display-1 align-self-center" style="text-shadow: 0 0 20px #ffffff;">Template Title</h1>
+        <img src="./img/cosmos1.png" style="rotate: 180deg; width: 50vw" class="align-self-center" />
+        <div class=" mt-5 blink d-flex flex-column align-items-center">
+            <a href="#contentStart" style="color: #ffffff;"><i class="bi bi-caret-down-fill h1" style="animation: alternate;"></i></a>
+        </div>
     </div>
     <!-- End of Title Card -->
 
 
     <!-- Content -->
-
-
+    
+    <div class="w-100" style="height: 3rem;" id="contentStart"></div>
+    
+    
 
     <!-- End of Content -->
 
 
     <!-- Off Canvas Nav -->
     <div class="offcanvas offcanvas-end text-light bg-dark" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-    <div class="offcanvas-header">
-        <h3 class="offcanvas-title" id="offcanvasNavbarLabel">Allen Cyber Invitational</h3>
-        <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
-        <img src="./img/ico/Close.png" style="width: 3rem; border: none" />
-        </button>
-    </div>
+        <div class="offcanvas-header">
+            <h3 class="offcanvas-title" id="offcanvasNavbarLabel">Allen Cyber Invitational</h3>
+            <button type="button" class="btn" data-bs-dismiss="offcanvas" aria-label="Close">
+            <img src="./img/ico/Close.png" style="width: 3rem; border: none" />
+            </button>
+        </div>
 
-    <div class="offcanvas-body text-light">
-        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-        <li class="nav-item">
-            <a class="nav-link" href="./index.html">
-                <h5>Home</h5>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="./team.html">
-            <h5>Meet The Team</h5>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="./FAQ.html">
-                <h5>FAQ</h5>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="./404.html">
-            <h5>Login</h5>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="./404.html">
-            <h5>Register</h5>
-            </a>
-        </li>
-        </ul>
-    </div>
+        <div class="offcanvas-body text-light">
+            <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+            <li class="nav-item">
+                <a class="nav-link" href="./">
+                    <h5>Home</h5>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./team.html">
+                <h5>Meet The Team</h5>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./FAQ.html">
+                    <h5>FAQ</h5>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./sponsors.html">
+                <h5>Sponsors</h5>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./404.html">
+                <h5>Login</h5>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="./404.html">
+                <h5>Register</h5>
+                </a>
+            </li>
+            </ul>
+        </div>
     </div>
     <!-- End of Off Canvas Nav -->
 
@@ -135,50 +148,7 @@
     <!-- End of Footer -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 
-    <script>
-    // Set the end date for the countdown (in UTC to ensure compatibility with all timezones)
-    var endDate = new Date("2024-04-27T08:00:00Z").getTime();
-    // var endDate = Date.now() + 604_800_000;
-
-    // Update the countdown every second
-    function formatTime(time, amount) {
-        return ("00" + time).slice(-amount);
-    }
-
-    const countdowns = document.getElementsByClassName("countdown");
-
-    let prevTime = Date.now();
-    function updateTime() {
-        let timeLeft = endDate - Date.now();
-
-        let days = Math.floor(timeLeft / (86_400 * 1000));
-        timeLeft %= 86_400 * 1000;
-        let hours = Math.floor(timeLeft / (3_600 * 1000));
-        timeLeft %= 3_600 * 1000;
-        let minutes = Math.floor(timeLeft / (60 * 1000));
-        timeLeft %= 60 * 1000;
-        let seconds = Math.floor(timeLeft / 1000);
-        timeLeft %= 1000;
-
-        for (let countdown of countdowns) {
-        if (timeLeft < 0) {
-            countdown.innerHTML = "EVENT STARTED !!!";
-            countdown.classList.add("text-danger");
-            countdown.style.animation = "glow-danger 10s ease-in-out infinite alternate";
-            return;
-        }
-
-        var now = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
-
-        // Display the countdown in the specified format
-        countdown.innerHTML = formatTime(days, 2) + " : " + formatTime(hours, 2) + " : " + formatTime(minutes, 2) + " : " + formatTime(seconds, 2) + " : " + formatTime(timeLeft, 3);
-        }
-
-        window.requestAnimationFrame(updateTime);
-    }
-
-    updateTime();
-    </script>
 </body>
 </html>

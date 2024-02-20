@@ -94,6 +94,11 @@ body {
   }
 }
 
+.fadeIn {
+  animation: fade-in 1.1s;
+  opacity: 1;
+}
+
 @-webkit-keyframes fade-in {
   from {
     translate: 0 3rem;
@@ -117,16 +122,19 @@ body {
 
 .glowP-hover:hover {
   text-shadow: 0 0 10px #ffffff;
-  transition: 0.3s;
-}
-
-.card-img-wrapper img {
-  transition: 1.15s;
-}
-
-.card:hover .card-img-wrapper img {
+  transition: all 0.3s ease-out;
   transform: scale(1.15);
 }
+
+.glowText {
+  text-shadow: 0 0 10px #ffffff;
+  transition: all 0.3s ease-in-out;
+}
+
+.glowText:hover {
+  transform: scale(1.15);
+}
+
 
 .unit {
   font-size: 18px;
@@ -161,6 +169,7 @@ body {
   animation: blink-animation .5s infinite alternate;
   -webkit-animation: blink-animation .5s infinite alternate;
 }
+
 @keyframes blink-animation {
   0% {
     opacity: 0;
@@ -169,6 +178,7 @@ body {
     opacity: 1;
   }
 }
+
 @-webkit-keyframes blink-animation {
   0% {
     opacity: 0;
@@ -178,3 +188,47 @@ body {
   }
 }
 
+.disappear {
+  animation: disappear 1s;
+}
+
+@keyframes disappear {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.flyInRight {
+  animation: rightIn 4s;
+  opacity: 1;
+}
+
+@keyframes rightIn {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  30% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
+
+.flyInLeft {
+  animation: leftIn 4s;
+  opacity: 1;
+}
+
+@keyframes leftIn {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  30% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+}
