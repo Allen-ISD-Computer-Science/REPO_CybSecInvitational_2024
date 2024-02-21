@@ -1620,6 +1620,7 @@ class ScenarioToken {
     } else {
       let currentToken = ScenarioToken._checkConcurrence(user.username);
       if (currentToken) {
+        console.log("fetched existing token");
         return { ok: true, token: currentToken };
       } else {
         console.log("created new token");
