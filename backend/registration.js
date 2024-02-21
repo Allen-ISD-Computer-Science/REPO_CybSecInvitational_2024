@@ -436,12 +436,12 @@ app.post("/register", async (req, res) => {
 
   try {
     await new VerificationGroup(registrants);
+    res.sendStatus(200);
+    return;
   } catch (err) {
     console.log(err);
     res.status(400).send(err);
     return;
-  } finally {
-    res.sendStatus(200);
   }
 });
 //#endregion

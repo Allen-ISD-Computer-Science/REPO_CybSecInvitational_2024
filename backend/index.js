@@ -198,6 +198,7 @@ app.get("/confirm", (req, res) => {
 });
 
 const nodemailer = require("nodemailer");
+const e = require("express");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -1599,6 +1600,15 @@ function uuidv4() {
 
 class ScenarioToken {
   static tokens = {};
+  static userReference = {};
+
+  static _checkConcurrence(username) {
+    for (let token of Object.values(ScenarioToken.tokens)) {
+      if (username == token.user?.username) return token;
+    }
+    return false;
+  }
+
   static fetchToken(id) {
     return ScenarioToken.tokens[id];
   }
@@ -1606,9 +1616,15 @@ class ScenarioToken {
   static async createNewToken(username, password) {
     const user = await fetchUser(username);
     if (!user || user?.password !== password) {
-      return null;
+      return { ok: false, message: "Missing arguments" };
     } else {
-      return new ScenarioToken(user);
+      let currentToken = ScenarioToken._checkConcurrence(user.username);
+      if (currentToken) {
+        return { ok: true, token: currentToken };
+      } else {
+        console.log("created new token");
+        return { ok: true, token: new ScenarioToken(user) };
+      }
     }
   }
 
@@ -1617,12 +1633,7 @@ class ScenarioToken {
     this.id = uuidv4();
     ScenarioToken.tokens[this.id] = this;
     this._timeout = setTimeout(() => {
-      //dispose after time
-      console.log(ScenarioToken.tokens);
-
-      console.log("removing token");
       delete ScenarioToken.tokens[this.id];
-      console.log(ScenarioToken.tokens);
     }, 10000);
   }
 }
@@ -1641,14 +1652,23 @@ io.on("connection", (socket) => {
 
     if (!data || !data.username || !data.password) {
       io.to(socket.id).emit("scenario_on_login", { ok: false, status: 400, message: "Missing Arguments" });
+      return;
     }
 
-    let token = await ScenarioToken.createNewToken(data.username, data.password);
+    let result = await ScenarioToken.createNewToken(data.username, data.password);
 
-    if (token) {
-      io.to(socket.id).emit("scenario_on_login", { ok: true, status: 200, message: "Logged In", tokenId: token.id });
+    if (result.ok) {
+      io.to(socket.id).emit("scenario_on_login", {
+        ok: true,
+        status: 200,
+        message: "Logged In",
+        tokenId: result.token.id,
+        expirationTime: Date.now() + config.scenario_token_duration,
+      });
+      return;
     } else {
-      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 403, message: "Incorrect Credentials" });
+      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 403, message: result.message });
+      return;
     }
   });
 
