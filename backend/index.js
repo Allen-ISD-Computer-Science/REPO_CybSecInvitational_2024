@@ -1,6 +1,7 @@
 //@ts-check
 require("dotenv").config();
 
+const crypto = require("crypto");
 const express = require("express");
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -59,18 +60,18 @@ process.on("SIGINT", () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(
-  session({
-    //@ts-ignore
-    secret:
-      process.env.EXPRESS_SESSION_SECRET ||
-      generateKey("hmac", { length: 256 }, (err, key) => {
-        return key;
-      }),
-    resave: false, // don't save session if unmodified
-    saveUninitialized: false, // don't create session until something stored
-  })
-);
+const sessionMiddleWare = session({
+  //@ts-ignore
+  secret:
+    process.env.EXPRESS_SESSION_SECRET ||
+    generateKey("hmac", { length: 256 }, (err, key) => {
+      return key;
+    }),
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+});
+
+app.use(sessionMiddleWare);
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -197,6 +198,7 @@ app.get("/confirm", (req, res) => {
 });
 
 const nodemailer = require("nodemailer");
+const e = require("express");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -1109,7 +1111,6 @@ function startUpdates() {
   paused = false;
   updateEvent();
 }
-startUpdates();
 
 app.get("/scoreboard", verifyUser, verifyBattleRound, function (req, res) {
   res.sendFile(path.join(__dirname, "public/scoreboard.html"));
@@ -1589,10 +1590,93 @@ app.post("/admin/command", adminCheck, async (req, res) => {
 });
 //#endregion
 
-//socket handling
+//#region Scenario
+
+// startUpdates();
+
+function uuidv4() {
+  return crypto.randomUUID();
+}
+
+class ScenarioToken {
+  static tokens = {};
+  static userReference = {};
+
+  static _checkConcurrence(username) {
+    for (let token of Object.values(ScenarioToken.tokens)) {
+      if (username == token.user?.username) return token;
+    }
+    return false;
+  }
+
+  static fetchToken(id) {
+    return ScenarioToken.tokens[id];
+  }
+
+  static async createNewToken(username, password) {
+    const user = await fetchUser(username);
+    if (!user || user?.password !== password) {
+      return { ok: false, message: "Missing arguments" };
+    } else {
+      let currentToken = ScenarioToken._checkConcurrence(user.username);
+      if (currentToken) {
+        console.log("fetched existing token");
+        return { ok: true, token: currentToken };
+      } else {
+        console.log("created new token");
+        return { ok: true, token: new ScenarioToken(user) };
+      }
+    }
+  }
+
+  constructor(user) {
+    this.user = user;
+    this.id = uuidv4();
+    ScenarioToken.tokens[this.id] = this;
+    this._timeout = setTimeout(() => {
+      delete ScenarioToken.tokens[this.id];
+    }, 10000);
+  }
+}
+
+io.engine.use(sessionMiddleWare);
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  //join unique room
+  socket.join(socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client Disconnected");
+  });
+
+  socket.on("scenario_login", async (data) => {
+    console.log("attempting login");
+
+    if (!data || !data.username || !data.password) {
+      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 400, message: "Missing Arguments" });
+      return;
+    }
+
+    let result = await ScenarioToken.createNewToken(data.username, data.password);
+
+    if (result.ok) {
+      io.to(socket.id).emit("scenario_on_login", {
+        ok: true,
+        status: 200,
+        message: "Logged In",
+        tokenId: result.token.id,
+        expirationTime: Date.now() + config.scenario_token_duration,
+      });
+      return;
+    } else {
+      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 403, message: result.message });
+      return;
+    }
+  });
+
+  console.log("Client Connected");
 });
+
+//#endregion
 
 server.listen(Number(config.host_port), function () {
   //@ts-ignore

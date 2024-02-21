@@ -26,5 +26,7 @@
       "puzzles": ["battleRound4Puzzle1", "battleRound4Puzzle2", "battleRound4Puzzle3", "battleRound4Puzzle4"],
       "min_bid": 0.1
     }
-  }
+  },
+
+  "scenario_token_duration": 60000
 }
