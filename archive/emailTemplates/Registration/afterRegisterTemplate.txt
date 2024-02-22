@@ -1,0 +1,37 @@
+Key:
+???
+
+Description:
+Information And Credentials
+
+Html Template:
+<html lang="en">
+<title>Information</title>
+<p>Please verify your information:</p>
+<p>Team Member A: #(memberA)</p>
+<p>School: #(memberA_school)</p>
+<p>Shirt Size: #(memberA_shirtSize)</p>
+<p></p>
+
+<p>Team Member B: #(memberB)</p>
+<p>School: #(memberB_school)</p>
+<p>Shirt Size: #(memberB_shirtSize)</p>
+<p></p>
+
+<p>Your team's username and password are below:</p>
+<br />
+<p>#(username)</p>
+<p>#(password)</p>
+<br />
+<p>If you did not make such a request, please disregard.</p>
+</body>
+</html>
+
+Text Template:
+Allen Cyber Invitational: Your email verification code is #(code)
+
+Fields:
+'{"requiredFields": ["memberA", "memberA_school", "memberA_shirtSize", "memberB", "memberB_school", "memberB_shirtSize"]}'
+
+Subject:
+Allen Cyber Invitational: Email Verification

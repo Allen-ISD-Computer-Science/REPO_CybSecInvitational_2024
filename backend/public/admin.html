@@ -21,203 +21,130 @@
   <body id="page-top">
     <!-- Page Wrapper -->
     <div id="wrapper">
-      <!-- Sidebar -->
-      <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-        <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center p-3" href="index.html">
-          <div class="sidebar-brand-icon">
-            <img src="./img/logo.png" alt="Logo" width="100%" height="100%" />
-          </div>
-          <div class="sidebar-brand-text mx-3">AHS Invitational</div>
-        </a>
-
-        <!-- Logout -->
-        <hr class="sidebar-divider" />
-        <a href="logout" class="mr-3 ml-3 mt-0 mb-3 d-sm-inline-block btn btn-sm btn-danger shadow-sm"><i class="fas fa-sign-out-alt fa-sm text-white-50"></i> Logout </a>
-        <hr class="sidebar-divider" />
-        <!--Logout end-->
-
-        <div class="sidebar-heading">Main</div>
-
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item">
-          <a class="nav-link p-3" href="home">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a
-          >
-        </li>
-
-        <!-- Nav Item - Scoreboard -->
-        <li class="nav-item">
-          <a class="nav-link pt-0" href="scoreboard">
-            <i class="fas fa-fw fa-clipboard-list"></i>
-            <span>Scoreboard</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider" />
-
-        <!-- Puzzle Round -->
-        <div class="sidebar-heading">Puzzle Round</div>
-
-        <li class="nav-item">
-          <a class="nav-link p-3" href="puzzles">
-            <i class="fas fa-fw fa-puzzle-piece"></i>
-            <span>Puzzles</span></a
-          >
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link pt-0" href="battleRound">
-            <i class="fas fa-fw fa-triangle-exclamation"></i>
-            <span>Battle Round</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider" />
-
-        <!-- Scenario Round -->
-        <div class="sidebar-heading">Scenario Round</div>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a class="nav-link p-3" href="home">
-            <i class="fas fa-fw fa-signal"></i>
-            <span>Status</span></a
-          >
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block" />
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-          <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-      </ul>
-
-      <!-- End of Sidebar -->
-
       <!-- Content Wrapper -->
       <div id="content-wrapper" class="d-flex flex-column">
         <!-- Main Content -->
-        <div id="content">
-          <!-- Topbar -->
-          <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow pr-0">
-            <!-- Sidebar Toggle (Topbar) -->
-            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-              <i class="fa fa-bars"></i>
-            </button>
-
-            <!-- Time Data -->
-            <div class="w-25 mr-5">
-              <h6 class="text-nowrap">Time Remaining</h6>
-              <div class="progress">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-
-            <div class="w-25 mr-5">
-              <h6 class="text-nowrap">Battle Round Time Remaining</h6>
-              <div class="progress">
-                <div class="progress-bar bg-danger" role="progressbar" style="width: 20%" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-              </div>
-            </div>
-            <!-- End of Time Data -->
-
-            <!-- Point and Name -->
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item">
-                <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-dark" id="points-text-label">Points: ...</span>
-                </div>
-              </li>
-              <div class="vr d-none d-lg-block bg-gray-300" style="width: 0.1rem"></div>
-              <li class="nav-item">
-                <div class="nav-link">
-                  <span class="mr-2 d-none d-lg-inline align-middle text-gray-600 small" id="username-text-label">...</span>
-                </div>
-              </li>
-            </ul>
-            <!-- End of Point and Name -->
-          </nav>
-          <!-- End of Topbar -->
-
+        <div id="content" class="mt-4">
           <!-- Begin Page Content -->
           <div class="container-fluid">
             <!-- Page Heading -->
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-              <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+              <h1 class="h3 mb-0 text-gray-800">Admin Panel</h1>
             </div>
 
-            <!-- Point Cards -->
-            <div class="row">
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Puzzle Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="puzzle-points-text-label">...</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-star-half-alt fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Scenario Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="scenario-points-text-label">...</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-star-half-alt fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                  <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                      <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Total Points</div>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-points-text-label">...</div>
-                      </div>
-                      <div class="col-auto">
-                        <i class="fas fa-star fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- End Point Cards -->
+            <div class="container-fluid">
+              <div class="mb-3 h-100">
+                <label for="" class="form-label">Output</label>
 
-            <!-- Point History Chard -->
-            <div class="row">
-              <div class="w-100">
-                <div class="card shadow mb-4">
-                  <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Point History</h6>
-                  </div>
-                  <div class="card-body">
-                    <div class="chart-area">
-                      <canvas id="myAreaChart"></canvas>
-                    </div>
-                  </div>
+                <div class="border rounded py-2 px-3" style="color: #6e707e; border: 1px solid #d1d3e2; background-color: rgb(255, 255, 255)">
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse lorem nibh, tristique a facilisis sed, eleifend sit amet mauris. Duis ut feugiat magna, sed congue turpis. Aliquam molestie augue at orci facilisis ultrices. Nulla erat diam, eleifend eu lacinia vel, tempus vel ante. Mauris elementum odio ut augue rutrum
+                  tincidunt. Nullam laoreet viverra lacinia. Suspendisse varius sapien sit amet mattis ultricies. Sed ultricies tincidunt eros, quis rhoncus ipsum pellentesque vel. Morbi ultricies velit et lacus tempor tempus. In sit amet finibus nisl, a interdum purus. Vestibulum vitae risus lobortis, laoreet tellus vitae, imperdiet nisi. Fusce
+                  eget faucibus nisi.
+                </div>
+              </div>
+
+              <div class="d-flex flex-column">
+                <div class="mb-3">
+                  <label for="admin_command_bar" class="form-label">Command Bar</label>
+                  <input type="text" class="form-control" name="" id="admin_command_bar" placeholder="[Operator] [Operand] [Options]" />
+                </div>
+              </div>
+
+              <div class="mb-5">
+                <h3>User Management</h3>
+
+                <!-- Change Points UI -->
+                <label class="form-label">Points</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_section">
+                    <option value="" hidden>Select Section</option>
+                    <option>PUZZLE_POINTS</option>
+                    <option>SCENARIO_POINTS</option>
+                  </select>
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_points_operation">
+                    <option value="" hidden>Select Operation</option>
+                    <option>ADD</option>
+                    <option>SUB</option>
+                    <option>SET</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_points_amount" placeholder="Amount" />
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_points_target" placeholder="Target" />
+                  <button type="button" id="admin_points_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
+
+                <!-- Change Complete Puzzles UI -->
+                <label class="form-label">Completed Puzzles</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_puzzles_operation">
+                    <option value="" hidden>Select Operation</option>
+                    <option>ADD</option>
+                    <option>SUB</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto" autocomplete="off" id="admin_puzzles_id" placeholder="Puzzle Id" />
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_puzzles_target" placeholder="Target" />
+                  <button type="button" id="admin_puzzles_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
+
+                <!-- Division Change UI -->
+                <label class="form-label">Division</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_division_selection">
+                    <option value="" hidden>Select Section</option>
+                    <option value="0">Silver</option>
+                    <option value="1">Gold</option>
+                    <option value="2">Platinum</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_division_target" placeholder="Target" />
+                  <button type="button" id="admin_division_submit" class="btn btn-primary mb-2">Submit</button>
+                </div>
+                <!-- End of Add Points UI -->
+              </div>
+              <div class="mb-5">
+                <h3>Event Management</h3>
+                <label class="form-label">Start Event</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_round_type">
+                    <option value="" hidden>Type</option>
+                    <option value="PUZZLE_ROUND">Puzzle Round</option>
+                    <option value="BATTLE_ROUND">Battle Round</option>
+                    <option value="SCENARIO_ROUND ">Scenario Round</option>
+                  </select>
+
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_round_id">
+                    <option value="" hidden>Event Name</option>
+                    <option>SEEDING_ROUND</option>
+                    <option>PUZZLE_ROUND_1</option>
+                    <option value="battle_round_1">BATTLE_ROUND_1</option>
+                    <option>PUZZLE_ROUND_2</option>
+                    <option>BATTLE_ROUND_2</option>
+                    <option>PUZZLE_ROUND_3</option>
+                    <option>BATTLE_ROUND_3</option>
+                    <option>SCENARIO</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_round_duration" placeholder="Duration" />
+                  <button id="admin_round_start" type="button" id="admin_points_submit" class="btn btn-primary mb-2 mr-2">Start</button>
+
+                  <button id="admin_round_end" type="button" id="admin_points_submit" class="btn btn-danger mb-2">End</button>
+                </div>
+              </div>
+
+              <div>
+                <h3>Miscellaneous</h3>
+                <label class="form-label">Alerts</label>
+                <div class="d-flex flex-wrap">
+                  <select class="form-control w-auto mr-2 mb-2" autocomplete="off" name="Section" id="admin_alert_selection">
+                    <option value="" hidden>Level</option>
+                    <option value="MESSAGE">Normal</option>
+                    <option value="WARNING">Warning</option>
+                    <option value="DANGER">Danger</option>
+                  </select>
+                  <input type="text" class="h-100 form-control mr-2 mb-2 w-auto flex-grow-1" autocomplete="off" id="admin_alert_message" placeholder="Message" />
+                  <button type="button" id="admin_alert_send" class="btn btn-primary mb-2 mr-2">Send</button>
                 </div>
               </div>
             </div>
-            <!-- End Point History Chart -->
           </div>
         </div>
         <!-- End of Main Content -->
@@ -242,19 +169,12 @@
     </a>
 
     <!-- Custom scripts for all pages-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <!-- Page level custom scripts -->
-    <script src="js/demo/chart-area-demo.js"></script>
-    <script src="js/demo/chart-pie-demo.js"></script>
-    <!-- <script src="js/scripts.js"></script> -->
     <!-- socket handling -->
-
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
     <script src="js/admin.js"></script>
   </body>

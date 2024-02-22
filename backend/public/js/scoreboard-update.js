@@ -36,10 +36,10 @@ function updateUI(scoreboard) {
       case 0:
         user.division = "Silver";
         break;
-      case 0:
+      case 1:
         user.division = "Gold";
         break;
-      case 0:
+      case 2:
         user.division = "Platinum";
         break;
       default:
@@ -55,9 +55,9 @@ function updateUI(scoreboard) {
 }
 
 socket.on("update_event", async (data) => {
-    console.log("updating")
+  console.log("updating");
 
-    scoreboard = data;
+  scoreboard = data.scoreboard;
   updateUI(scoreboard);
 });
 
