@@ -850,8 +850,7 @@ async function endBattleRound() {
       const username = user.username;
       const k = Object.values(participant.completed).length / 4;
       const multiplier = lerp(config.battle_round_min_multiplier, config.battle_round_max_multiplier, k);
-      const prize = Math.min(multiplier * participant.bid);
-      console.log(prize);
+      const prize = Math.floor(multiplier * participant.bid);
       onBattleRoundCredit(username, prize);
       delete usersList[username];
     });
@@ -1592,7 +1591,7 @@ app.post("/admin/command", adminCheck, async (req, res) => {
 
 //#region Scenario
 
-// startUpdates();
+startUpdates();
 
 function uuidv4() {
   return crypto.randomUUID();
