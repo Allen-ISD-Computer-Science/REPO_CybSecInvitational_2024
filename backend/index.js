@@ -941,7 +941,7 @@ app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res)
     return;
   }
 
-  res.json({ alreadyJoined: false, endTime: currentRound.endTime });
+  res.json({ alreadyJoined: false, endTime: currentRound.endTime, minBid: currentRound.min_bid });
 });
 
 app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {

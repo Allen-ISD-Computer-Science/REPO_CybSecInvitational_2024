@@ -210,7 +210,9 @@ const amountDisplay = document.getElementById("battle_round_bid_amount");
 const loadingDisplay = document.getElementById("battle_round_loading");
 
 amountSlider.oninput = function () {
-  amountDisplay.textContent = `Points: ${Math.min((user.puzzle_points * amountSlider.value) / 100)}`;
+  let percentage = Math.max(amountSlider.value / 100, minBid);
+  let bid = Math.max(Math.min(Math.floor(user.puzzle_points * percentage), user.puzzle_points), 0);
+  amountDisplay.textContent = `Points: ${bid}`;
 };
 
 const confirmButton = document.getElementById("battle_round_bid_confirm");
@@ -221,7 +223,7 @@ confirmButton.onclick = async function (ev) {
     doubleCheck = true;
     return;
   } else {
-    let result = await joinBattleRound(amountSlider.value / 100);
+    let result = await joinBattleRound(Math.max(amountSlider.value / 100, minBid));
     console.log(result);
     if (result.alreadyJoined) return;
 
@@ -275,6 +277,7 @@ function updateBattleRoundTime() {
   setTimeout(updateBattleRoundTime, clockUpdateInterval);
 }
 
+let minBid = 0.1;
 document.addEventListener("user-loaded", async () => {
   const result = await fetchStatus();
   if (result.alreadyJoined) {
@@ -288,7 +291,9 @@ document.addEventListener("user-loaded", async () => {
     joinUi.style.display = "block";
   }
 
-  console.log(result);
+  minBid = result.minBid;
+  amountSlider.min = Math.floor(minBid * 100);
+
   if (result.endTime) {
     endTime = result.endTime;
     updateBattleRoundTime();

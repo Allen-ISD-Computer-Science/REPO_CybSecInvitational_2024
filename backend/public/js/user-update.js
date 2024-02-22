@@ -99,6 +99,7 @@ function updateCurrentRoundUI(data) {
   if (Object.values(data).length <= 0) {
     label.textContent = "No Round Started Yet!";
     timer.innerHTML = "";
+    currentEndTime = Date.now();
   } else {
     currentEndTime = data.endTime;
     label.textContent = data.type;
