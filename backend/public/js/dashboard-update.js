@@ -8,7 +8,7 @@ function updateUI(user) {
   totalPointsCardLabel.textContent = String(user.puzzle_points + user.scenario_points);
 }
 
-socket.on("scoreboard_update", async (data) => {
+document.addEventListener("user-updated", () => {
   updateUI(user);
 });
 

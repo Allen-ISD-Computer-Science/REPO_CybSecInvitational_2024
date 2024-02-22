@@ -110,11 +110,13 @@ window.onresize = function () {
 };
 
 socket.on("update_event", async (data) => {
-  data.sort((a, b) => {
+  board = data.scoreboard;
+
+  board.sort((a, b) => {
     return b.puzzle_points + b.scenario_points - (a.puzzle_points + a.scenario_points);
   });
 
-  scoreboard = data.slice(0, 50);
+  scoreboard = board.slice(0, 50);
 
   let updatedUsers = {};
 

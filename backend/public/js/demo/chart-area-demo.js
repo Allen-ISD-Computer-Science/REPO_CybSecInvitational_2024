@@ -55,7 +55,7 @@ var myLineChart = new Chart(ctx, {
         {
           ticks: {
             maxTicksLimit: 10,
-            padding: 10,
+            padding: 5,
           },
           gridLines: {
             color: "rgb(234, 236, 244)",
