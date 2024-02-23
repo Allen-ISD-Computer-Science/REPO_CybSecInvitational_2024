@@ -731,6 +731,15 @@ async function onPuzzleCorrect(username, amount, id) {
   }
 }
 
+// app.get("/context/:name", (req, res) => {
+//   let context = req.params.name;
+//   try {
+//     res.sendFile(path.join(__dirname, "public/puzzles/", context));
+//   } catch {
+//     res.sendStatus(404);
+//   }
+// });
+
 app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
   if (!currentRound || currentRound.type != "PuzzleRound") {
     res.redirect("home");
