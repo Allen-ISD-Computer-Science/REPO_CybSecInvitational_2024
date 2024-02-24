@@ -790,6 +790,12 @@ app.post("/submitPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   const puzzle = fetchPuzzle(id);
   if (!puzzle) {
     res.status(404).send("Puzzle not found!");
+    return;
+  }
+
+  if (userData.completed_puzzles[id]) {
+    res.status(400).send("Puzzle already completed");
+    return;
   }
 
   if (await isPuzzleAnswerCorrect(id, answer)) {
