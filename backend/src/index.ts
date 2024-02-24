@@ -1,9 +1,13 @@
 import { ObjectId } from "mongodb";
 
 const testModule = require("./testModule");
+
 require("dotenv").config();
 require("crypto");
+
 const express = require("express");
+import { Request, Response } from "express";
+
 const { createServer, get } = require("http");
 const session = require("express-session");
 const { Server } = require("socket.io");
@@ -148,8 +152,12 @@ class PuzzleRound extends Round {
     this.type = "PuzzleRound";
   }
 }
-
 server.listen(Number(config.host_port), function () {
   console.log(server.address());
   console.log("server at http://localhost:%s/home", server.address().port);
 });
+app.get("/", (req: Request, res: Response): any => {
+  res.send("Bruh");
+});
+
+app.use("/api", testModule);

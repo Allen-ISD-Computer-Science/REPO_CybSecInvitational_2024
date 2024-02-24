@@ -75,7 +75,7 @@ const sessionMiddleWare = session({
 });
 app.use(sessionMiddleWare);
 //Static File Serving
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "../public")));
 function fetchUser(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -124,3 +124,7 @@ server.listen(Number(config.host_port), function () {
     console.log(server.address());
     console.log("server at http://localhost:%s/home", server.address().port);
 });
+app.get("/", (req, res) => {
+    res.send("Bruh");
+});
+app.use("/api", testModule);
