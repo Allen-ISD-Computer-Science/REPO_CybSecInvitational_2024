@@ -9,6 +9,12 @@
   "battle_round_min_multiplier": 0.5,
   "battle_round_max_multiplier": 2,
 
+  "puzzle_rounds": {
+    "puzzle_round_1": {
+      "multiplier": 1
+    }
+  },
+
   "battle_rounds": {
     "battle_round_1": {
       "puzzles": ["battleRound1Puzzle1", "battleRound1Puzzle2", "battleRound1Puzzle3", "battleRound1Puzzle4"],
