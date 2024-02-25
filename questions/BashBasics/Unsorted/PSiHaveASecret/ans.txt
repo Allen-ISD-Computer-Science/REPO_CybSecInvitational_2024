@@ -1,1 +1,0 @@
-bash.txt = AHSINV{f27a3286c4741944c2c6f7cd00f330b9}
