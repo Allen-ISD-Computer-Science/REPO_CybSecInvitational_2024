@@ -1,0 +1,55 @@
+[
+    {
+        "name": "9 Lives",
+        "description": "Find the flag located in this file.",
+        "points_value": 5,
+        "difficulty": 0,
+        "category": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"login\">Use Me!</a>",
+        "answer": "AHSINV{9ac8efe31b7a7a1e8dc66e4dad493308}"
+    },
+
+    {
+        "name": "C Deez Flags",
+        "description": "Navigating a Linux file system.",
+        "points_value": 5,
+        "difficulty": 0,
+        "category": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"link\">directory</a>, but how do I get to it?</p>",
+        "answer": "AHSINV{3cc66404a32f37c7be0206f399018c9c}"
+    },
+
+    {
+        "name": "Back To Basics 64",
+        "description": "Experiment with a fundamental encryption algorithm.",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "<h1>A Hidden Message?</h1><h3>Cryptography</h3><p>I was told this is the <a href=\"link\">flag</a>, but it's not right. Maybe it's in a different format?",
+        "answer": "AHSINV{50f42fd7d6b7d2caf4b1732f314941a2}"
+    },
+
+    {
+        "name": "Julius Caesar",
+        "description": "I think I see a pattern here.",
+        "points_value": 15,
+        "difficulty": 0,
+        "category": "<h1>Is it that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
+        "answer": "AHSINV{8dca3fb283af6d299fb25e5840a50032}"
+    },
+
+    {
+        "name": 
+        "description": 
+        "points_value": 
+        "difficulty": 
+        "category": 
+        "answer": 
+    },
+
+    {
+        "name": 
+        "description": 
+        "points_value": 
+        "difficulty": 
+        "category": 
+        "answer": 
+    }
+]

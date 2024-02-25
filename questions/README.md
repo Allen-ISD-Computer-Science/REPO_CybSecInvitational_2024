@@ -1,11 +1,11 @@
 # Guideline
 
-This is a way to visually keep up puzzle progress in GitHub.
-Properly maintain this README to maximize teamwork.
-Put "P" in the cell that you are working on.
-Put "Done" in the cell that you have finished.
-If the table below has bad formatting, resize your screen.
-Check both "Puzzle Writeups" and "Puzzle Questions" before implementing and making writeups!
+ - This is a way to visually keep up puzzle progress in GitHub.
+ - Properly maintain this README to maximize teamwork.
+ - Put "P" in the cell that you are working on.
+ - Put "Done" in the cell that you have finished.
+ - If the table below has bad formatting, resize your screen.
+ - Check both "Puzzle Writeups" and "Puzzle Questions" before implementing and making writeups!
 
 
 ## Cryptography
