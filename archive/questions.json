@@ -1,0 +1,298 @@
+
+{
+
+    "9lives": {
+        "Puz-num":  #,
+        "id": "9 Lives",
+        "description": "<p>Given the file <a href="url">file</a> respond with the contents inside. This <a href=\"https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html#cat-invocation\">link</a> may help</p>",
+        "point_value": 5,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "cdeezflags": {
+        "Puz-num":  #,
+        "id": "CDeez Flags",
+        "description": "<p>Given the folder navigate towards <a href=\"url\">Flag.txt</a>. This <a href=\"https://man7.org/linux/man-pages/man1/cd.1p.html\">link</a> may help.</p>",
+        "point_value": 5,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "flagception": {
+        "Puz-num":  #,
+        "id": "Flagception",
+        "description": "<p>Given the file <a href=\"url\">a.out</a>, execute the file to obtain the flag. This <a href=\"https://ss64.com/bash/chmod.html\">link</a> may help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    }
+    ,
+    "getthew": {
+    "Puz-num":  #,
+        "id": "Get The W",
+        "description": "<p>Given the file <a href=\"url\">FlagLink</a>, pull the flag from the specified source. This <a href=\"https://ss64.com/bash/chmod.html\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+
+    "grepgrepgrep": {
+    "Puz-num":  #,
+        "id": "GREP GRE PGREP",
+        "description": "<p>Given the transcript, submit the hidden <a href=\"url\">flag</a> within the transcript of <em>Romeo and Juliet</em>. This <a href=\"https://man7.org/linux/man-pages/man1/grep.1.html\">link</a> might help.</p>",
+        "point_value": 15,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+
+    "lockdoors": {
+    "Puz-num":  #,
+        "id": "Locked Doors",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, run the Python script to decrypt said Flag. This <a href=\"https://realpython.com/run-python-scripts/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "lockdoorsii": {
+    "Puz-num":  #,
+        "id": "Locked Doors II",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, run the Python script to decrypt said Flag. This <a href=\"https://realpython.com/run-python-scripts/\">link</a> might help.</p>",
+        "point_value": 15,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "pathofthepuzzled": {
+    "Puz-num":  #,
+        "id": "Path of The Puzzled",
+        "description": "<p>Given a maze of directories, find the <strong>Flag</strong>.</p>",
+        "point_value": 20,
+        "difficulty": 1,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "permisionconundrum": {
+    "Puz-num":  #,
+        "id": "Permision Conundrum",
+        "description": "<p>Given a <strong>Flag</strong>, submit the contents. This <a href=\"https://ss64.com/bash/chmod.html\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    }
+    ,
+    "pssihaveasecret": {
+    "Puz-num":  #,
+        "id": "PSS I Have a Secret",
+        "description": "<p>Given a <strong>Flag</strong>, find the correct flag.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+
+    "PathOfThePuzzledII": {
+    "Puz-num":  #,
+        "id": "Path Of The Puzzled II",
+        "description": "<p>Given a <strong>Series of Folders</strong>, obtain the <strong>Flag</strong>.</p>",
+        "point_value": 15,
+        "difficulty": 0,
+        "category": "Bash Basics",
+        "answer":""
+    },
+    "2HopsThisTime": {
+    "Puz-num":  #,
+        "id": "2 Hops This Time",
+        "description": "</p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{f0fe7a894e2420de8d2b9900a181fac0}"
+    },
+
+    "basic64": {
+    "Puz-num":  #,
+        "id": "Basic64",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{50f42fd7d6b7d2caf4b1732f314941a2}"
+    },
+    "Dots&Lines": {
+    "Puz-num":  #,
+        "id": "Dots & Lines",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{1d874c9def8d64704c36e577a56768c2}"
+    },
+    "LittleCeasars": {
+    "Puz-num":  #,
+        "id": "Little Ceasars",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{8dca3fb283af6d299fb25e5840a50032}"
+    },
+    "LongWayHome": {
+    "Puz-num":  #,
+        "id": "Long Way Home",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://10015.io/tools/sha256-encrypt-decrypt\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{Password}"
+    },
+    "OneFishTwoFish": {
+    "Puz-num":  #,
+        "id": "One Fish Two Fish",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://encode-decode.com/blowfish-encrypt-online/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{onefishtwofishgetthiscodethis}"
+    },
+    "RailFence": {
+    "Puz-num":  #,
+        "id": "RailFence",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{e8c1e18853cff7468e2b30f42e85c22e}"
+    },
+    "Rotation": {
+    "Puz-num":  #,
+        "id": "Rotation",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://www.thomas-kuehn.de/geocaching/rot.php\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{ec1a20c7fca87ae26304a0bd166d8f83} "
+    },
+    "Stego": {
+    "Puz-num":  #,
+        "id": "Stego",
+        "description": "<p>Given a picture <strong>Flag</strong>, extract the hidden Flag within. This <a href=\"https://man7.org/linux/man-pages/man1/tail.1.html\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{6b4973aa0fed1fc5c66e7790710e6f76}"
+    },
+    "SUSZUCK": {
+    "Puz-num":  #,
+        "id": "SUS ZUCK",
+        "description": "<p>Given a picture <strong>Flag</strong>, extract the hidden Flag within.</p>",
+        "point_value": 20,
+        "difficulty": 1,
+        "category": "Cryptography",
+        "answer":"AHSINV{d83638633b691b9352f36d9a475456d4}"
+    },
+    "WHATDOTHEYMEANMASON": {
+    "Puz-num":  #,
+        "id": "WHAT DO THEY MEAN MASON",
+        "description": "<p>Given an encrypted <strong>Flag</strong>, decrypt it and submit the <strong>Flag</strong>. This <a href=\"https://cryptii.com/\">link</a> might help.</p>",
+        "point_value": 10,
+        "difficulty": 0,
+        "category": "Cryptography",
+        "answer":"AHSINV{faedccb891142eece84b18a696047de2}"
+    },
+    "DisassembleTheStack": {
+    "Puz-num":  #,
+        "id": "Disassemble The Stack",
+        "description": "",
+        "point_value": 1,
+        "difficulty": "",
+        "category": "Exploitation",
+        "answer":""
+    },
+    "NegativeEnergy": {
+    "Puz-num":  #,
+        "id": "Negative Energy",
+        "description": "",
+        "point_value": 1,
+        "difficulty": "",
+        "category": "Exploitation",
+        "answer":""
+    },
+    "OutInTheOpen": {
+    "Puz-num":  #,
+        "id": "Out In The Open",
+        "description": "",
+        "point_value": 1,
+        "difficulty": "",
+        "category": "Exploitation",
+        "answer":""
+    },
+    "1-1000000": {
+    "Puz-num":  #,
+        "id": "1-1 000 000",
+        "description": "<p>Given the program <strong>main</strong>, produce an unexpected.</p>",
+        "point_value": 30,
+        "difficulty": 2,
+        "category": "Exploitation",
+        "answer":""
+    },
+    "BinaryObscurity": {
+    "Puz-num":  #,
+        "id": "Binary Obscurity",
+        "description": "<p>Given a set of <strong>programs</strong>, figure out how to extract the Flag.</p>",
+        "point_value": 35,
+        "difficulty": 2,
+        "category": "Exploitation",
+        "answer":"AHSINV{1b8221a1bd0001a5e0b359f2aa0866d7}"
+    },
+    "JackI": {
+    "Puz-num":  #,
+        "id": "John I",
+        "description": "<p>Given a Locked zip file that requires a password, use John The Ripper to unlock the contents of said file.</p>",
+        "point_value": 30,
+        "difficulty": 2,
+        "category": "Exploitation",
+        "answer":"AHSINV{b839adb44db26e278407bf9294f717c3}"
+    },
+    "JackII": {
+    "Puz-num":  #,
+        "id": "John II",
+        "description": "<p>Given a website, build a word list that will be used to break into the password protected zip file.</p>",
+        "point_value": 40,
+        "difficulty": 2,
+        "category": "Exploitation",
+        "answer":"AHSINV{06271d19d45e3ba01c76802484abf184}"
+    },
+    "NetworkNuisance": {
+    "Puz-num":  #,
+        "id": "Network Nuisance",
+        "description": "<p>Given a <strong>pcap</strong> file, find the flag. This <a href=\"https://www.wireshark.org/docs/man-pages/tshark.html\">link</a> might help.</p>",
+        "point_value": 40,
+        "difficulty":2,
+        "category": "Exploitation",
+        "answer":"AHSINV{06271d19d45e3ba01c76802484abf184}"
+    },
+    "ShellHijack": {
+    "Puz-num":  #,
+        "id": "Shell Hijack",
+        "description": "<p>Given a set of <strong>Scripts</strong>, find the <strong>Flag</strong>.</p>",
+        "point_value": 40,
+        "difficulty": 2,
+        "category": "Exploitation",
+        "answer":"AHSINV{6b02b63de34e3d1b8c612a5b01501d1b}"
+    },
+    "HashYourMindAway": {
+    "Puz-num":  #,
+        "id": "Hash Your Mind Away",
+        "description": "<p>Given the photo, follow the trail to the <strong>Flag</strong>.</p>",
+        "point_value": 50,
+        "difficulty": 3,
+        "category": "Exploitation",
+        "answer":"AHSINV{d561236ca9ee076635012293def138ee}"
+    }
+}

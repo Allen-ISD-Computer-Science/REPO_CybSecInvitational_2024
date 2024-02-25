@@ -162,8 +162,9 @@ app.get("/", (req: Request, res: Response): any => {
   res.send("Bruh");
 });
 
-app.get("/", (req: Request, res: Response): any => {
-  res.redirect(path.join(""));
+app.get("/redirect", (req: Request, res: Response): any => {
+  console.log("redirecting!");
+  res.redirect(path.join(config.host_path, "/"));
 });
 
 app.use("/api", testModule);

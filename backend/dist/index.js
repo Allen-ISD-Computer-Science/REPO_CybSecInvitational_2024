@@ -128,8 +128,9 @@ server.listen(Number(config.host_port), function () {
 app.get("/", (req, res) => {
     res.send("Bruh");
 });
-app.get("/", (req, res) => {
-    res.redirect(path.join(""));
+app.get("/redirect", (req, res) => {
+    console.log("redirecting!");
+    res.redirect(path.join(config.host_path, "/"));
 });
 app.use("/api", testModule);
 io.on("connection", (socket) => {
