@@ -7,6 +7,7 @@ require("crypto");
 
 const express = require("express");
 import { Request, Response } from "express";
+import { Socket } from "socket.io";
 
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -73,6 +74,7 @@ const sessionMiddleWare = session({
   saveUninitialized: false,
 });
 app.use(sessionMiddleWare);
+io.engine.use(sessionMiddleWare);
 
 //Static File Serving
 app.use(express.static(path.join(__dirname, "../public")));
@@ -160,4 +162,12 @@ app.get("/", (req: Request, res: Response): any => {
   res.send("Bruh");
 });
 
+app.get("/", (req: Request, res: Response): any => {
+  res.redirect(path.join(""));
+});
+
 app.use("/api", testModule);
+
+io.on("connection", (socket: Socket) => {
+  console.log("Connected!");
+});

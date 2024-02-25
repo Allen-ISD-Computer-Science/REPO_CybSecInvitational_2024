@@ -1,4 +1,5 @@
 import express, { Request, Response, Router } from "express";
+import { Socket } from "socket.io";
 
 // Create a new router
 const router: Router = express.Router();

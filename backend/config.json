@@ -1,5 +1,6 @@
 {
   "host_port": 11278,
+  "host_path": "",
 
   "internal_tick_rate": 10000,
 

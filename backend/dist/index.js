@@ -74,6 +74,7 @@ const sessionMiddleWare = session({
     saveUninitialized: false,
 });
 app.use(sessionMiddleWare);
+io.engine.use(sessionMiddleWare);
 //Static File Serving
 app.use(express.static(path.join(__dirname, "../public")));
 function fetchUser(username) {
@@ -127,4 +128,10 @@ server.listen(Number(config.host_port), function () {
 app.get("/", (req, res) => {
     res.send("Bruh");
 });
+app.get("/", (req, res) => {
+    res.redirect(path.join(""));
+});
 app.use("/api", testModule);
+io.on("connection", (socket) => {
+    console.log("Connected!");
+});
