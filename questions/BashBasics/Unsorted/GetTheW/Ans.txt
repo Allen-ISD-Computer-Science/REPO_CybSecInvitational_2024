@@ -1,0 +1,2 @@
+wget https://codermerlin.academy/users/abel-semahegn/Digital%20Portfolio/Flag.html
+AHSINV{0b974ec3cc1b8cad08a2d7b2b9a34b4c}
