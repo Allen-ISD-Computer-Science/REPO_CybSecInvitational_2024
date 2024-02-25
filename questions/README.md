@@ -13,7 +13,7 @@
 
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
-|1         |Back to Basics 64                      |Done               |Done       |       |
+|1         |Back to Basics 64                      |Done               |Done       |Done   |
 |2         |Long Way Home                          |Done               |           |       |
 |3         |One Fish Two Fish Red Fish Blue Fish   |Done               |           |       |
 |4         |Stego                                  |Done               |Done       |       |
@@ -25,7 +25,7 @@
 |10        |Suspicious Zuck                        |Done               |           |       |
 |11        |WHAT DO THEY MEAN MASON                |Done               |           |       |
 |12        |Step by Step                           |                   |           |       |
-|13        |Julius Caesar                          |Done               |Done       |       |
+|13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
 |15        |Listen Carefullly                      |                   |           |       |
 |16        |Sending a Message                      |                   |           |       |
@@ -46,8 +46,8 @@
 
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
-|1         |9 Lives                                |Done               |Done       |       |
-|2         |C Deez Flags                           |Done               |Done       |       |
+|1         |9 Lives                                |Done               |Done       |Done   |
+|2         |C Deez Flags                           |Done               |Done       |Done   |
 |3         |PS I Have A Secret                     |Done               |Done       |       |
 |4         |Internet Cat                           |                   |           |       |
 |5         |Grep Grep Grep!                        |Done               |Done       |       |
@@ -83,7 +83,7 @@
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |Disassemble The Stack                  |P                  |           |       |
-|2         |Negative Energy                        |                   |           |       |
+|2         |Negative Energy                        |Done               |Done       |       |
 |3         |Workflow Disruption                    |                   |           |       |
 |4         |Luck of the Draw                       |                   |           |       |
 |5         |Fatal Error! Segmentation Fault        |                   |           |       |
@@ -106,7 +106,7 @@
 |22        |Can't Escape The Past                  |                   |           |       |
 |23        |Not So Safe Anymore                    |                   |           |       |
 |24        |Blogs Are Great!                       |                   |           |       |
-|25        |Glass Too Full                         |Done               |           |       |
+|25        |Glass Too Full                         |Done               |Done       |       |
 |26        |Curly Head of Hair                     |                   |           |       |
 |27        |Cookie Baking                          |                   |           |       |
 |28        |Brain Surgery                          |                   |           |       |
