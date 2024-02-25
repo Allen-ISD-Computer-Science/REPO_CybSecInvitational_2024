@@ -31,25 +31,25 @@
         "description": "I think I see a pattern here.",
         "points_value": 15,
         "difficulty": 0,
-        "category": "<h1>Is it that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
+        "category": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
         "answer": "AHSINV{8dca3fb283af6d299fb25e5840a50032}"
     },
 
     {
-        "name": 
-        "description": 
-        "points_value": 
-        "difficulty": 
-        "category": 
-        "answer": 
+        "name": "Glass Too Full",
+        "description": "A glass can only hold so much.",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"link\">program</a> how to count to 100?</p>",
+        "answer": "AHSINV{1279adb4a5f0fe2acf6c384a4162db8c}"
     },
 
     {
-        "name": 
-        "description": 
-        "points_value": 
-        "difficulty": 
-        "category": 
-        "answer": 
+        "name": "Negative Energy",
+        "description": "My math is not mathing.",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"link\">this</a> program's math problem.",
+        "answer": "AHSINV{46deeac62656870a6b14fdfb5805daf2}"
     }
 ]

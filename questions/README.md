@@ -83,7 +83,7 @@
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |Disassemble The Stack                  |P                  |           |       |
-|2         |Negative Energy                        |Done               |Done       |       |
+|2         |Negative Energy                        |Done               |Done       |Done   |
 |3         |Workflow Disruption                    |                   |           |       |
 |4         |Luck of the Draw                       |                   |           |       |
 |5         |Fatal Error! Segmentation Fault        |                   |           |       |
@@ -106,7 +106,7 @@
 |22        |Can't Escape The Past                  |                   |           |       |
 |23        |Not So Safe Anymore                    |                   |           |       |
 |24        |Blogs Are Great!                       |                   |           |       |
-|25        |Glass Too Full                         |Done               |Done       |       |
+|25        |Glass Too Full                         |Done               |Done       |Done   |
 |26        |Curly Head of Hair                     |                   |           |       |
 |27        |Cookie Baking                          |                   |           |       |
 |28        |Brain Surgery                          |                   |           |       |
