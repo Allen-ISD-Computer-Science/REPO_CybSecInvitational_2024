@@ -78,6 +78,17 @@ function resetMember2() {
   register2Grade.value = "";
   register2ShirtSize.value = "";
 }
+let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/];
+function checkEmailDomain(email) {
+  for (let regexDomain of allowedDomains) {
+    console.log(regexDomain);
+    if (regexDomain.test(email)) {
+      console.log("matches");
+      return true;
+    }
+  }
+  return false;
+}
 
 var sent = false;
 registerSubmit.onclick = async (evt) => {
@@ -111,6 +122,17 @@ registerSubmit.onclick = async (evt) => {
   if (register1Email == register2Email) {
     alertProblem("Multiple members can not have the same email!");
     return;
+  }
+
+  if (!checkEmailDomain(register1Email.value)) {
+    alertProblem("Email Domain Not Allowed");
+    return;
+  }
+  if (secondMember) {
+    if (!checkEmailDomain(register2Email.value)) {
+      alertProblem("Email Domain Not Allowed");
+      return;
+    }
   }
 
   sent = true; //debounce

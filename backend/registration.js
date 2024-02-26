@@ -374,6 +374,18 @@ app.post("/registerVerify", (req, res) => {
   }
 });
 
+let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/];
+function checkEmailDomain(email) {
+  for (let regexDomain of allowedDomains) {
+    console.log(regexDomain);
+    if (regexDomain.test(email)) {
+      console.log("matches");
+      return true;
+    }
+  }
+  return false;
+}
+
 app.post("/register", async (req, res) => {
   /**@type {Registrant[]} */
   let registrants = [];
@@ -401,6 +413,11 @@ app.post("/register", async (req, res) => {
 
       if (!validateEmail(email)) {
         res.status(400).send("Invalid Email Format!");
+        return;
+      }
+
+      if (!checkEmailDomain(email)) {
+        res.status(400).send("Invalid Email Domain!");
         return;
       }
 
