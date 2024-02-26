@@ -81,9 +81,7 @@ function resetMember2() {
 let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/];
 function checkEmailDomain(email) {
   for (let regexDomain of allowedDomains) {
-    console.log(regexDomain);
     if (regexDomain.test(email)) {
-      console.log("matches");
       return true;
     }
   }
@@ -137,7 +135,6 @@ registerSubmit.onclick = async (evt) => {
 
   sent = true; //debounce
   let response = await sendRequest();
-  console.log(response);
   if (!response.ok) {
     alertProblem(await response.text());
   } else if (response.ok) {
