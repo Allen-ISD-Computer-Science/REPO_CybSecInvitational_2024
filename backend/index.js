@@ -791,6 +791,12 @@ app.post("/submitPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   const puzzle = fetchPuzzle(id);
   if (!puzzle) {
     res.status(404).send("Puzzle not found!");
+    return;
+  }
+
+  if (userData.completed_puzzles[id]) {
+    res.status(400).send("Puzzle already completed");
+    return;
   }
 
   if (await isPuzzleAnswerCorrect(id, answer)) {
@@ -1697,3 +1703,24 @@ server.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
+
+function bulkWritePuzzles(data) {
+  let operations = [];
+  for (let question of data) {
+    operations.push({
+      insertOne: {
+        document: {
+          name: question.name,
+          description: question.description,
+          point_value: question.point_value,
+          difficulty: question.difficulty,
+          category: question.category,
+          answer: question.answer,
+        },
+      },
+    });
+  }
+
+  client.db(mainDbName).collection(puzzlesColName).bulkWrite(operations);
+}
+// bulkWritePuzzles(require("../questions/questions.json"));
