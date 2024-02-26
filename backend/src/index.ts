@@ -8,6 +8,7 @@ require("crypto");
 const express = require("express");
 import { Request, Response } from "express";
 import { Socket } from "socket.io";
+import { Token } from "./token";
 
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -89,10 +90,6 @@ async function fetchUser(username: string): Promise<User | null> {
   }
 }
 
-fetchUser("username").then((user) => {
-  console.log(user);
-});
-
 type User = {
   _id: ObjectId;
   division: 0 | 1 | 2; // Silver, Gold, Platinum
@@ -126,8 +123,9 @@ class Round {
 
   static endCurrentRound() {
     // * Callback is called before currentRound is set to null
-    if (!this.currentRound) throw Error("No Round In Session");
-    clearTimeout(this.currentRound._endTimeout); // Force stop timeout
+    console.log("Attempting Round Closure");
+    if (!Round.currentRound) throw Error("No Round In Session");
+    clearTimeout(Round.currentRound._endTimeout); // Force stop timeout
     Round.currentRound?.callback();
     Round.currentRound = null;
   }
@@ -143,32 +141,41 @@ class Round {
 }
 
 class PuzzleRound extends Round {
-  static endPuzzleRound() {
-    console.log("Ending Puzzle Round");
-  }
-
   type: "PuzzleRound";
 
+  static _onEnd() {
+    console.log("Puzzle Round Ended");
+  }
+
   constructor(duration: number, id: string) {
-    super(duration, "PuzzleRound", id);
+    super(duration, "PuzzleRound", id, PuzzleRound._onEnd);
     this.type = "PuzzleRound";
+    Round.currentRound = this;
   }
 }
+
+function startPuzzleRound() {
+  try {
+    let round = new PuzzleRound(10000, "PuzzleRoundId");
+    console.log(Round.currentRound);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// startPuzzleRound();
+
 server.listen(Number(config.host_port), function () {
   console.log(server.address());
   console.log("server at http://localhost:%s/home", server.address().port);
 });
-app.get("/", (req: Request, res: Response): any => {
-  res.send("Bruh");
-});
 
-app.get("/redirect", (req: Request, res: Response): any => {
-  console.log("redirecting!");
-  res.redirect(path.join(config.host_path, "/"));
-});
+// app.use("/api", testModule);
 
-app.use("/api", testModule);
+// io.on("connection", (socket: Socket) => {
+//   console.log("Connected!");
+// });
 
-io.on("connection", (socket: Socket) => {
-  console.log("Connected!");
+let a = new Token(() => {
+  console.log("token expired");
 });
