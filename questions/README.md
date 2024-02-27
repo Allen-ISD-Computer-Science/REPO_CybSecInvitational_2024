@@ -14,8 +14,8 @@
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |Back to Basics 64                      |Done               |Done       |Done   |
-|2         |Long Way Home                          |Done               |           |       |
-|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |           |       |
+|2         |Long Way Home                          |Done               |Done       |       |
+|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |       |
 |4         |Stego                                  |Done               |Done       |       |
 |5         |Rotation                               |Done               |Done       |       |
 |6         |Dots and Lines                         |Done               |           |       |
@@ -27,7 +27,7 @@
 |12        |Step by Step                           |                   |           |       |
 |13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
-|15        |Listen Carefullly                      |                   |           |       |
+|15        |Listen Carefully                       |                   |           |       |
 |16        |Sending a Message                      |                   |           |       |
 |17        |Swapping                               |                   |           |       |
 |18        |Database Fun                           |                   |           |       |
@@ -39,6 +39,8 @@
 |24        |Network Nuisance                       |Done               |           |       |
 |25        |The Mask                               |Done               |Done       |       |
 |26        |Scrambled                              |Done               |Done       |       |
+|27        |New phone who dis                      |Done               |           |       |
+|28        |Which Photo                            |                   |           |       |
 
 
 ## BashBasics
