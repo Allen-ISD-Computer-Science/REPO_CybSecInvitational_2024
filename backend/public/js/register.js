@@ -62,42 +62,15 @@ function alertProblem(message) {
 }
 
 function isRegister1Valid() {
-  return (
-    register1FirstName.value &&
-    register1LastName.value &&
-    register1Email.value &&
-    register1EmailConfirm.value &&
-    register1School.value &&
-    register1Grade.value &&
-    register1ShirtSize.value &&
-    register1DietaryRestriction.value
-  );
+  return register1FirstName.value && register1LastName.value && register1Email.value && register1EmailConfirm.value && register1School.value && register1Grade.value && register1ShirtSize.value && register1DietaryRestriction.value;
 }
 
 function isRegister2Valid() {
-  return (
-    register2FirstName.value &&
-    register2LastName.value &&
-    register2Email.value &&
-    register2EmailConfirm.value &&
-    register2School.value &&
-    register2Grade.value &&
-    register2ShirtSize.value &&
-    register2DietaryRestriction.value
-  );
+  return register2FirstName.value && register2LastName.value && register2Email.value && register2EmailConfirm.value && register2School.value && register2Grade.value && register2ShirtSize.value && register2DietaryRestriction.value;
 }
 
 function isSecondMember() {
-  return (
-    register2FirstName.value ||
-    register2LastName.value ||
-    register2Email.value ||
-    register2EmailConfirm.value ||
-    register2School.value ||
-    register2Grade.value ||
-    register2ShirtSize.value ||
-    register2DietaryRestriction.value
-  );
+  return register2FirstName.value || register2LastName.value || register2Email.value || register2EmailConfirm.value || register2School.value || register2Grade.value || register2ShirtSize.value || register2DietaryRestriction.value;
 }
 
 function resetMember2() {
@@ -110,7 +83,8 @@ function resetMember2() {
   register2ShirtSize.value = "";
   register2DietaryRestriction.value = "";
 }
-let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/];
+
+let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@friscoisd.org\s*$/];
 function checkEmailDomain(email) {
   for (let regexDomain of allowedDomains) {
     if (regexDomain.test(email)) {
