@@ -1,3 +1,4 @@
+import express, { Request, Response } from "express";
 const crypto = require("crypto");
 
 export class Token {
@@ -73,8 +74,12 @@ export class TokenGroup {
   }
 }
 
-const _ = {
-  Token,
-  TokenGroup,
-};
-export default _;
+export const loginTokenGroup = new TokenGroup(120000);
+export async function validateLoginToken(req: express.Request, res: express.Response, next: Function) {
+  const loginTokenId = req.cookies["LoginToken"];
+  if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
+    res.redirect("login");
+  } else {
+    next();
+  }
+}

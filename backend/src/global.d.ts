@@ -19,8 +19,6 @@ declare global {
     category: string; //
     answer: string;
   };
-
-  type TyperType = {};
 }
 
 export {};

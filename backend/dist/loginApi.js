@@ -74,8 +74,3 @@ function validateLoginToken(req, res, next) {
     });
 }
 exports.validateLoginToken = validateLoginToken;
-const _ = {
-    Token,
-    TokenGroup,
-};
-exports.default = _;

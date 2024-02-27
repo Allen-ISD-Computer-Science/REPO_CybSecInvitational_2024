@@ -8,7 +8,7 @@ require("crypto");
 import express from "express";
 import { Request, Response } from "express";
 import { Socket } from "socket.io";
-import { Token, TokenGroup } from "./token";
+import * as TokenApi from "./loginApi";
 
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -178,8 +178,6 @@ server.listen(Number(config.host_port), function () {
   console.log("server at http://localhost:%s/", server.address().port);
 });
 
-const loginTokenGroup = new TokenGroup(5000);
-
 app.post("/login", async (req: express.Request, res: express.Response) => {
   console.log("attempting login");
   const username: string | undefined = req.body.username;
@@ -200,26 +198,38 @@ app.post("/login", async (req: express.Request, res: express.Response) => {
     res.status(400).send("Incorrect Credentials!");
   }
 
-  const id = loginTokenGroup.createNewToken();
-  console.log(loginTokenGroup.findTokenOfId(id));
-  res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
+  const id = TokenApi.loginTokenGroup.createNewToken();
+  res.cookie("LoginToken", id, { secure: true, maxAge: TokenApi.loginTokenGroup.duration, httpOnly: true }).redirect("home");
+});
+
+app.get("/login", (req: express.Request, res: express.Response) => {
+  const loginTokenId = req.cookies["LoginToken"];
+
+  if (loginTokenId && TokenApi.loginTokenGroup.findTokenOfId(loginTokenId)) {
+    res.redirect("home");
+    return;
+  }
+
+  res.sendFile(path.join(__dirname, "../public/login.html"));
+});
+
+app.get("/logout", (req: express.Request, res: express.Response) => {
+  const loginTokenId = req.cookies["LoginToken"];
+  if (loginTokenId) {
+    TokenApi.loginTokenGroup.removeToken(loginTokenId);
+    res.clearCookie("LoginToken");
+  }
+
+  res.redirect("login");
+});
+
+app.get("/home", TokenApi.validateLoginToken, (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../public/home.html"));
 });
 
 app.get("/", (req: express.Request, res: express.Response) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
+  res.redirect("login");
 });
 
-async function validateLoginToken(req: express.Request, res: express.Response, next: Function) {
-  const loginTokenId = req.cookies["LoginToken"];
-  console.log(loginTokenId);
-
-  if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
-    res.redirect("");
-  } else {
-    next();
-  }
-}
-
-app.get("/home", validateLoginToken, (req: express.Request, res: express.Response) => {
-  res.sendFile(path.join(__dirname, "../public/home.html"));
-});
+const puzzleRouter = require("./puzzleRoutes");
+app.use("/", puzzleRouter);

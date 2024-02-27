@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -16,7 +39,7 @@ const testModule = require("./testModule");
 require("dotenv").config();
 require("crypto");
 const express_1 = __importDefault(require("express"));
-const token_1 = require("./token");
+const TokenApi = __importStar(require("./loginApi"));
 const { createServer, get } = require("http");
 const session = require("express-session");
 const { Server } = require("socket.io");
@@ -140,7 +163,6 @@ server.listen(Number(config.host_port), function () {
     console.log(server.address());
     console.log("server at http://localhost:%s/", server.address().port);
 });
-const loginTokenGroup = new token_1.TokenGroup(5000);
 app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("attempting login");
     const username = req.body.username;
@@ -157,25 +179,30 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (user.password !== password) {
         res.status(400).send("Incorrect Credentials!");
     }
-    const id = loginTokenGroup.createNewToken();
-    console.log(loginTokenGroup.findTokenOfId(id));
-    res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
+    const id = TokenApi.loginTokenGroup.createNewToken();
+    res.cookie("LoginToken", id, { secure: true, maxAge: TokenApi.loginTokenGroup.duration, httpOnly: true }).redirect("home");
 }));
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+app.get("/login", (req, res) => {
+    const loginTokenId = req.cookies["LoginToken"];
+    if (loginTokenId && TokenApi.loginTokenGroup.findTokenOfId(loginTokenId)) {
+        res.redirect("home");
+        return;
+    }
+    res.sendFile(path.join(__dirname, "../public/login.html"));
 });
-function validateLoginToken(req, res, next) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const loginTokenId = req.cookies["LoginToken"];
-        console.log(loginTokenId);
-        if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
-            res.redirect("/");
-        }
-        else {
-            next();
-        }
-    });
-}
-app.get("/home", validateLoginToken, (req, res) => {
+app.get("/logout", (req, res) => {
+    const loginTokenId = req.cookies["LoginToken"];
+    if (loginTokenId) {
+        TokenApi.loginTokenGroup.removeToken(loginTokenId);
+        res.clearCookie("LoginToken");
+    }
+    res.redirect("login");
+});
+app.get("/home", TokenApi.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/home.html"));
 });
+app.get("/", (req, res) => {
+    res.redirect("login");
+});
+const puzzleRouter = require("./puzzleRoutes");
+app.use("/", puzzleRouter);

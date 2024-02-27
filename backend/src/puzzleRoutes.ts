@@ -1,15 +1,16 @@
 import express, { Request, Response, Router } from "express";
 import { Socket } from "socket.io";
+import * as loginApi from "./loginApi";
 
 // Create a new router
 const router: Router = express.Router();
 
 // Define routes
-router.get("/", (req: Request, res: Response) => {
+router.get("/puzzle", loginApi.validateLoginToken, (req: Request, res: Response) => {
   res.send("GET request to the homepage");
 });
 
-router.post("/", (req: Request, res: Response) => {
+router.post("/puzzle", loginApi.validateLoginToken, (req: Request, res: Response) => {
   res.send("POST request to the homepage");
 });
 
