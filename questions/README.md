@@ -27,7 +27,7 @@
 |12        |Step by Step                           |Done               |Done       |       |
 |13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
-|15        |Listen Carefully                       |                   |           |       |
+|15        |Listen Carefully                       |Done               |           |       |
 |16        |Sending a Message                      |                   |           |       |
 |17        |Swapping                               |                   |           |       |
 |18        |Database Fun                           |                   |           |       |
