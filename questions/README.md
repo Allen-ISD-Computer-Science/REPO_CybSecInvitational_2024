@@ -18,7 +18,7 @@
 |3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |       |
 |4         |Stego                                  |Done               |Done       |       |
 |5         |Rotation                               |Done               |Done       |       |
-|6         |Dots and Lines                         |Done               |           |       |
+|6         |Dots and Lines                         |Done               |Done       |       |
 |7         |Rotationally Challenged                |                   |           |       |
 |8         |Rail Fence                             |Done               |Done       |       |
 |9         |RSA Basics                             |                   |           |       |
