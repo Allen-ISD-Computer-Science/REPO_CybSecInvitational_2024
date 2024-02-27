@@ -5,10 +5,10 @@ const testModule = require("./testModule");
 require("dotenv").config();
 require("crypto");
 
-const express = require("express");
+import express from "express";
 import { Request, Response } from "express";
 import { Socket } from "socket.io";
-import { Token } from "./token";
+import { Token, TokenGroup } from "./token";
 
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -76,6 +76,16 @@ const sessionMiddleWare = session({
 });
 app.use(sessionMiddleWare);
 io.engine.use(sessionMiddleWare);
+
+declare module "express-session" {
+  interface SessionData {
+    username: string;
+  }
+}
+
+//Cookie Handling
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 //Static File Serving
 app.use(express.static(path.join(__dirname, "../public")));
@@ -163,19 +173,53 @@ function startPuzzleRound() {
   }
 }
 
-// startPuzzleRound();
-
 server.listen(Number(config.host_port), function () {
   console.log(server.address());
-  console.log("server at http://localhost:%s/home", server.address().port);
+  console.log("server at http://localhost:%s/", server.address().port);
 });
 
-// app.use("/api", testModule);
+const loginTokenGroup = new TokenGroup(5000);
 
-// io.on("connection", (socket: Socket) => {
-//   console.log("Connected!");
-// });
+app.post("/login", async (req: express.Request, res: express.Response) => {
+  console.log("attempting login");
+  const username: string | undefined = req.body.username;
+  const password: string | undefined = req.body.password;
 
-let a = new Token(() => {
-  console.log("token expired");
+  if (!username || !password) {
+    res.status(400).send("Missing Username or Password!");
+    return;
+  }
+
+  let user = await fetchUser(username);
+  if (!user) {
+    res.status(400).send("Incorrect Credentials!");
+    return;
+  }
+
+  if (user.password !== password) {
+    res.status(400).send("Incorrect Credentials!");
+  }
+
+  const id = loginTokenGroup.createNewToken();
+  console.log(loginTokenGroup.findTokenOfId(id));
+  res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
+});
+
+app.get("/", (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+
+async function validateLoginToken(req: express.Request, res: express.Response, next: Function) {
+  const loginTokenId = req.cookies["LoginToken"];
+  console.log(loginTokenId);
+
+  if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
+    res.redirect("");
+  } else {
+    next();
+  }
+}
+
+app.get("/home", validateLoginToken, (req: express.Request, res: express.Response) => {
+  res.sendFile(path.join(__dirname, "../public/home.html"));
 });

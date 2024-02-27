@@ -8,11 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const testModule = require("./testModule");
 require("dotenv").config();
 require("crypto");
-const express = require("express");
+const express_1 = __importDefault(require("express"));
 const token_1 = require("./token");
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -20,7 +23,7 @@ const { Server } = require("socket.io");
 const path = require("path");
 const bodyParser = require("body-parser");
 const config = require(path.join(__dirname, "../config.json"));
-const app = express();
+const app = (0, express_1.default)();
 const server = createServer(app);
 const io = new Server(server);
 if (!process.env.MONGODB_USERNAME)
@@ -76,8 +79,11 @@ const sessionMiddleWare = session({
 });
 app.use(sessionMiddleWare);
 io.engine.use(sessionMiddleWare);
+//Cookie Handling
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 //Static File Serving
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express_1.default.static(path.join(__dirname, "../public")));
 function fetchUser(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -130,16 +136,46 @@ function startPuzzleRound() {
         console.log(err);
     }
 }
-// startPuzzleRound();
 server.listen(Number(config.host_port), function () {
     console.log(server.address());
-    console.log("server at http://localhost:%s/home", server.address().port);
+    console.log("server at http://localhost:%s/", server.address().port);
 });
-// app.use("/api", testModule);
-// io.on("connection", (socket: Socket) => {
-//   console.log("Connected!");
-// });
-let a = new token_1.Token(() => {
-    console.log("token expired");
+const loginTokenGroup = new token_1.TokenGroup(5000);
+app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("attempting login");
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || !password) {
+        res.status(400).send("Missing Username or Password!");
+        return;
+    }
+    let user = yield fetchUser(username);
+    if (!user) {
+        res.status(400).send("Incorrect Credentials!");
+        return;
+    }
+    if (user.password !== password) {
+        res.status(400).send("Incorrect Credentials!");
+    }
+    const id = loginTokenGroup.createNewToken();
+    console.log(loginTokenGroup.findTokenOfId(id));
+    res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
+}));
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
 });
-new token_1.Token();
+function validateLoginToken(req, res, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const loginTokenId = req.cookies["LoginToken"];
+        console.log(loginTokenId);
+        if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
+            res.redirect("/");
+        }
+        else {
+            next();
+        }
+    });
+}
+app.get("/home", validateLoginToken, (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/home.html"));
+});
