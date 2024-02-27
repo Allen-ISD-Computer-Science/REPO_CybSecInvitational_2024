@@ -350,6 +350,7 @@ class VerificationToken {
     this.school = registrant.school;
     this.gradeLevel = registrant.gradeLevel;
     this.shirtSize = registrant.shirtSize;
+    this.dietaryRestriction = registrant.dietaryRestriction;
     this.code = Math.floor(100000 + Math.random() * 900000);
     this.verified = false;
   }
@@ -406,7 +407,8 @@ app.post("/register", async (req, res) => {
       const school = String(registrant.school);
       const gradeLevel = String(registrant.gradeLevel);
       const shirtSize = String(registrant.shirtSize);
-      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize) {
+      const dietRestriction = String(registrant.dietaryRestriction);
+      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize || !dietRestriction) {
         res.status(400).send("Missing Parameters!");
         return;
       }
@@ -428,6 +430,7 @@ app.post("/register", async (req, res) => {
         school: school,
         gradeLevel: gradeLevel,
         shirtSize: shirtSize,
+        dietaryRestriction: dietRestriction,
       });
     }
   } catch (err) {

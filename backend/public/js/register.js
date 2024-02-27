@@ -7,6 +7,7 @@ async function sendRequest() {
       school: register1School.value,
       gradeLevel: register1Grade.value,
       shirtSize: register1ShirtSize.value,
+      dietaryRestriction: register1DietaryRestriction.value,
     },
   ];
 
@@ -18,6 +19,7 @@ async function sendRequest() {
       school: register2School.value,
       gradeLevel: register2Grade.value,
       shirtSize: register2ShirtSize.value,
+      dietaryRestriction: register2DietaryRestriction.value,
     });
   }
 
@@ -40,6 +42,7 @@ const register1EmailConfirm = document.getElementById("register_1_email_confirm"
 const register1School = document.getElementById("register_1_school");
 const register1Grade = document.getElementById("register_1_grade");
 const register1ShirtSize = document.getElementById("register_1_shirt_size");
+const register1DietaryRestriction = document.getElementById("register_1_dietary_restriction");
 
 const register2FirstName = document.getElementById("register_2_first_name");
 const register2LastName = document.getElementById("register_2_last_name");
@@ -48,6 +51,7 @@ const register2EmailConfirm = document.getElementById("register_2_email_confirm"
 const register2School = document.getElementById("register_2_school");
 const register2Grade = document.getElementById("register_2_grade");
 const register2ShirtSize = document.getElementById("register_2_shirt_size");
+const register2DietaryRestriction = document.getElementById("register_2_dietary_restriction");
 
 const registerSubmit = document.getElementById("register_submit");
 
@@ -58,15 +62,42 @@ function alertProblem(message) {
 }
 
 function isRegister1Valid() {
-  return register1FirstName.value && register1LastName.value && register1Email.value && register1EmailConfirm.value && register1School.value && register1Grade.value && register1ShirtSize.value;
+  return (
+    register1FirstName.value &&
+    register1LastName.value &&
+    register1Email.value &&
+    register1EmailConfirm.value &&
+    register1School.value &&
+    register1Grade.value &&
+    register1ShirtSize.value &&
+    register1DietaryRestriction.value
+  );
 }
 
 function isRegister2Valid() {
-  return register2FirstName.value && register2LastName.value && register2Email.value && register2EmailConfirm.value && register2School.value && register2Grade.value && register2ShirtSize.value;
+  return (
+    register2FirstName.value &&
+    register2LastName.value &&
+    register2Email.value &&
+    register2EmailConfirm.value &&
+    register2School.value &&
+    register2Grade.value &&
+    register2ShirtSize.value &&
+    register2DietaryRestriction.value
+  );
 }
 
 function isSecondMember() {
-  return register2FirstName.value || register2LastName.value || register2Email.value || register2EmailConfirm.value || register2School.value || register2Grade.value || register2ShirtSize.value;
+  return (
+    register2FirstName.value ||
+    register2LastName.value ||
+    register2Email.value ||
+    register2EmailConfirm.value ||
+    register2School.value ||
+    register2Grade.value ||
+    register2ShirtSize.value ||
+    register2DietaryRestriction.value
+  );
 }
 
 function resetMember2() {
@@ -77,6 +108,7 @@ function resetMember2() {
   register2School.value = "";
   register2Grade.value = "";
   register2ShirtSize.value = "";
+  register2DietaryRestriction.value = "";
 }
 let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/];
 function checkEmailDomain(email) {
