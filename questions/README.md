@@ -19,12 +19,12 @@
 |4         |Stego                                  |Done               |Done       |       |
 |5         |Rotation                               |Done               |Done       |       |
 |6         |Dots and Lines                         |Done               |Done       |       |
-|7         |Rotationally Challenged                |                   |           |       |
+|7         |Rotationally Challenged                |Done               |Done       |       |
 |8         |Rail Fence                             |Done               |Done       |       |
-|9         |RSA Basics                             |                   |           |       |
-|10        |Suspicious Zuck                        |Done               |           |       |
-|11        |WHAT DO THEY MEAN MASON                |Done               |           |       |
-|12        |Step by Step                           |                   |           |       |
+|9         |RSA Basics                             |Done               |Done       |       |
+|10        |Suspicious Zuck                        |Done               |Done       |       |
+|11        |WHAT DO THEY MEAN MASON                |Done               |Done       |       |
+|12        |Step by Step                           |Done               |Done       |       |
 |13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
 |15        |Listen Carefully                       |                   |           |       |
