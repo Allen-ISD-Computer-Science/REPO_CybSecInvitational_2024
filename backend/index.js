@@ -474,6 +474,7 @@ app.post("/register", async (req, res) => {
       return;
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send("Server Side Error!");
     return;
   }
@@ -731,6 +732,15 @@ async function onPuzzleCorrect(username, amount, id) {
   }
 }
 
+// app.get("/context/:name", (req, res) => {
+//   let context = req.params.name;
+//   try {
+//     res.sendFile(path.join(__dirname, "public/puzzles/", context));
+//   } catch {
+//     res.sendStatus(404);
+//   }
+// });
+
 app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
   if (!currentRound || currentRound.type != "PuzzleRound") {
     res.redirect("home");
@@ -781,6 +791,12 @@ app.post("/submitPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   const puzzle = fetchPuzzle(id);
   if (!puzzle) {
     res.status(404).send("Puzzle not found!");
+    return;
+  }
+
+  if (userData.completed_puzzles[id]) {
+    res.status(400).send("Puzzle already completed");
+    return;
   }
 
   if (await isPuzzleAnswerCorrect(id, answer)) {
@@ -850,8 +866,7 @@ async function endBattleRound() {
       const username = user.username;
       const k = Object.values(participant.completed).length / 4;
       const multiplier = lerp(config.battle_round_min_multiplier, config.battle_round_max_multiplier, k);
-      const prize = Math.min(multiplier * participant.bid);
-      console.log(prize);
+      const prize = Math.floor(multiplier * participant.bid);
       onBattleRoundCredit(username, prize);
       delete usersList[username];
     });
@@ -942,7 +957,7 @@ app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res)
     return;
   }
 
-  res.json({ alreadyJoined: false, endTime: currentRound.endTime });
+  res.json({ alreadyJoined: false, endTime: currentRound.endTime, minBid: currentRound.min_bid });
 });
 
 app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
@@ -1592,7 +1607,7 @@ app.post("/admin/command", adminCheck, async (req, res) => {
 
 //#region Scenario
 
-// startUpdates();
+startUpdates();
 
 function uuidv4() {
   return crypto.randomUUID();
@@ -1688,3 +1703,24 @@ server.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
+
+function bulkWritePuzzles(data) {
+  let operations = [];
+  for (let question of data) {
+    operations.push({
+      insertOne: {
+        document: {
+          name: question.name,
+          description: question.description,
+          point_value: question.point_value,
+          difficulty: question.difficulty,
+          category: question.category,
+          answer: question.answer,
+        },
+      },
+    });
+  }
+
+  client.db(mainDbName).collection(puzzlesColName).bulkWrite(operations);
+}
+// bulkWritePuzzles(require("../questions/questions.json"));
