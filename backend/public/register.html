@@ -31,7 +31,24 @@
         <div class="card-body p-0">
           <!-- Nested Row within Card Body -->
           <div class="row">
-            <div class="col-lg-5 d-lg-block bg-register-image"></div>
+            <div class="col-lg-5 d-lg-block py-5 pl-5 pr-5 text-justify pl-lg-5 pr-lg-0">
+              <div class="w-100 text-center h3">Instructions</div>
+              <hr class="my-2" />
+              <p>
+                If you are signing up with a partner, use the [ + ] button to add a new member and [ - ] button to remove a member. The max number of people allowed per team is <b>Two</b> people.
+                <br />
+                <br />
+                Please use your <b>School</b> emails. Some email domains may not be allowed. In the case where you are unable to register with a valid school email, please contact this <a href="mailto:info.ahscyber@gmail.com"> email</a> (info.ahscyber@gmail.com).
+                <br />
+                <br />
+                If you are registering with a partner, both member's emails will be required. <b>Both</b> members will be need to verify their email using a code that will be sent after you try to register your account.
+                <br />
+                <br />
+                Your username and password will be sent to you after you complete the registration process.
+              </p>
+              <hr class="my-2" />
+              <div class="small">Contact us <a style="text-decoration: underline" href="mailto:info.ahscyber@gmail.com">Here</a> if there are any other problems!</div>
+            </div>
             <div class="col-lg-7">
               <div class="p-5">
                 <div class="text-center">
@@ -57,25 +74,36 @@
 
                     <div class="d-flex mb-3">
                       <select id="register_1_school" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select School</option>
-                        <option value="School1">School 1</option>
-                        <option value="School2">School 2</option>
-                        <option value="School3">School 3</option>
+                        <option class="d-none" value="" selected>Select School</option>
+                        <option value="Lovejoy">Lovejoy HS</option>
+                        <option value="MckinneyBoyd">Mckinney Boyd HS</option>
+                        <option value="Allen">Allen HS</option>
+                        <option value="Frisco">Frisco HS</option>
                       </select>
 
                       <select id="register_1_grade" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select Grade Level</option>
+                        <option class="d-none" value="" selected>Select Grade Level</option>
                         <option value="Grade9">9th Grade</option>
                         <option value="Grade10">10th Grade</option>
                         <option value="Grade11">11th Grade</option>
                         <option value="Grade12">12th Grade</option>
                       </select>
+
                       <select id="register_1_shirt_size" class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select Shirt Size</option>
+                        <option class="d-none" value="" selected>Select Shirt Size</option>
                         <option value="S">S</option>
                         <option value="M">M</option>
                         <option value="L">L</option>
                         <option value="XL">XL</option>
+                      </select>
+
+                      <select id="register_1_dietary_restriction" class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
+                        <option class="d-none" value="" selected>Dietary Restrictions</option>
+                        <option value="none">None</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="kosher">Kosher</option>
+                        <option value="glutenfree">Gluten-Free</option>
+                        <option value="dairyfree">Dairy-Free</option>
                       </select>
                     </div>
                   </div>
@@ -101,25 +129,35 @@
 
                     <div class="d-flex mb-3">
                       <select id="register_2_school" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select School</option>
-                        <option value="School1">School 1</option>
-                        <option value="School2">School 2</option>
-                        <option value="School3">School 3</option>
+                        <option class="d-none" value="" selected>Select School</option>
+                        <option value="Lovejoy">Lovejoy HS</option>
+                        <option value="MckinneyBoyd">Mckinney Boyd HS</option>
+                        <option value="Allen">Allen HS</option>
+                        <option value="Frisco">Frisco HS</option>
                       </select>
 
                       <select id="register_2_grade" class="custom-select rounded-pill mr-sm-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select Grade Level</option>
+                        <option class="d-none" value="" selected>Select Grade Level</option>
                         <option value="Grade9">9th Grade</option>
                         <option value="Grade10">10th Grade</option>
                         <option value="Grade11">11th Grade</option>
                         <option value="Grade12">12th Grade</option>
                       </select>
                       <select id="register_2_shirt_size" class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
-                        <option value="" selected>Select Shirt Size</option>
+                        <option class="d-none" value="" selected>Select Shirt Size</option>
                         <option value="S">S</option>
                         <option value="M">M</option>
                         <option value="L">L</option>
                         <option value="XL">XL</option>
+                      </select>
+
+                      <select id="register_2_dietary_restriction" class="custom-select rounded-pill mr-2" aria-label="Default select example" style="font-size: 0.8rem">
+                        <option class="d-none" value="" selected>Dietary Restrictions</option>
+                        <option value="none">None</option>
+                        <option value="vegetarian">Vegetarian</option>
+                        <option value="kosher">Kosher</option>
+                        <option value="glutenfree">Gluten-Free</option>
+                        <option value="dairyfree">Dairy-Free</option>
                       </select>
                     </div>
 

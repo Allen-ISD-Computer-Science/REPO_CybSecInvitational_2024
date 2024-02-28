@@ -162,7 +162,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "ahsinvitational@gmail.com",
+    user: "info.ahscyber@gmail.com",
     pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
@@ -350,6 +350,7 @@ class VerificationToken {
     this.school = registrant.school;
     this.gradeLevel = registrant.gradeLevel;
     this.shirtSize = registrant.shirtSize;
+    this.dietaryRestriction = registrant.dietaryRestriction;
     this.code = Math.floor(100000 + Math.random() * 900000);
     this.verified = false;
   }
@@ -374,6 +375,18 @@ app.post("/registerVerify", (req, res) => {
   }
 });
 
+let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@friscoisd.org\s*$/];
+function checkEmailDomain(email) {
+  for (let regexDomain of allowedDomains) {
+    console.log(regexDomain);
+    if (regexDomain.test(email)) {
+      console.log("matches");
+      return true;
+    }
+  }
+  return false;
+}
+
 app.post("/register", async (req, res) => {
   /**@type {Registrant[]} */
   let registrants = [];
@@ -394,13 +407,19 @@ app.post("/register", async (req, res) => {
       const school = String(registrant.school);
       const gradeLevel = String(registrant.gradeLevel);
       const shirtSize = String(registrant.shirtSize);
-      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize) {
+      const dietRestriction = String(registrant.dietaryRestriction);
+      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize || !dietRestriction) {
         res.status(400).send("Missing Parameters!");
         return;
       }
 
       if (!validateEmail(email)) {
         res.status(400).send("Invalid Email Format!");
+        return;
+      }
+
+      if (!checkEmailDomain(email)) {
+        res.status(400).send("Invalid Email Domain!");
         return;
       }
 
@@ -411,6 +430,7 @@ app.post("/register", async (req, res) => {
         school: school,
         gradeLevel: gradeLevel,
         shirtSize: shirtSize,
+        dietaryRestriction: dietRestriction,
       });
     }
   } catch (err) {

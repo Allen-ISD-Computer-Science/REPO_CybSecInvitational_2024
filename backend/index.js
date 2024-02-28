@@ -474,6 +474,7 @@ app.post("/register", async (req, res) => {
       return;
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send("Server Side Error!");
     return;
   }
