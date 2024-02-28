@@ -142,7 +142,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (user.password !== password) {
         res.status(400).send("Incorrect Credentials!");
     }
-    const id = TokenApi.loginTokenGroup.createNewToken();
+    const id = TokenApi.loginTokenGroup.createNewToken(user);
     res.cookie("LoginToken", id, { secure: true, maxAge: TokenApi.loginTokenGroup.duration, httpOnly: true }).redirect("home");
 }));
 app.get("/login", (req, res) => {

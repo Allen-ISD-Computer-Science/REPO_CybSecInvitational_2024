@@ -39,9 +39,12 @@ exports.puzzles = exports.router = void 0;
 const express_1 = __importDefault(require("express"));
 const loginApi = __importStar(require("./loginApi"));
 const mongoApi = __importStar(require("./mongoApi"));
+const path = __importStar(require("path"));
 exports.router = express_1.default.Router();
-exports.router.get("/puzzle", loginApi.validateLoginToken, (req, res) => {
-    res.send("GET request to the homepage");
+exports.router.get("/puzzles", loginApi.validateLoginToken, (req, res) => {
+    console.log(loginApi.loginTokenGroup.findTokenOfId(req.cookies["LoginToken"]));
+    res.sendFile(path.join(__dirname, "../public/puzzles.html"));
+    // res.send("GET request to the homepage");
 });
 exports.router.post("/puzzle", loginApi.validateLoginToken, (req, res) => {
     res.send("POST request to the homepage");
@@ -50,12 +53,17 @@ exports.puzzles = [];
 function replicatePuzzles() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = yield mongoApi.client
+            const result = (yield mongoApi.client
                 .db(mongoApi.mainDbName)
                 .collection(mongoApi.puzzlesColName)
                 .find({}, { projection: { _id: 0 } })
-                .toArray();
-            console.log(result);
+                .toArray());
+            if (!result) {
+                console.warn("Failed to replicate puzzles from backend!");
+            }
+            else {
+                exports.puzzles = result;
+            }
         }
         catch (err) {
             console.log(err);

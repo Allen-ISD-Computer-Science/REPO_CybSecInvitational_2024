@@ -164,7 +164,7 @@ app.post("/login", async (req: express.Request, res: express.Response) => {
     res.status(400).send("Incorrect Credentials!");
   }
 
-  const id = TokenApi.loginTokenGroup.createNewToken();
+  const id = TokenApi.loginTokenGroup.createNewToken(user);
   res.cookie("LoginToken", id, { secure: true, maxAge: TokenApi.loginTokenGroup.duration, httpOnly: true }).redirect("home");
 });
 
