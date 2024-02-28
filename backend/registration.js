@@ -374,8 +374,7 @@ app.post("/registerVerify", (req, res) => {
     return;
   }
 });
-
-let allowedDomains = [/@student.allenisd.org\s*$/, /@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@friscoisd.org\s*$/];
+let allowedDomains = [/@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@student.allenisd.org\s*$/, /@friscoisd.org\s*$/, /@prosper-isd.net\s*$/];
 function checkEmailDomain(email) {
   for (let regexDomain of allowedDomains) {
     console.log(regexDomain);
