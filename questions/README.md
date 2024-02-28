@@ -30,7 +30,7 @@
 |15        |Listen Carefully                       |Done               |Done       |       |
 |16        |Sending a Message                      |                   |           |       |
 |17        |Swapping                               |                   |           |       |
-|18        |Database Fun                           |                   |           |       |
+|18                                                |                   |           |       |
 |19        |SQL                                    |                   |           |       |
 |20        |Mix and Match                          |                   |           |       |
 |21        |Packing Digits                         |                   |           |       |
@@ -54,7 +54,7 @@
 |4         |Internet Cat                           |                   |           |       |
 |5         |Grep Grep Grep!                        |Done               |Done       |       |
 |6         |Get That W                             |Done               |Done       |       |
-|7         |Zip Zap                                |Done               |Done       |       |
+|7         |Zip Zap                                |                   |           |       |
 |8         |Maybe we should call Mario             |                   |           |       |
 |9         |Locked Doors 1                         |Done               |           |       |
 |10        |Locked Doors 2                         |Done               |           |       |

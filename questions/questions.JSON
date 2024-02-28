@@ -1,55 +1,63 @@
 [
     {
         "name": "9 Lives",
-        "description": "Find the flag located in this file.",
+        "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"login\">Use Me!</a>",
         "points_value": 5,
         "difficulty": 0,
-        "category": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"login\">Use Me!</a>",
+        "category": "BashBasics",
         "answer": "AHSINV{9ac8efe31b7a7a1e8dc66e4dad493308}"
     },
 
     {
         "name": "C Deez Flags",
-        "description": "Navigating a Linux file system.",
+        "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"link\">directory</a>, but how do I get to it?</p>",
         "points_value": 5,
         "difficulty": 0,
-        "category": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"link\">directory</a>, but how do I get to it?</p>",
+        "category": "BashBasics",
         "answer": "AHSINV{3cc66404a32f37c7be0206f399018c9c}"
     },
 
     {
         "name": "Back To Basics 64",
-        "description": "Experiment with a fundamental encryption algorithm.",
+        "description": "<h1>A Hidden Message?</h1><h3>Cryptography</h3><p>I was told this is the <a href=\"link\">flag</a>, but it's not right. Maybe it's in a different format?</p>",
         "points_value": 10,
         "difficulty": 0,
-        "category": "<h1>A Hidden Message?</h1><h3>Cryptography</h3><p>I was told this is the <a href=\"link\">flag</a>, but it's not right. Maybe it's in a different format?",
+        "category": "Cryptography",
         "answer": "AHSINV{50f42fd7d6b7d2caf4b1732f314941a2}"
     },
 
     {
         "name": "Julius Caesar",
-        "description": "I think I see a pattern here.",
+        "description": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
         "points_value": 15,
         "difficulty": 0,
-        "category": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
+        "category": "Cryptography",
         "answer": "AHSINV{8dca3fb283af6d299fb25e5840a50032}"
     },
 
     {
         "name": "Glass Too Full",
-        "description": "A glass can only hold so much.",
+        "description": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"link\">program</a> how to count to 100?</p>",
         "points_value": 10,
         "difficulty": 0,
-        "category": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"link\">program</a> how to count to 100?</p>",
+        "category": "Binary Exploit",
         "answer": "AHSINV{1279adb4a5f0fe2acf6c384a4162db8c}"
     },
 
     {
         "name": "Negative Energy",
-        "description": "My math is not mathing.",
+        "description": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"link\">this</a> program's math problem.</p>",
         "points_value": 10,
         "difficulty": 0,
-        "category": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"link\">this</a> program's math problem.",
+        "category": "Binary Exploit",
         "answer": "AHSINV{46deeac62656870a6b14fdfb5805daf2}"
+    }
+    {
+        "name": "Rotation",
+        "description": "<h1>Rotation</h1><h3>Cryptography</h3><p>Spinning, spinning, spinning, spinning. Maybe the encryption was making us dizzy all along. Here you do it: <a href=\"link\">File</a></p>",
+        "points_value": 10,
+        "category": "Cryptography",
+        "answer": "AHSINV{ec1a20c7fca87ae26304a0bd166d8f83}"
+        
     }
 ]
