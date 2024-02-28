@@ -17,7 +17,7 @@ const io = new Server(server);
 
 //#region MongoDB
 if (!process.env.MONGODB_USERNAME) throw Error("Process missing MongoDB Username");
-if (!process.env.MONGODB_PASSWORD) throw Error("Process missing MongoDB Password");
+if (!process.env.MONGODB_PASSWORD) throw Error("Process missing MongoDB Passwfd");
 if (!process.env.MAIN_DATABASE_NAME) throw Error("Missing main database name");
 if (!process.env.USERS_COLLECTION) throw Error("Missing users collection name");
 if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection name");

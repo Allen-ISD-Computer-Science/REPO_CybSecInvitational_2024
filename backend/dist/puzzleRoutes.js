@@ -28,15 +28,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const loginApi = __importStar(require("./loginApi"));
-// Create a new router
 const router = express_1.default.Router();
-// Define routes
 router.get("/puzzle", loginApi.validateLoginToken, (req, res) => {
     res.send("GET request to the homepage");
 });
 router.post("/puzzle", loginApi.validateLoginToken, (req, res) => {
     res.send("POST request to the homepage");
 });
-// Define more routes as needed
 // Export the router
 module.exports = router;
