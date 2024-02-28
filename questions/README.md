@@ -52,7 +52,7 @@
 |4         |Internet Cat                           |                   |           |       |
 |5         |Grep Grep Grep!                        |Done               |Done       |       |
 |6         |Get That W                             |Done               |Done       |       |
-|7         |Zip Zap                                |                   |           |       |
+|7         |Zip Zap                                |Done               |Done       |       |
 |8         |Maybe we should call Mario             |                   |           |       |
 |9         |Locked Doors 1                         |Done               |           |       |
 |10        |Locked Doors 2                         |Done               |           |       |
