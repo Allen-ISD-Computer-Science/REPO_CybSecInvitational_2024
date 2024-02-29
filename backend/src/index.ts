@@ -83,3 +83,7 @@ server.listen(Number(config.host_port), function () {
   console.log(server.address());
   console.log("server at http://localhost:%s/", server.address().port);
 });
+
+mongoApi.fetchScoreboard().then((result) => {
+  console.log(result);
+});

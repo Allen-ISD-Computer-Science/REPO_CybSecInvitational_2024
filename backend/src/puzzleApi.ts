@@ -25,6 +25,10 @@ async function replicatePuzzles() {
 
 replicatePuzzles();
 
+export function fetchPuzzle(name: string): Puzzle | null {
+  return puzzles.name;
+}
+
 export const router: Router = express.Router();
 
 router.get("/puzzles", loginApi.validateLoginToken, (req: Request, res: Response) => {

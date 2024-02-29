@@ -47,3 +47,31 @@ export async function fetchUser(username: string): Promise<User | null> {
     return null;
   }
 }
+
+export async function fetchAllUsers(): Promise<User[] | null> {
+  try {
+    const cursor = await client.db(mainDbName).collection(usersColName).find();
+    return cursor.toArray() as unknown as User[];
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+export async function fetchScoreboard(): Promise<Object[] | null> {
+  const allUsers: User[] | null = await fetchAllUsers();
+  if (!allUsers) return null;
+
+  const scoreboard: Object[] = [];
+
+  allUsers.forEach((user) => {
+    scoreboard.push({
+      division: user.division,
+      username: user.username,
+      puzzle_points: user.puzzle_points,
+      scenario_points: user.scenario_points,
+    });
+  });
+
+  return scoreboard;
+}

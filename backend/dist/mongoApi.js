@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchUser = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 if (!process.env.MONGODB_USERNAME)
@@ -86,3 +86,34 @@ function fetchUser(username) {
     });
 }
 exports.fetchUser = fetchUser;
+function fetchAllUsers() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client.db(exports.mainDbName).collection(exports.usersColName).find();
+            return cursor.toArray();
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    });
+}
+exports.fetchAllUsers = fetchAllUsers;
+function fetchScoreboard() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const allUsers = yield fetchAllUsers();
+        if (!allUsers)
+            return null;
+        const scoreboard = [];
+        allUsers.forEach((user) => {
+            scoreboard.push({
+                division: user.division,
+                username: user.username,
+                puzzle_points: user.puzzle_points,
+                scenario_points: user.scenario_points,
+            });
+        });
+        return scoreboard;
+    });
+}
+exports.fetchScoreboard = fetchScoreboard;

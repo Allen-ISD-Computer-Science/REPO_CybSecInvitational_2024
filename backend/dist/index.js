@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = __importStar(require("path"));
 const TokenApi = __importStar(require("./loginApi"));
 const server_1 = require("./server");
+const mongoApi = __importStar(require("./mongoApi"));
 const config = require(path.join(__dirname, "../config.json"));
 //#region Types
 class Round {
@@ -83,4 +84,7 @@ socketApi.init(); //initialize socket server
 server_1.server.listen(Number(config.host_port), function () {
     console.log(server_1.server.address());
     console.log("server at http://localhost:%s/", server_1.server.address().port);
+});
+mongoApi.fetchScoreboard().then((result) => {
+    console.log(result);
 });
