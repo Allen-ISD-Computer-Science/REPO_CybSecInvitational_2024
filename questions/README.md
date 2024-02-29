@@ -14,20 +14,20 @@
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |Back to Basics 64                      |Done               |Done       |Done   |
-|2         |Long Way Home                          |Done               |Done       |       |
-|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |       |
-|4         |Stego                                  |Done               |Done       |       |
-|5         |Rotation                               |Done               |Done       |       |
-|6         |Dots and Lines                         |Done               |Done       |       |
+|2         |Long Way Home                          |Done               |Done       |Done   |
+|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |Done   |
+|4         |Stego                                  |Done               |Done       |Done   |
+|5         |Rotation                               |Done               |Done       |Done   |
+|6         |Dots and Lines                         |Done               |Done       |Done   |
 |7         |Rotationally Challenged                |Done               |Done       |       |
-|8         |Rail Fence                             |Done               |Done       |       |
+|8         |Rail Fence                             |Done               |Done       |Done   |
 |9         |RSA Basics                             |Done               |Done       |       |
 |10        |Suspicious Zuck                        |Done               |Done       |       |
-|11        |WHAT DO THEY MEAN MASON                |Done               |Done       |       |
-|12        |Step by Step                           |Done               |Done       |       |
+|11        |WHAT DO THEY MEAN MASON                |Done               |Done       |Done   |
+|12        |Step by Step                           |Done               |Done       |Done   |
 |13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
-|15        |Listen Carefully                       |Done               |Done       |       |
+|15        |Listen Carefully                       |Done               |Done       |Done   |
 |16        |Sending a Message                      |                   |           |       |
 |17        |Swapping                               |                   |           |       |
 |18                                                |                   |           |       |
@@ -35,7 +35,7 @@
 |20        |Mix and Match                          |                   |           |       |
 |21        |Packing Digits                         |                   |           |       |
 |22        |Cryptographic Asylum                   |                   |           |       |
-|23        |Two Hops This Time                     |Done               |Done       |       |
+|23        |Two Hops This Time                     |Done               |Done       |Done   |
 |24        |Network Nuisance                       |Done               |           |       |
 |25        |The Mask                               |Done               |Done       |       |
 |26        |Scrambled                              |Done               |Done       |       |
