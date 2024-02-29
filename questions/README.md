@@ -22,7 +22,7 @@
 |7         |Rotationally Challenged                |Done               |Done       |       |
 |8         |Rail Fence                             |Done               |Done       |Done   |
 |9         |RSA Basics                             |Done               |Done       |       |
-|10        |Suspicious Zuck                        |Done               |Done       |       |
+|10        |Suspicious Duck                        |Done               |Done       |Done   |
 |11        |WHAT DO THEY MEAN MASON                |Done               |Done       |Done   |
 |12        |Step by Step                           |Done               |Done       |Done   |
 |13        |Julius Caesar                          |Done               |Done       |Done   |

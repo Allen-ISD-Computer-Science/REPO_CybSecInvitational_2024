@@ -160,9 +160,18 @@
     {
         "name": "Rotationlly Challenged",
         "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p><a href=\"link\">file</a></p>",
-        "points_value": ,
-        "difficulty": ,
+        "points_value": 20,
+        "difficulty": 2,
         "category": "",
         "answer": ""
+    },
+
+    {
+        "name": "Suspicious Duck",
+        "description": "<h1>Suspicious Duck</h1><h3>Cryptography</h3><p>You were slid a nice <a href=\"link\">photo of a duck</a> ... but wait... what's that on its tail?</p>",
+        "points_value": 30,
+        "difficulty": 2,
+        "category": "Cryptography",
+        "answer": "AHSINV{d83638633b691b9352f36d9a475456d4}"
     }
 ]
