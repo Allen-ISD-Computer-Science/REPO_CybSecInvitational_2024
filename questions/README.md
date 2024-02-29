@@ -40,7 +40,7 @@
 |25        |The Mask                               |Done               |Done       |       |
 |26        |Scrambled                              |Done               |Done       |       |
 |27        |New phone who dis                      |Done               |           |       |
-|28        |Which Photo                            |                   |           |       |
+|28        |Which Photo                            |Done               |           |       |
 
 
 ## BashBasics
