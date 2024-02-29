@@ -162,7 +162,7 @@ const transporter = nodemailer.createTransport({
   port: 465,
   secure: true,
   auth: {
-    user: "ahsinvitational@gmail.com",
+    user: "info.ahscyber@gmail.com",
     pass: process.env.GMAIL_APP_PASSWORD,
   },
 });
@@ -209,7 +209,7 @@ const validateEmail = (email) => {
     .match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 };
 
-async function sendVerificationEmail(email, code) {
+async function sendVerificationEmail(email, code, registrant) {
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
@@ -231,9 +231,36 @@ async function sendVerificationEmail(email, code) {
       console.log("Email sent: ", info.response);
     }
   });
-}
 
-function sendConfirmationEmail(email, username, password) {
+  const devMessage = {
+    from: "ahsinvitational@gmail.com",
+    to: ["soohan.cho@student.allenisd.org", "david.benyaakov@allenisd.org", "james.dungan@student.allenisd.org"],
+    subject: "AHS Cyber Invitational - Developer Verification Email",
+    html: `
+    <p>
+    Registrant is verifying email<br />
+    <br />
+    Sent To: ${email}<br />
+    Code: ${code}<br />
+    FirstName: ${registrant.firstName}<br />
+    LastName: ${registrant.lastName}<br />
+    School: ${registrant.school}<br />
+    GradeLevel: ${registrant.gradeLevel}<br />
+    shirtSize: ${registrant.shirtSize}<br />
+    GradeLevel: ${registrant.dietaryRestriction}<br />
+    </p>
+    `,
+  };
+
+  transporter.sendMail(devMessage, (error, info) => {
+    if (error) {
+      console.error("Error sending dev email: ", error);
+    } else {
+      console.log("Dev Email sent: ", info.response);
+    }
+  });
+}
+function sendConfirmationEmail(email, username, password, registrant) {
   const message = {
     from: "ahsinvitational@gmail.com",
     to: [email],
@@ -254,6 +281,34 @@ function sendConfirmationEmail(email, username, password) {
       console.error("Error sending email: ", error);
     } else {
       console.log("Email sent: ", info.response);
+    }
+  });
+
+  const devMessage = {
+    from: "ahsinvitational@gmail.com",
+    to: ["soohan.cho@student.allenisd.org", "david.benyaakov@allenisd.org", "james.dungan@student.allenisd.org"],
+    subject: "AHS Cyber Invitational - Developer Confirmation Email",
+    html: `
+      <p>
+      Registrant's account is made, confirmation information<br />
+      <br />
+      Sent To: ${email}<br />
+      Username: ${username}<br />
+      Password: ${password}<br />
+      FirstName: ${registrant.firstName}<br />
+      LastName: ${registrant.lastName}<br />
+      School: ${registrant.school}<br />
+      GradeLevel: ${registrant.gradeLevel}<br />
+      shirtSize: ${registrant.shirtSize}<br />
+      GradeLevel: ${registrant.dietaryRestriction}<br />
+      </p>
+      `,
+  };
+  transporter.sendMail(devMessage, (error, info) => {
+    if (error) {
+      console.error("Error sending dev email: ", error);
+    } else {
+      console.log("Dev Email sent: ", info.response);
     }
   });
 }
@@ -285,7 +340,7 @@ class VerificationGroup {
 
       let token = new VerificationToken(registrant);
       if (token) this.tokens[registrant.email] = token;
-      sendVerificationEmail(registrant.email, token.code);
+      sendVerificationEmail(registrant.email, token.code, registrant);
       VerificationGroup.pendingGroups[registrant.email] = this;
     }
 
@@ -314,7 +369,7 @@ class VerificationGroup {
       console.log("added user successfully!", result);
       if (!result || !result.members) return;
       for (let member of result.members) {
-        sendConfirmationEmail(member.email, result.username, result.password);
+        sendConfirmationEmail(member.email, result.username, result.password, member);
       }
     });
 
@@ -350,6 +405,7 @@ class VerificationToken {
     this.school = registrant.school;
     this.gradeLevel = registrant.gradeLevel;
     this.shirtSize = registrant.shirtSize;
+    this.dietaryRestriction = registrant.dietaryRestriction;
     this.code = Math.floor(100000 + Math.random() * 900000);
     this.verified = false;
   }
@@ -373,6 +429,17 @@ app.post("/registerVerify", (req, res) => {
     return;
   }
 });
+let allowedDomains = [/@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@student.allenisd.org\s*$/, /@friscoisd.org\s*$/, /@prosper-isd.net\s*$/];
+function checkEmailDomain(email) {
+  for (let regexDomain of allowedDomains) {
+    console.log(regexDomain);
+    if (regexDomain.test(email)) {
+      console.log("matches");
+      return true;
+    }
+  }
+  return false;
+}
 
 app.post("/register", async (req, res) => {
   /**@type {Registrant[]} */
@@ -394,13 +461,19 @@ app.post("/register", async (req, res) => {
       const school = String(registrant.school);
       const gradeLevel = String(registrant.gradeLevel);
       const shirtSize = String(registrant.shirtSize);
-      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize) {
+      const dietRestriction = String(registrant.dietaryRestriction);
+      if (!email || !firstName || !lastName || !school || !gradeLevel || !shirtSize || !dietRestriction) {
         res.status(400).send("Missing Parameters!");
         return;
       }
 
       if (!validateEmail(email)) {
         res.status(400).send("Invalid Email Format!");
+        return;
+      }
+
+      if (!checkEmailDomain(email)) {
+        res.status(400).send("Invalid Email Domain!");
         return;
       }
 
@@ -411,6 +484,7 @@ app.post("/register", async (req, res) => {
         school: school,
         gradeLevel: gradeLevel,
         shirtSize: shirtSize,
+        dietaryRestriction: dietRestriction,
       });
     }
   } catch (err) {

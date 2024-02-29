@@ -1,39 +1,34 @@
 import asyncio
 import socketio
+import datetime
 
 sio = socketio.AsyncClient()
 
-# base
 @sio.event
 async def connect():
     print('connection established')
 
-    token = open("token.txt","r")
-    print(token.read())
     #attempt login after connection
     print("Enter your username: ")
     username = input()
     print("Enter your password: ")
     password = input()
 
-    result = await attemptLogin("username", "password")
-    print(result)
-    
+    await attemptLogin(username, password)
 
-@sio.event
-async def disconnect():
-    print('disconnected from server')
-
-# login
 async def attemptLogin(username, password):
-    print("attempting login")
     await sio.emit("scenario_login", {"username": username, "password": password})
 
 @sio.event
 async def scenario_on_login(data):
-    print("Login Attempt :", data)
+    if data['ok']:
+        date = datetime.datetime.fromtimestamp(data["expirationTime"]/1000.0)
+        print("Successfully Logged In!")
+        print("Token expires at: "  + date.strftime("%b %d %I %M %S"))
+    else:
+        print(data["message"])
 
-# else
+    await sio.disconnect()
 
 async def main():
     await sio.connect('http://localhost:11278')
