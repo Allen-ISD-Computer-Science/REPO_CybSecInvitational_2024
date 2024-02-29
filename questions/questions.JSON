@@ -123,15 +123,7 @@
         "difficulty": 1,
         "category": "Cryptography",
         "answer": "AHSINV{040179ad7cda1aeced48ca53f2559710}"
-    },
-    {
-        "name": "",
-        "description": "<h1></h1><h3></h3><p><a href=\"link\">file</a></p>",
-        "points_value":10 ,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{040179ad7cda1aeced48ca53f2559710}"
-    },  
+    }, 
     {
         "name": "One Fish Two Fish Red Fish Blue Fish",
         "description": "<h1>One Fish Two Fish Red Fish Blue Fish</h1><h3>Cryptography</h3><p>One fish, two fish, red fish, blue fish The secret fish is a blowfish.The contents of this <a href=\"link\">file</a> must not make you riled.To unlock the string you seek,“Dr. Seuss” holds the key, though he is slightly weak.</p>",
@@ -150,7 +142,7 @@
     },
     {
         "name": "Stego",
-        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an a href=\"link\">Image</a></p>? That’s unheard of! Or is it?<",
+        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"link\">Image</a></p>? That’s unheard of! Or is it?<",
         "points_value": 20,
         "difficulty": 1,
         "category": "Cryptography",
@@ -158,7 +150,15 @@
     },
     {
         "name": "Rotationlly Challenged",
-        "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p><a href=\"link\">file</a></p>",
+        "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p>Your boss has given you a grid of numbers, and has asked you to follow the <a href=\"link\">Instructions</a> to solve it. Go <a href=\"https://www.dcode.fr/hill-cipher\">here</a>. Make sure to replace \"<>\" with \"{}\"</p>",
+        "points_value": 10,
+        "difficulty": 1,
+        "category": "Cryptography",
+        "answer": "AHSINV{matrixmultiplication}"
+    },
+    {
+        "name": "Scrambled",
+        "description": "<h1>Scrambled</h1><h3></h3><p><a href=\"link\">file</a></p>",
         "points_value": ,
         "difficulty": ,
         "category": "",
