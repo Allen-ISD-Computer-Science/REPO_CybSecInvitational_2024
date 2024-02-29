@@ -19,6 +19,14 @@ declare global {
     category: string; //
     answer: string;
   };
+
+  type PuzzleDescription = {
+    name: string;
+    description: string;
+    point_value: number;
+    difficulty: 0 | 1 | 2 | 3; // Easy, Medium, Hard, Master
+    category: string; //
+  };
 }
 
 export {};

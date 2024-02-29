@@ -72,8 +72,8 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect("login");
 });
 
-import { router as puzzleRouter } from "./puzzleApi";
-app.use("/", puzzleRouter);
+import * as puzzleApi from "./puzzleApi";
+app.use("/", puzzleApi.router);
 
 import * as socketApi from "./socketApi";
 socketApi.init(); //initialize socket server
@@ -82,8 +82,4 @@ socketApi.init(); //initialize socket server
 server.listen(Number(config.host_port), function () {
   console.log(server.address());
   console.log("server at http://localhost:%s/", server.address().port);
-});
-
-mongoApi.fetchScoreboard().then((result) => {
-  console.log(result);
 });

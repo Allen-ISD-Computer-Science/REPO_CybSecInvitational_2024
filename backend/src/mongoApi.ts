@@ -75,3 +75,5 @@ export async function fetchScoreboard(): Promise<Object[] | null> {
 
   return scoreboard;
 }
+
+export async function addPointsToUser(username: string);

@@ -95,6 +95,10 @@ export async function validateLoginToken(req: express.Request, res: express.Resp
   next();
 }
 
+export function fetchLoginToken(id: string): Token | null {
+  return loginTokenGroup.findTokenOfId(id);
+}
+
 app.post("/login", async (req: Request, res: Response) => {
   console.log("attempting login");
   const username: string | undefined = req.body.username;

@@ -35,12 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.puzzles = void 0;
+exports.router = exports.fetchPuzzleOnlyDescription = exports.fetchPuzzle = exports.puzzles = void 0;
 const express_1 = __importDefault(require("express"));
 const loginApi = __importStar(require("./loginApi"));
 const mongoApi = __importStar(require("./mongoApi"));
 const path = __importStar(require("path"));
-exports.puzzles = [];
+exports.puzzles = {};
 function replicatePuzzles() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -53,7 +53,9 @@ function replicatePuzzles() {
                 console.warn("Failed to replicate puzzles from backend!");
             }
             else {
-                exports.puzzles = result;
+                result.forEach((puzzle) => {
+                    exports.puzzles[puzzle.name] = puzzle;
+                });
             }
         }
         catch (err) {
@@ -61,7 +63,23 @@ function replicatePuzzles() {
         }
     });
 }
-replicatePuzzles();
+replicatePuzzles().then(() => {
+    console.log(fetchPuzzleOnlyDescription("templatePuzzleName"));
+});
+function fetchPuzzle(name) {
+    return exports.puzzles[name];
+}
+exports.fetchPuzzle = fetchPuzzle;
+function fetchPuzzleOnlyDescription(name) {
+    let puzzle = fetchPuzzle(name);
+    if (!puzzle)
+        return null;
+    delete puzzle._id;
+    delete puzzle.answer;
+    return puzzle;
+}
+exports.fetchPuzzleOnlyDescription = fetchPuzzleOnlyDescription;
+// Routes
 exports.router = express_1.default.Router();
 exports.router.get("/puzzles", loginApi.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/puzzles.html"));
@@ -72,3 +90,4 @@ exports.router.get("/puzzle", loginApi.validateLoginToken, (req, res) => __await
     console.log(user);
     res.send("POST request to the homepage");
 }));
+exports.router.post("/getPuzzle", loginApi.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
