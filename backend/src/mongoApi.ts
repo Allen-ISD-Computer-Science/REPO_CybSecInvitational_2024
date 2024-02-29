@@ -37,3 +37,13 @@ process.on("SIGINT", () => {
     process.exit(0);
   });
 });
+
+export async function fetchUser(username: string): Promise<User | null> {
+  try {
+    const result = await client.db(mainDbName).collection(usersColName).findOne({ username: username });
+    return result as unknown as Promise<User | null>;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}

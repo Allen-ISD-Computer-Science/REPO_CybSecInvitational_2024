@@ -4,21 +4,7 @@ import * as loginApi from "./loginApi";
 import * as mongoApi from "./mongoApi";
 import * as path from "path";
 
-export const router: Router = express.Router();
-
-router.get("/puzzles", loginApi.validateLoginToken, (req: Request, res: Response) => {
-  console.log(loginApi.loginTokenGroup.findTokenOfId(req.cookies["LoginToken"]));
-  res.sendFile(path.join(__dirname, "../public/puzzles.html"));
-
-  // res.send("GET request to the homepage");
-});
-
-router.post("/puzzle", loginApi.validateLoginToken, (req: Request, res: Response) => {
-  res.send("POST request to the homepage");
-});
-
 export var puzzles: Puzzle[] = [];
-
 async function replicatePuzzles() {
   try {
     const result = (await mongoApi.client
@@ -38,3 +24,15 @@ async function replicatePuzzles() {
 }
 
 replicatePuzzles();
+
+export const router: Router = express.Router();
+
+router.get("/puzzles", loginApi.validateLoginToken, (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../public/puzzles.html"));
+});
+
+router.get("/puzzle", loginApi.validateLoginToken, async (req: Request, res: Response) => {
+  const user = await mongoApi.fetchUser(res.locals.token?.data?.username);
+  console.log(user);
+  res.send("POST request to the homepage");
+});

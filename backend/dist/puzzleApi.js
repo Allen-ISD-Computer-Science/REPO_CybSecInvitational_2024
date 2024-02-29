@@ -35,20 +35,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.puzzles = exports.router = void 0;
+exports.router = exports.puzzles = void 0;
 const express_1 = __importDefault(require("express"));
 const loginApi = __importStar(require("./loginApi"));
 const mongoApi = __importStar(require("./mongoApi"));
 const path = __importStar(require("path"));
-exports.router = express_1.default.Router();
-exports.router.get("/puzzles", loginApi.validateLoginToken, (req, res) => {
-    console.log(loginApi.loginTokenGroup.findTokenOfId(req.cookies["LoginToken"]));
-    res.sendFile(path.join(__dirname, "../public/puzzles.html"));
-    // res.send("GET request to the homepage");
-});
-exports.router.post("/puzzle", loginApi.validateLoginToken, (req, res) => {
-    res.send("POST request to the homepage");
-});
 exports.puzzles = [];
 function replicatePuzzles() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -71,3 +62,13 @@ function replicatePuzzles() {
     });
 }
 replicatePuzzles();
+exports.router = express_1.default.Router();
+exports.router.get("/puzzles", loginApi.validateLoginToken, (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/puzzles.html"));
+});
+exports.router.get("/puzzle", loginApi.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const user = yield mongoApi.fetchUser((_b = (_a = res.locals.token) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.username);
+    console.log(user);
+    res.send("POST request to the homepage");
+}));

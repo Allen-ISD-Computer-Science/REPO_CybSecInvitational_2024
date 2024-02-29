@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,6 +33,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.validateLoginToken = exports.loginTokenGroup = exports.TokenGroup = exports.Token = void 0;
+const server_1 = require("./server");
+const path = __importStar(require("path"));
+const mongoApi = __importStar(require("./mongoApi"));
 const crypto = require("crypto");
 class Token {
     constructor(callback = () => { }, data = {}, duration = Token.defaultDuration) {
@@ -65,12 +91,52 @@ exports.loginTokenGroup = new TokenGroup(120000);
 function validateLoginToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const loginTokenId = req.cookies["LoginToken"];
-        if (!loginTokenId || !exports.loginTokenGroup.findTokenOfId(loginTokenId)) {
+        if (!loginTokenId) {
             res.redirect("login");
+            return;
         }
-        else {
-            next();
+        const token = exports.loginTokenGroup.findTokenOfId(loginTokenId);
+        if (!token) {
+            res.redirect("login");
+            return;
         }
+        res.locals.token = token;
+        next();
     });
 }
 exports.validateLoginToken = validateLoginToken;
+server_1.app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("attempting login");
+    const username = req.body.username;
+    const password = req.body.password;
+    if (!username || !password) {
+        res.status(400).send("Missing Username or Password!");
+        return;
+    }
+    let user = yield mongoApi.fetchUser(username);
+    if (!user) {
+        res.status(400).send("Incorrect Credentials!");
+        return;
+    }
+    if (user.password !== password) {
+        res.status(400).send("Incorrect Credentials!");
+    }
+    const id = exports.loginTokenGroup.createNewToken(user);
+    res.cookie("LoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).redirect("home");
+}));
+server_1.app.get("/login", (req, res) => {
+    const loginTokenId = req.cookies["LoginToken"];
+    if (loginTokenId && exports.loginTokenGroup.findTokenOfId(loginTokenId)) {
+        res.redirect("home");
+        return;
+    }
+    res.sendFile(path.join(__dirname, "../public/login.html"));
+});
+server_1.app.get("/logout", (req, res) => {
+    const loginTokenId = req.cookies["LoginToken"];
+    if (loginTokenId) {
+        exports.loginTokenGroup.removeToken(loginTokenId);
+        res.clearCookie("LoginToken");
+    }
+    res.redirect("login");
+});

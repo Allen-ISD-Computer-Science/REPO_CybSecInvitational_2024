@@ -22,66 +22,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const env = __importStar(require("dotenv"));
-env.config();
-// require("dotenv").config();
-const express_1 = __importDefault(require("express"));
+const path = __importStar(require("path"));
 const TokenApi = __importStar(require("./loginApi"));
-const { createServer, get } = require("http");
-const session = require("express-session");
-const { Server } = require("socket.io");
-const path = require("path");
-const bodyParser = require("body-parser");
+const server_1 = require("./server");
 const config = require(path.join(__dirname, "../config.json"));
-const app = (0, express_1.default)();
-const server = createServer(app);
-const io = new Server(server);
-const crypto_1 = require("crypto");
-const mongoApi_1 = require("./mongoApi");
-const mongoApi = __importStar(require("./mongoApi"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-//Session Handling
-const sessionMiddleWare = session({
-    secret: process.env.EXPRESS_SESSION_SECRET ||
-        (0, crypto_1.generateKey)("hmac", { length: 256 }, (err, key) => {
-            return key;
-        }),
-    resave: false,
-    saveUninitialized: false,
-});
-app.use(sessionMiddleWare);
-io.engine.use(sessionMiddleWare);
-//Cookie Handling
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
-//Static File Serving
-app.use(express_1.default.static(path.join(__dirname, "../public")));
-function fetchUser(username) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const result = yield mongoApi_1.client.db(mongoApi.mainDbName).collection(mongoApi.usersColName).findOne({ username: username });
-            return result;
-        }
-        catch (err) {
-            console.log(err);
-            return null;
-        }
-    });
-}
+//#region Types
 class Round {
     static endCurrentRound() {
         var _a;
@@ -113,6 +59,7 @@ class PuzzleRound extends Round {
         Round.currentRound = this;
     }
 }
+//#endregion
 function startPuzzleRound() {
     try {
         let round = new PuzzleRound(10000, "PuzzleRoundId");
@@ -122,50 +69,18 @@ function startPuzzleRound() {
         console.log(err);
     }
 }
-server.listen(Number(config.host_port), function () {
-    console.log(server.address());
-    console.log("server at http://localhost:%s/", server.address().port);
-});
-app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("attempting login");
-    const username = req.body.username;
-    const password = req.body.password;
-    if (!username || !password) {
-        res.status(400).send("Missing Username or Password!");
-        return;
-    }
-    let user = yield fetchUser(username);
-    if (!user) {
-        res.status(400).send("Incorrect Credentials!");
-        return;
-    }
-    if (user.password !== password) {
-        res.status(400).send("Incorrect Credentials!");
-    }
-    const id = TokenApi.loginTokenGroup.createNewToken(user);
-    res.cookie("LoginToken", id, { secure: true, maxAge: TokenApi.loginTokenGroup.duration, httpOnly: true }).redirect("home");
-}));
-app.get("/login", (req, res) => {
-    const loginTokenId = req.cookies["LoginToken"];
-    if (loginTokenId && TokenApi.loginTokenGroup.findTokenOfId(loginTokenId)) {
-        res.redirect("home");
-        return;
-    }
-    res.sendFile(path.join(__dirname, "../public/login.html"));
-});
-app.get("/logout", (req, res) => {
-    const loginTokenId = req.cookies["LoginToken"];
-    if (loginTokenId) {
-        TokenApi.loginTokenGroup.removeToken(loginTokenId);
-        res.clearCookie("LoginToken");
-    }
-    res.redirect("login");
-});
-app.get("/home", TokenApi.validateLoginToken, (req, res) => {
+server_1.app.get("/home", TokenApi.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/home.html"));
 });
-app.get("/", (req, res) => {
+server_1.app.get("/", (req, res) => {
     res.redirect("login");
 });
 const puzzleApi_1 = require("./puzzleApi");
-app.use("/", puzzleApi_1.router);
+server_1.app.use("/", puzzleApi_1.router);
+const socketApi = __importStar(require("./socketApi"));
+socketApi.init(); //initialize socket server
+// Host http server at port
+server_1.server.listen(Number(config.host_port), function () {
+    console.log(server_1.server.address());
+    console.log("server at http://localhost:%s/", server_1.server.address().port);
+});

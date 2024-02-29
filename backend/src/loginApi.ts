@@ -1,4 +1,8 @@
+import { app } from "./server";
+import * as path from "path";
 import express, { Request, Response } from "express";
+import * as mongoApi from "./mongoApi";
+
 const crypto = require("crypto");
 
 export class Token {
@@ -77,9 +81,61 @@ export class TokenGroup {
 export const loginTokenGroup = new TokenGroup(120000);
 export async function validateLoginToken(req: express.Request, res: express.Response, next: Function) {
   const loginTokenId = req.cookies["LoginToken"];
-  if (!loginTokenId || !loginTokenGroup.findTokenOfId(loginTokenId)) {
+  if (!loginTokenId) {
     res.redirect("login");
-  } else {
-    next();
+    return;
   }
+  const token = loginTokenGroup.findTokenOfId(loginTokenId);
+  if (!token) {
+    res.redirect("login");
+    return;
+  }
+  res.locals.token = token;
+
+  next();
 }
+
+app.post("/login", async (req: Request, res: Response) => {
+  console.log("attempting login");
+  const username: string | undefined = req.body.username;
+  const password: string | undefined = req.body.password;
+
+  if (!username || !password) {
+    res.status(400).send("Missing Username or Password!");
+    return;
+  }
+
+  let user = await mongoApi.fetchUser(username);
+  if (!user) {
+    res.status(400).send("Incorrect Credentials!");
+    return;
+  }
+
+  if (user.password !== password) {
+    res.status(400).send("Incorrect Credentials!");
+  }
+
+  const id = loginTokenGroup.createNewToken(user);
+  res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).redirect("home");
+});
+
+app.get("/login", (req: Request, res: Response) => {
+  const loginTokenId = req.cookies["LoginToken"];
+
+  if (loginTokenId && loginTokenGroup.findTokenOfId(loginTokenId)) {
+    res.redirect("home");
+    return;
+  }
+
+  res.sendFile(path.join(__dirname, "../public/login.html"));
+});
+
+app.get("/logout", (req: Request, res: Response) => {
+  const loginTokenId = req.cookies["LoginToken"];
+  if (loginTokenId) {
+    loginTokenGroup.removeToken(loginTokenId);
+    res.clearCookie("LoginToken");
+  }
+
+  res.redirect("login");
+});
