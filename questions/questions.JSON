@@ -128,8 +128,7 @@
         "difficulty": 1,
         "category": "Cryptography",
         "answer": "AHSINV{040179ad7cda1aeced48ca53f2559710}"
-    },
-
+    }, 
     {
         "name": "One Fish Two Fish Red Fish Blue Fish",
         "description": "<h1>One Fish Two Fish Red Fish Blue Fish</h1><h3>Cryptography</h3><p>One fish, two fish, red fish, blue fish The secret fish is a blowfish.The contents of this <a href=\"link\">file</a> must not make you riled.To unlock the string you seek,“Dr. Seuss” holds the key, though he is slightly weak.</p>",
@@ -150,7 +149,7 @@
 
     {
         "name": "Stego",
-        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an a href=\"link\">Image</a></p>? That’s unheard of! Or is it?<",
+        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"link\">Image</a></p>? That’s unheard of! Or is it?<",
         "points_value": 20,
         "difficulty": 1,
         "category": "Cryptography",
