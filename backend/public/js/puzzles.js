@@ -38,13 +38,7 @@ async function submitPuzzle(id, answer) {
       "Content-type": "application/json; charset=UTF-8",
     },
   });
-
-  if (!response.ok) {
-    return;
-  }
-
-  const data = await response.json();
-  return data;
+  return response;
 }
 
 let allPuzzles = null;
@@ -281,15 +275,17 @@ puzzleSubmitButton.onclick = async function (evt) {
   }
 
   const result = await submitPuzzle(puzzleModalHeader.textContent, puzzleSubmitInput.value);
-  if (!result) {
-    puzzleAlert.innerHTML = `<p class="text-dark mb-0 align-self-center"><b>something went wrong on the server</b></p>`;
+
+  if (!result.ok) {
+    puzzleAlert.innerHTML = `<p class="text-danger mb-0 align-self-center">${await result.text()}</p>`;
     return;
   }
 
-  if (result.correct) {
+  const data = await result.json();
+  if (data.correct) {
     puzzleAlert.innerHTML = `<p class="text-success mb-0 align-self-center">Success!</p>`;
     return;
-  } else if (result.alreadyCompleted) {
+  } else if (data.alreadyCompleted) {
     puzzleAlert.innerHTML = `<p class="text-warning mb-0 align-self-center">Already Completed</p>`;
     return;
   } else {

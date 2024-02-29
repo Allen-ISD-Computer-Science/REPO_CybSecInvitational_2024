@@ -1,0 +1,26 @@
+[
+  {
+    "name": "templatePuzzleName",
+    "description": "This is a template description",
+    "points_value": 10,
+    "difficulty": 0,
+    "category": "Template",
+    "anwser": "AHSINV{templateFlag}"
+  },
+  {
+    "name": "templatePuzzleName",
+    "description": "This is a template description",
+    "points_value": 10,
+    "difficulty": 0,
+    "category": "Template",
+    "anwser": "AHSINV{templateFlag}"
+  },
+  {
+    "name": "templatePuzzleName",
+    "description": "This is a template description",
+    "points_value": 10,
+    "difficulty": 0,
+    "category": "Template",
+    "anwser": "AHSINV{templateFlag}"
+  }
+]

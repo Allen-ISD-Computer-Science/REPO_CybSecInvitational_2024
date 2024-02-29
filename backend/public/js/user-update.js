@@ -79,7 +79,10 @@ function updateTimer() {
   let currentTime = Date.now();
   let timeLeft = new Date(currentEndTime - currentTime);
 
-  if (timeLeft <= 0) return;
+  if (timeLeft <= 0) {
+    timer.innerHTML = "Round Ended!";
+    return;
+  }
 
   let timeStr = "";
 
@@ -93,40 +96,50 @@ function updateTimer() {
 }
 
 function updateCurrentRoundUI(data) {
-  if (!data) {
-    label.textContent = "";
+  if (Object.values(data).length <= 0) {
+    label.textContent = "No Round Started Yet!";
     timer.innerHTML = "";
-
-    return;
+    currentEndTime = Date.now();
+  } else {
+    currentEndTime = data.endTime;
+    label.textContent = data.type;
+    updateTimer();
   }
-
-  currentEndTime = data.endTime;
-  console.log(data);
-  label.textContent = data.type;
-  updateTimer();
 }
 
 const usernameTextLabel = document.getElementById("username-text-label");
 const pointsTextLabel = document.getElementById("points-text-label");
 
-console.log(pointsTextLabel, usernameTextLabel);
 function updateUserUI(user) {
-  console.log("updating!");
-  console.log(user);
   usernameTextLabel.textContent = user.username;
   pointsTextLabel.textContent = `points : ${user.puzzle_points + user.scenario_points}`;
 }
 
 socket.on("update_event", async (data) => {
   updateCurrentRoundUI(data.currentRound);
-
-  console.log(data);
   user = await fetchUser();
   updateUserUI(user);
   document.dispatchEvent(userUpdated);
+
+  localStorage.setItem("user_update_current_round", JSON.stringify(data.currentRound));
 });
 
+function fetchLocalData() {
+  try {
+    return JSON.parse(localStorage.getItem("user_update_current_round"));
+  } catch {
+    return null;
+  }
+}
+
 async function init() {
+  console.log("initializing");
+
+  let localCurrentRound = fetchLocalData();
+  if (localCurrentRound) {
+    updateCurrentRoundUI(localCurrentRound);
+  }
+
   user = await fetchUser();
   updateUserUI(user);
   document.dispatchEvent(userLoaded);
@@ -136,16 +149,21 @@ init();
 socket.on("round_start", (data) => {
   switch (data?.type) {
     case "BattleRound":
+      localStorage.setItem("user_update_current_round", JSON.stringify(data));
       window.location.replace("battleRound");
       break;
+
     case "PuzzleRound":
+      localStorage.setItem("user_update_current_round", JSON.stringify(data));
       window.location.replace("puzzles");
       break;
+
     default:
       break;
   }
 });
 
 socket.on("round_end", (data) => {
+  localStorage.removeItem("user_update_current_round");
   window.location.replace("home");
 });

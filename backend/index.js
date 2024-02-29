@@ -1,6 +1,7 @@
 //@ts-check
 require("dotenv").config();
 
+const crypto = require("crypto");
 const express = require("express");
 const { createServer, get } = require("http");
 const session = require("express-session");
@@ -59,18 +60,18 @@ process.on("SIGINT", () => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(
-  session({
-    //@ts-ignore
-    secret:
-      process.env.EXPRESS_SESSION_SECRET ||
-      generateKey("hmac", { length: 256 }, (err, key) => {
-        return key;
-      }),
-    resave: false, // don't save session if unmodified
-    saveUninitialized: false, // don't create session until something stored
-  })
-);
+const sessionMiddleWare = session({
+  //@ts-ignore
+  secret:
+    process.env.EXPRESS_SESSION_SECRET ||
+    generateKey("hmac", { length: 256 }, (err, key) => {
+      return key;
+    }),
+  resave: false, // don't save session if unmodified
+  saveUninitialized: false, // don't create session until something stored
+});
+
+app.use(sessionMiddleWare);
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -197,6 +198,7 @@ app.get("/confirm", (req, res) => {
 });
 
 const nodemailer = require("nodemailer");
+const e = require("express");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
@@ -472,6 +474,7 @@ app.post("/register", async (req, res) => {
       return;
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send("Server Side Error!");
     return;
   }
@@ -729,6 +732,15 @@ async function onPuzzleCorrect(username, amount, id) {
   }
 }
 
+// app.get("/context/:name", (req, res) => {
+//   let context = req.params.name;
+//   try {
+//     res.sendFile(path.join(__dirname, "public/puzzles/", context));
+//   } catch {
+//     res.sendStatus(404);
+//   }
+// });
+
 app.get("/puzzles", verifyUser, verifyBattleRound, function (req, res) {
   if (!currentRound || currentRound.type != "PuzzleRound") {
     res.redirect("home");
@@ -779,6 +791,12 @@ app.post("/submitPuzzle", verifyUser, testPuzzleRound, async (req, res) => {
   const puzzle = fetchPuzzle(id);
   if (!puzzle) {
     res.status(404).send("Puzzle not found!");
+    return;
+  }
+
+  if (userData.completed_puzzles[id]) {
+    res.status(400).send("Puzzle already completed");
+    return;
   }
 
   if (await isPuzzleAnswerCorrect(id, answer)) {
@@ -848,8 +866,7 @@ async function endBattleRound() {
       const username = user.username;
       const k = Object.values(participant.completed).length / 4;
       const multiplier = lerp(config.battle_round_min_multiplier, config.battle_round_max_multiplier, k);
-      const prize = Math.min(multiplier * participant.bid);
-      console.log(prize);
+      const prize = Math.floor(multiplier * participant.bid);
       onBattleRoundCredit(username, prize);
       delete usersList[username];
     });
@@ -940,7 +957,7 @@ app.post("/battleRound/getStatus", verifyUser, testBattleRound, async (req, res)
     return;
   }
 
-  res.json({ alreadyJoined: false, endTime: currentRound.endTime });
+  res.json({ alreadyJoined: false, endTime: currentRound.endTime, minBid: currentRound.min_bid });
 });
 
 app.post("/battleRound/join", verifyUser, testBattleRound, async (req, res) => {
@@ -1109,7 +1126,6 @@ function startUpdates() {
   paused = false;
   updateEvent();
 }
-startUpdates();
 
 app.get("/scoreboard", verifyUser, verifyBattleRound, function (req, res) {
   res.sendFile(path.join(__dirname, "public/scoreboard.html"));
@@ -1589,10 +1605,93 @@ app.post("/admin/command", adminCheck, async (req, res) => {
 });
 //#endregion
 
-//socket handling
+//#region Scenario
+
+startUpdates();
+
+function uuidv4() {
+  return crypto.randomUUID();
+}
+
+class ScenarioToken {
+  static tokens = {};
+  static userReference = {};
+
+  static _checkConcurrence(username) {
+    for (let token of Object.values(ScenarioToken.tokens)) {
+      if (username == token.user?.username) return token;
+    }
+    return false;
+  }
+
+  static fetchToken(id) {
+    return ScenarioToken.tokens[id];
+  }
+
+  static async createNewToken(username, password) {
+    const user = await fetchUser(username);
+    if (!user || user?.password !== password) {
+      return { ok: false, message: "Missing arguments" };
+    } else {
+      let currentToken = ScenarioToken._checkConcurrence(user.username);
+      if (currentToken) {
+        console.log("fetched existing token");
+        return { ok: true, token: currentToken };
+      } else {
+        console.log("created new token");
+        return { ok: true, token: new ScenarioToken(user) };
+      }
+    }
+  }
+
+  constructor(user) {
+    this.user = user;
+    this.id = uuidv4();
+    ScenarioToken.tokens[this.id] = this;
+    this._timeout = setTimeout(() => {
+      delete ScenarioToken.tokens[this.id];
+    }, 10000);
+  }
+}
+
+io.engine.use(sessionMiddleWare);
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  //join unique room
+  socket.join(socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client Disconnected");
+  });
+
+  socket.on("scenario_login", async (data) => {
+    console.log("attempting login");
+
+    if (!data || !data.username || !data.password) {
+      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 400, message: "Missing Arguments" });
+      return;
+    }
+
+    let result = await ScenarioToken.createNewToken(data.username, data.password);
+
+    if (result.ok) {
+      io.to(socket.id).emit("scenario_on_login", {
+        ok: true,
+        status: 200,
+        message: "Logged In",
+        tokenId: result.token.id,
+        expirationTime: Date.now() + config.scenario_token_duration,
+      });
+      return;
+    } else {
+      io.to(socket.id).emit("scenario_on_login", { ok: false, status: 403, message: result.message });
+      return;
+    }
+  });
+
+  console.log("Client Connected");
 });
+
+//#endregion
 
 server.listen(Number(config.host_port), function () {
   //@ts-ignore
@@ -1604,3 +1703,24 @@ server.listen(Number(config.host_port), function () {
 
   console.log("server at http://localhost:%s/home", port);
 });
+
+function bulkWritePuzzles(data) {
+  let operations = [];
+  for (let question of data) {
+    operations.push({
+      insertOne: {
+        document: {
+          name: question.name,
+          description: question.description,
+          point_value: question.point_value,
+          difficulty: question.difficulty,
+          category: question.category,
+          answer: question.answer,
+        },
+      },
+    });
+  }
+
+  client.db(mainDbName).collection(puzzlesColName).bulkWrite(operations);
+}
+// bulkWritePuzzles(require("../questions/questions.json"));
