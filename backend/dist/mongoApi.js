@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.setPointsOfUser = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 if (!process.env.MONGODB_USERNAME)
@@ -49,15 +49,17 @@ if (!process.env.BATTLE_ROUND_COLLECTION)
     throw Error("Missing battle round collection name");
 if (!process.env.ADMINISTRATOR_COLLECTION)
     throw Error("Missing administrator collection name");
+const mongodb_1 = require("mongodb");
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
+// * Module Parameters
 exports.mainDbName = process.env.MAIN_DATABASE_NAME;
 exports.usersColName = process.env.USERS_COLLECTION;
 exports.puzzlesColName = process.env.PUZZLES_COLLECTION;
 exports.battleRoundPuzzlesColName = process.env.BATTLE_ROUND_COLLECTION;
 exports.adminColName = process.env.ADMINISTRATOR_COLLECTION;
-const mongodb_1 = require("mongodb");
 const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
+// * Module Initialization
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 exports.client = new mongodb_1.MongoClient(uri, {
     serverApi: {
@@ -73,6 +75,7 @@ process.on("SIGINT", () => {
         process.exit(0);
     });
 });
+// * Methods
 function fetchUser(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -86,6 +89,7 @@ function fetchUser(username) {
     });
 }
 exports.fetchUser = fetchUser;
+// fetches all users, includes ALL data present in the db
 function fetchAllUsers() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -99,6 +103,7 @@ function fetchAllUsers() {
     });
 }
 exports.fetchAllUsers = fetchAllUsers;
+// fetches all users with only data pertaining to scoreboard
 function fetchScoreboard() {
     return __awaiter(this, void 0, void 0, function* () {
         const allUsers = yield fetchAllUsers();
@@ -117,3 +122,41 @@ function fetchScoreboard() {
     });
 }
 exports.fetchScoreboard = fetchScoreboard;
+// returns true if successfully added, false if not
+function addPointsToUser(username, amount, category) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username, [category]: { $exists: true } }, { $inc: { [category]: amount } });
+            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            console.log(err);
+            return false;
+        }
+    });
+}
+exports.addPointsToUser = addPointsToUser;
+// returns true if successfully set, false if not
+function setPointsOfUser(username, amount, category) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username, [category]: { $exists: true } }, { $set: { [category]: amount } });
+            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            console.log(err);
+            return false;
+        }
+    });
+}
+exports.setPointsOfUser = setPointsOfUser;

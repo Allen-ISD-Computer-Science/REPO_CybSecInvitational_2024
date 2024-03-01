@@ -1,5 +1,5 @@
 declare global {
-  type User = {
+  interface User {
     _id: ObjectId;
     division: 0 | 1 | 2; // Silver, Gold, Platinum
     username: string;
@@ -7,10 +7,10 @@ declare global {
     completed_puzzles: { String: boolean };
     puzzle_points: number;
     scenario_points: number;
-  };
+  }
 
   //TODO Add categories to Puzzle class
-  type Puzzle = {
+  interface Puzzle {
     _id: ObjectId;
     name: string;
     description: string;
@@ -18,15 +18,7 @@ declare global {
     difficulty: 0 | 1 | 2 | 3; // Easy, Medium, Hard, Master
     category: string; //
     answer: string;
-  };
-
-  type PuzzleDescription = {
-    name: string;
-    description: string;
-    point_value: number;
-    difficulty: 0 | 1 | 2 | 3; // Easy, Medium, Hard, Master
-    category: string; //
-  };
+  }
 }
 
 export {};

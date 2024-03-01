@@ -1,7 +1,7 @@
-async function fetchPuzzle(id) {
+async function fetchPuzzle(name) {
   const response = await fetch("getPuzzle", {
     method: "POST",
-    body: JSON.stringify({ id: id }),
+    body: JSON.stringify({ name: name }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
@@ -30,10 +30,10 @@ async function fetchAllPuzzles() {
   }
 }
 
-async function submitPuzzle(id, answer) {
+async function submitPuzzle(name, answer) {
   const response = await fetch("submitPuzzle", {
     method: "POST",
-    body: JSON.stringify({ id: id, answer: answer }),
+    body: JSON.stringify({ name: name, answer: answer }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
@@ -251,6 +251,8 @@ async function generatePuzzleModal(id) {
   puzzleModalBody.innerHTML = `<img style="width: 5rem; height: 5rem" src="img/sharp_reloading.svg" />`;
 
   const puzzle = await fetchPuzzle(id);
+
+  console.log(puzzle);
 
   puzzleModalHeader.innerHTML = puzzle.name;
   puzzleModalBody.innerHTML = puzzle.description;

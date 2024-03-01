@@ -1,10 +1,12 @@
-import { app } from "./server";
 import * as path from "path";
-import express, { Request, Response } from "express";
-import * as mongoApi from "./mongoApi";
+import express, { Request, Response, Router } from "express";
+
+import { app } from "./server";
+import { fetchUser } from "./mongoApi";
 
 const crypto = require("crypto");
 
+// * Types
 export class Token {
   static readonly defaultDuration: number = 120000;
 
@@ -31,7 +33,6 @@ export class Token {
 
   destroy(withCallback: boolean) {
     if (withCallback) {
-      console.log(this);
       this._callback();
       clearTimeout(this._timeout);
     } else {
@@ -78,8 +79,11 @@ export class TokenGroup {
   }
 }
 
+// * Module Parameters
 export const loginTokenGroup = new TokenGroup(120000);
-export async function validateLoginToken(req: express.Request, res: express.Response, next: Function) {
+
+// * Methods
+export async function validateLoginToken(req: Request, res: Response, next: Function) {
   const loginTokenId = req.cookies["LoginToken"];
   if (!loginTokenId) {
     res.redirect("login");
@@ -99,7 +103,10 @@ export function fetchLoginToken(id: string): Token | null {
   return loginTokenGroup.findTokenOfId(id);
 }
 
-app.post("/login", async (req: Request, res: Response) => {
+// * Routes
+export const router: Router = express.Router();
+
+router.post("/login", async (req: Request, res: Response) => {
   console.log("attempting login");
   const username: string | undefined = req.body.username;
   const password: string | undefined = req.body.password;
@@ -109,7 +116,7 @@ app.post("/login", async (req: Request, res: Response) => {
     return;
   }
 
-  let user = await mongoApi.fetchUser(username);
+  let user = await fetchUser(username);
   if (!user) {
     res.status(400).send("Incorrect Credentials!");
     return;
@@ -123,7 +130,7 @@ app.post("/login", async (req: Request, res: Response) => {
   res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).redirect("home");
 });
 
-app.get("/login", (req: Request, res: Response) => {
+router.get("/login", (req: Request, res: Response) => {
   const loginTokenId = req.cookies["LoginToken"];
 
   if (loginTokenId && loginTokenGroup.findTokenOfId(loginTokenId)) {
@@ -134,8 +141,9 @@ app.get("/login", (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/login.html"));
 });
 
-app.get("/logout", (req: Request, res: Response) => {
+router.get("/logout", (req: Request, res: Response) => {
   const loginTokenId = req.cookies["LoginToken"];
+
   if (loginTokenId) {
     loginTokenGroup.removeToken(loginTokenId);
     res.clearCookie("LoginToken");

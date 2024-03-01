@@ -9,18 +9,21 @@ if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection nam
 if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
 if (!process.env.ADMINISTRATOR_COLLECTION) throw Error("Missing administrator collection name");
 
+import { UpdateResult, MongoClient, ServerApiVersion } from "mongodb";
+
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
 
+// * Module Parameters
 export const mainDbName = process.env.MAIN_DATABASE_NAME;
 export const usersColName = process.env.USERS_COLLECTION;
 export const puzzlesColName = process.env.PUZZLES_COLLECTION;
 export const battleRoundPuzzlesColName = process.env.BATTLE_ROUND_COLLECTION;
 export const adminColName = process.env.ADMINISTRATOR_COLLECTION;
-import { MongoClient, ServerApiVersion } from "mongodb";
 
 const uri = `mongodb+srv://${mongo_username}:${mongo_password}@cluster0.jn6o6ac.mongodb.net/?retryWrites=true&w=majority`;
 
+// * Module Initialization
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 export const client = new MongoClient(uri, {
   serverApi: {
@@ -38,6 +41,8 @@ process.on("SIGINT", () => {
   });
 });
 
+// * Methods
+
 export async function fetchUser(username: string): Promise<User | null> {
   try {
     const result = await client.db(mainDbName).collection(usersColName).findOne({ username: username });
@@ -48,6 +53,7 @@ export async function fetchUser(username: string): Promise<User | null> {
   }
 }
 
+// fetches all users, includes ALL data present in the db
 export async function fetchAllUsers(): Promise<User[] | null> {
   try {
     const cursor = await client.db(mainDbName).collection(usersColName).find();
@@ -58,6 +64,7 @@ export async function fetchAllUsers(): Promise<User[] | null> {
   }
 }
 
+// fetches all users with only data pertaining to scoreboard
 export async function fetchScoreboard(): Promise<Object[] | null> {
   const allUsers: User[] | null = await fetchAllUsers();
   if (!allUsers) return null;
@@ -76,4 +83,32 @@ export async function fetchScoreboard(): Promise<Object[] | null> {
   return scoreboard;
 }
 
-export async function addPointsToUser(username: string);
+// returns true if successfully added, false if not
+export async function addPointsToUser(username: string, amount: number, category: "puzzle_points" | "scenario_points"): Promise<boolean> {
+  try {
+    const cursor: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username, [category]: { $exists: true } }, { $inc: { [category]: amount } });
+    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+// returns true if successfully set, false if not
+export async function setPointsOfUser(username: string, amount: number, category: "puzzle_points" | "scenario_points"): Promise<boolean> {
+  try {
+    const cursor: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username, [category]: { $exists: true } }, { $set: { [category]: amount } });
+    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}

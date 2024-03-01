@@ -31,12 +31,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateLoginToken = exports.loginTokenGroup = exports.TokenGroup = exports.Token = void 0;
-const server_1 = require("./server");
+exports.router = exports.fetchLoginToken = exports.validateLoginToken = exports.loginTokenGroup = exports.TokenGroup = exports.Token = void 0;
 const path = __importStar(require("path"));
-const mongoApi = __importStar(require("./mongoApi"));
+const express_1 = __importDefault(require("express"));
+const mongoApi_1 = require("./mongoApi");
 const crypto = require("crypto");
+// * Types
 class Token {
     constructor(callback = () => { }, data = {}, duration = Token.defaultDuration) {
         this.id = crypto.randomBytes(20).toString("hex");
@@ -87,7 +91,9 @@ class TokenGroup {
 }
 exports.TokenGroup = TokenGroup;
 TokenGroup.defaultDuration = 120000;
+// * Module Parameters
 exports.loginTokenGroup = new TokenGroup(120000);
+// * Methods
 function validateLoginToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const loginTokenId = req.cookies["LoginToken"];
@@ -105,7 +111,13 @@ function validateLoginToken(req, res, next) {
     });
 }
 exports.validateLoginToken = validateLoginToken;
-server_1.app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+function fetchLoginToken(id) {
+    return exports.loginTokenGroup.findTokenOfId(id);
+}
+exports.fetchLoginToken = fetchLoginToken;
+// * Routes
+exports.router = express_1.default.Router();
+exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("attempting login");
     const username = req.body.username;
     const password = req.body.password;
@@ -113,7 +125,7 @@ server_1.app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(400).send("Missing Username or Password!");
         return;
     }
-    let user = yield mongoApi.fetchUser(username);
+    let user = yield (0, mongoApi_1.fetchUser)(username);
     if (!user) {
         res.status(400).send("Incorrect Credentials!");
         return;
@@ -124,7 +136,7 @@ server_1.app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, func
     const id = exports.loginTokenGroup.createNewToken(user);
     res.cookie("LoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).redirect("home");
 }));
-server_1.app.get("/login", (req, res) => {
+exports.router.get("/login", (req, res) => {
     const loginTokenId = req.cookies["LoginToken"];
     if (loginTokenId && exports.loginTokenGroup.findTokenOfId(loginTokenId)) {
         res.redirect("home");
@@ -132,7 +144,7 @@ server_1.app.get("/login", (req, res) => {
     }
     res.sendFile(path.join(__dirname, "../public/login.html"));
 });
-server_1.app.get("/logout", (req, res) => {
+exports.router.get("/logout", (req, res) => {
     const loginTokenId = req.cookies["LoginToken"];
     if (loginTokenId) {
         exports.loginTokenGroup.removeToken(loginTokenId);

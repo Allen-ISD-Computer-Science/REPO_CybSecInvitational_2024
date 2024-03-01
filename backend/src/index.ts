@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
-
 import * as path from "path";
-import * as serverApi from "./server";
 
-import * as TokenApi from "./loginApi";
 import { app, server } from "./server";
-
-import * as mongoApi from "./mongoApi";
-import { ObjectId } from "mongodb";
+import * as loginApi from "./loginApi";
+import * as userApi from "./usersApi";
+import * as puzzleApi from "./puzzleApi";
+import * as socketApi from "./socketApi";
 
 const config = require(path.join(__dirname, "../config.json"));
 //#region Types
@@ -64,7 +62,8 @@ function startPuzzleRound() {
   }
 }
 
-app.get("/home", TokenApi.validateLoginToken, (req: Request, res: Response) => {
+// Initialize Routes
+app.get("/home", loginApi.validateLoginToken, (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/home.html"));
 });
 
@@ -72,14 +71,23 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect("login");
 });
 
-import * as puzzleApi from "./puzzleApi";
+app.use("/", loginApi.router);
 app.use("/", puzzleApi.router);
+app.use("/", userApi.router);
 
-import * as socketApi from "./socketApi";
-socketApi.init(); //initialize socket server
+// Initialize Socket Server
+socketApi.init();
+
+// Initialize Puzzles
+puzzleApi.replicatePuzzles();
 
 // Host http server at port
 server.listen(Number(config.host_port), function () {
   console.log(server.address());
   console.log("server at http://localhost:%s/", server.address().port);
 });
+
+// Update Loop
+setInterval(() => {
+  console.log("updating");
+}, 5000);

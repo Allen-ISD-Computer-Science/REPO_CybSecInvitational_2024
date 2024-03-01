@@ -35,20 +35,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.fetchPuzzleOnlyDescription = exports.fetchPuzzle = exports.puzzles = void 0;
+exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
 const express_1 = __importDefault(require("express"));
-const loginApi = __importStar(require("./loginApi"));
-const mongoApi = __importStar(require("./mongoApi"));
 const path = __importStar(require("path"));
+const mongoApi_1 = require("./mongoApi");
+const loginApi_1 = require("./loginApi");
+class PuzzleSubmitResult {
+    constructor(correct) {
+        this.correct = correct;
+    }
+}
+exports.PuzzleSubmitResult = PuzzleSubmitResult;
+// * Module Parameters
 exports.puzzles = {};
+// * Methods
+// Replicates all current puzzles in db to puzzles variable
 function replicatePuzzles() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const result = (yield mongoApi.client
-                .db(mongoApi.mainDbName)
-                .collection(mongoApi.puzzlesColName)
-                .find({}, { projection: { _id: 0 } })
-                .toArray());
+            const result = (yield mongoApi_1.client.db(mongoApi_1.mainDbName).collection(mongoApi_1.puzzlesColName).find({}).toArray());
             if (!result) {
                 console.warn("Failed to replicate puzzles from backend!");
             }
@@ -63,31 +68,90 @@ function replicatePuzzles() {
         }
     });
 }
-replicatePuzzles().then(() => {
-    console.log(fetchPuzzleOnlyDescription("templatePuzzleName"));
-});
+exports.replicatePuzzles = replicatePuzzles;
+// fetches puzzle from puzzles variable
 function fetchPuzzle(name) {
-    return exports.puzzles[name];
+    // return copy of puzzle
+    return Object.assign({}, exports.puzzles[name]);
 }
 exports.fetchPuzzle = fetchPuzzle;
-function fetchPuzzleOnlyDescription(name) {
+// fetches all puzzles excluding description and answer
+function fetchAllPuzzleData() {
+    let puzzleData = [];
+    for (let puzzleName in exports.puzzles) {
+        let value = fetchPuzzle(puzzleName);
+        delete value._id;
+        delete value.answer;
+        delete value.description;
+        puzzleData.push(value);
+    }
+    return puzzleData;
+}
+exports.fetchAllPuzzleData = fetchAllPuzzleData;
+// fetches only the description data of puzzle
+function fetchPuzzleDescription(name) {
     let puzzle = fetchPuzzle(name);
+    console.log(puzzle);
     if (!puzzle)
         return null;
     delete puzzle._id;
     delete puzzle.answer;
     return puzzle;
 }
-exports.fetchPuzzleOnlyDescription = fetchPuzzleOnlyDescription;
-// Routes
+exports.fetchPuzzleDescription = fetchPuzzleDescription;
+// * Routes
 exports.router = express_1.default.Router();
-exports.router.get("/puzzles", loginApi.validateLoginToken, (req, res) => {
+// serves puzzle page
+exports.router.get("/puzzles", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.sendFile(path.join(__dirname, "../public/puzzles.html"));
-});
-exports.router.get("/puzzle", loginApi.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const user = yield mongoApi.fetchUser((_b = (_a = res.locals.token) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.username);
-    console.log(user);
-    res.send("POST request to the homepage");
 }));
-exports.router.post("/getPuzzle", loginApi.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+// used to fetch puzzle description from client side
+exports.router.post("/getPuzzle", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const name = req.body.name;
+    if (!name) {
+        res.status(400).send("Missing Puzzle Name");
+        return;
+    }
+    const puzzle = fetchPuzzleDescription(name);
+    if (!puzzle) {
+        res.status(404).send("Puzzle Not Found");
+        return;
+    }
+    res.json(puzzle);
+}));
+exports.router.post("/getAllPuzzles", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json(fetchAllPuzzleData());
+}));
+// used to submit puzzle and awards points if correct
+exports.router.post("/submitPuzzle", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const name = req.body.name;
+    const answer = req.body.answer;
+    // verify correct input parameters
+    if (!name || !answer) {
+        res.status(400).send("Missing Parameters");
+        return;
+    }
+    // fetch user from token
+    const user = (_a = (0, loginApi_1.fetchLoginToken)(req.cookies["LoginToken"])) === null || _a === void 0 ? void 0 : _a.data;
+    // ? May not be needed due to typescript consistency
+    // check if token contains user
+    // if (!user) {
+    //   res.status(404).send("Missing User From Token");
+    //   return;
+    // }
+    // verify puzzle exists
+    const puzzle = fetchPuzzle(name);
+    if (!puzzle) {
+        res.status(404).send("Puzzle Not Found");
+        return;
+    }
+    // process submission then send result back
+    if (puzzle.answer === answer) {
+        (0, mongoApi_1.addPointsToUser)(user.username, puzzle.point_value, "puzzle_points"); // reward! yay!
+        res.json(new PuzzleSubmitResult(true));
+    }
+    else {
+        res.json(new PuzzleSubmitResult(false));
+    }
+}));

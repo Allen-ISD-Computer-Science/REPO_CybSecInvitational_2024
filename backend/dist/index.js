@@ -24,8 +24,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = __importStar(require("path"));
-const TokenApi = __importStar(require("./loginApi"));
 const server_1 = require("./server");
+const loginApi = __importStar(require("./loginApi"));
+const userApi = __importStar(require("./usersApi"));
+const puzzleApi = __importStar(require("./puzzleApi"));
+const socketApi = __importStar(require("./socketApi"));
 const config = require(path.join(__dirname, "../config.json"));
 //#region Types
 class Round {
@@ -69,18 +72,26 @@ function startPuzzleRound() {
         console.log(err);
     }
 }
-server_1.app.get("/home", TokenApi.validateLoginToken, (req, res) => {
+// Initialize Routes
+server_1.app.get("/home", loginApi.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/home.html"));
 });
 server_1.app.get("/", (req, res) => {
     res.redirect("login");
 });
-const puzzleApi = __importStar(require("./puzzleApi"));
+server_1.app.use("/", loginApi.router);
 server_1.app.use("/", puzzleApi.router);
-const socketApi = __importStar(require("./socketApi"));
-socketApi.init(); //initialize socket server
+server_1.app.use("/", userApi.router);
+// Initialize Socket Server
+socketApi.init();
+// Initialize Puzzles
+puzzleApi.replicatePuzzles();
 // Host http server at port
 server_1.server.listen(Number(config.host_port), function () {
     console.log(server_1.server.address());
     console.log("server at http://localhost:%s/", server_1.server.address().port);
 });
+// Update Loop
+setInterval(() => {
+    console.log("updating");
+}, 5000);
