@@ -32,9 +32,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setPointsOfUser = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.setPointsOfUser = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
+const config = require("../config.json");
 if (!process.env.MONGODB_USERNAME)
     throw Error("Process missing MongoDB Username");
 if (!process.env.MONGODB_PASSWORD)
@@ -76,6 +77,32 @@ process.on("SIGINT", () => {
     });
 });
 // * Methods
+function fetchBattleRoundPuzzles(roundId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const roundConfig = config.battle_rounds[roundId];
+        if (!roundConfig || !roundConfig.puzzles || !roundConfig.min_bid) {
+            return null;
+        }
+        console.log(roundConfig);
+        try {
+            const result = (yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.battleRoundPuzzlesColName)
+                .find({ name: { $in: roundConfig.puzzles } })
+                .toArray());
+            let retVal = {};
+            result.forEach((puzzle) => {
+                retVal[puzzle.name] = puzzle;
+            });
+            return retVal;
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    });
+}
+exports.fetchBattleRoundPuzzles = fetchBattleRoundPuzzles;
 function fetchUser(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

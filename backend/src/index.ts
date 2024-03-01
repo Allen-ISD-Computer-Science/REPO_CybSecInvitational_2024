@@ -6,6 +6,7 @@ import * as loginApi from "./loginApi";
 import * as userApi from "./usersApi";
 import * as puzzleApi from "./puzzleApi";
 import * as socketApi from "./socketApi";
+import * as mongoApi from "./mongoApi";
 
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
@@ -39,5 +40,5 @@ interface UpdatePacket {}
 setInterval(() => {
   let updatePacket: UpdatePacket = {};
 
-  console.log("updating");
+  // console.log("updating");
 }, 5000);

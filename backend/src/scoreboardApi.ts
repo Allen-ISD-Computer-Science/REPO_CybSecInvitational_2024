@@ -14,16 +14,16 @@ router.get("/scoreboard", validateLoginToken, (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/puzzles.html"));
 });
 
-// router.post("/getScoreboard", validateLoginToken, async (req: Request, res: Response) => {
-//   // fetch user from token
-//   const user = fetchLoginToken(req.cookies["LoginToken"])?.data as unknown as User;
-//   if (!user) {
-//     res.status(404).send("User Not Found");
-//   }
-//   const userData = (await fetchUser(user.username)) as unknown as { [_: string]: any };
+router.post("/getScoreboard", validateLoginToken, async (req: Request, res: Response) => {
+  // fetch user from token
+  const user = fetchLoginToken(req.cookies["LoginToken"])?.data as unknown as User;
+  if (!user) {
+    res.status(404).send("User Not Found");
+  }
+  const userData = (await fetchUser(user.username)) as unknown as { [_: string]: any };
 
-//   delete userData._id;
-//   delete userData.password;
+  delete userData._id;
+  delete userData.password;
 
-//   res.json(userData);
-// });
+  res.json(userData);
+});

@@ -1,8 +1,9 @@
 import * as path from "path";
 import express, { Request, Response, Router } from "express";
 
-import { addPointsToUser, client, mainDbName, puzzlesColName } from "./mongoApi";
+import { addPointsToUser, battleRoundPuzzlesColName, client, mainDbName, puzzlesColName } from "./mongoApi";
 import { fetchLoginToken, validateLoginToken } from "./loginApi";
+require("../config.json");
 
 // * Module Type Declarations
 interface PuzzleDescription {
@@ -30,6 +31,7 @@ export class PuzzleSubmitResult {
 
 // * Module Parameters
 export var puzzles: { [name: string]: Puzzle } = {};
+export var battleRoundPuzzles: { [name: string]: Puzzle } = {};
 
 // * Methods
 // Replicates all current puzzles in db to puzzles variable
@@ -147,3 +149,5 @@ router.post("/submitPuzzle", validateLoginToken, async (req: Request, res: Respo
     res.json(new PuzzleSubmitResult(false));
   }
 });
+
+//

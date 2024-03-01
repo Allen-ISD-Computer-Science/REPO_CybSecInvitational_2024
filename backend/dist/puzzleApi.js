@@ -35,11 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
-const express_1 = __importDefault(require("express"));
+exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
 const path = __importStar(require("path"));
+const express_1 = __importDefault(require("express"));
 const mongoApi_1 = require("./mongoApi");
 const loginApi_1 = require("./loginApi");
+require("../config.json");
 class PuzzleSubmitResult {
     constructor(correct) {
         this.correct = correct;
@@ -48,6 +49,7 @@ class PuzzleSubmitResult {
 exports.PuzzleSubmitResult = PuzzleSubmitResult;
 // * Module Parameters
 exports.puzzles = {};
+exports.battleRoundPuzzles = {};
 // * Methods
 // Replicates all current puzzles in db to puzzles variable
 function replicatePuzzles() {
@@ -91,7 +93,6 @@ exports.fetchAllPuzzleData = fetchAllPuzzleData;
 // fetches only the description data of puzzle
 function fetchPuzzleDescription(name) {
     let puzzle = fetchPuzzle(name);
-    console.log(puzzle);
     if (!puzzle)
         return null;
     delete puzzle._id;
@@ -155,3 +156,4 @@ exports.router.post("/submitPuzzle", loginApi_1.validateLoginToken, (req, res) =
         res.json(new PuzzleSubmitResult(false));
     }
 }));
+//

@@ -54,7 +54,6 @@ class Token {
     }
     destroy(withCallback) {
         if (withCallback) {
-            console.log(this);
             this._callback();
             clearTimeout(this._timeout);
         }

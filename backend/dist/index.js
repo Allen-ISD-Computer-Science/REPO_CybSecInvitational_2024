@@ -30,48 +30,6 @@ const userApi = __importStar(require("./usersApi"));
 const puzzleApi = __importStar(require("./puzzleApi"));
 const socketApi = __importStar(require("./socketApi"));
 const config = require(path.join(__dirname, "../config.json"));
-//#region Types
-class Round {
-    static endCurrentRound() {
-        var _a;
-        // * Callback is called before currentRound is set to null
-        console.log("Attempting Round Closure");
-        if (!Round.currentRound)
-            throw Error("No Round In Session");
-        clearTimeout(Round.currentRound._endTimeout); // Force stop timeout
-        (_a = Round.currentRound) === null || _a === void 0 ? void 0 : _a.callback();
-        Round.currentRound = null;
-    }
-    constructor(duration, type, id, callback = () => { }) {
-        this.startTime = Date.now();
-        this.endTime = this.startTime + duration;
-        this.callback = callback;
-        this.type = type;
-        this.id = id;
-        this._endTimeout = setTimeout(Round.endCurrentRound, duration);
-    }
-}
-Round.currentRound = null;
-class PuzzleRound extends Round {
-    static _onEnd() {
-        console.log("Puzzle Round Ended");
-    }
-    constructor(duration, id) {
-        super(duration, "PuzzleRound", id, PuzzleRound._onEnd);
-        this.type = "PuzzleRound";
-        Round.currentRound = this;
-    }
-}
-//#endregion
-function startPuzzleRound() {
-    try {
-        let round = new PuzzleRound(10000, "PuzzleRoundId");
-        console.log(Round.currentRound);
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
 // Initialize Routes
 server_1.app.get("/home", loginApi.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/home.html"));
@@ -93,5 +51,6 @@ server_1.server.listen(Number(config.host_port), function () {
 });
 // Update Loop
 setInterval(() => {
-    console.log("updating");
+    let updatePacket = {};
+    // console.log("updating");
 }, 5000);

@@ -1,5 +1,6 @@
 import * as env from "dotenv";
 env.config();
+const config = require("../config.json");
 
 if (!process.env.MONGODB_USERNAME) throw Error("Process missing MongoDB Username");
 if (!process.env.MONGODB_PASSWORD) throw Error("Process missing MongoDB Password");
@@ -9,7 +10,7 @@ if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection nam
 if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
 if (!process.env.ADMINISTRATOR_COLLECTION) throw Error("Missing administrator collection name");
 
-import { UpdateResult, MongoClient, ServerApiVersion } from "mongodb";
+import { UpdateResult, MongoClient, ServerApiVersion, UnorderedBulkOperation } from "mongodb";
 
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
@@ -41,7 +42,36 @@ process.on("SIGINT", () => {
   });
 });
 
+interface BattleRoundConfig {
+  puzzles: string[];
+  min_bid: number;
+}
+
 // * Methods
+export async function fetchBattleRoundPuzzles(roundId: string): Promise<{ [name: string]: Puzzle } | null> {
+  const roundConfig: BattleRoundConfig | null = config.battle_rounds[roundId];
+  if (!roundConfig || !roundConfig.puzzles || !roundConfig.min_bid) {
+    return null;
+  }
+
+  console.log(roundConfig);
+  try {
+    const result = (await client
+      .db(mainDbName)
+      .collection(battleRoundPuzzlesColName)
+      .find({ name: { $in: roundConfig.puzzles } })
+      .toArray()) as unknown as Puzzle[];
+
+    let retVal: { [name: string]: Puzzle } = {};
+    result.forEach((puzzle) => {
+      retVal[puzzle.name] = puzzle;
+    });
+    return retVal;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
 
 export async function fetchUser(username: string): Promise<User | null> {
   try {
@@ -65,11 +95,18 @@ export async function fetchAllUsers(): Promise<User[] | null> {
 }
 
 // fetches all users with only data pertaining to scoreboard
-export async function fetchScoreboard(): Promise<Object[] | null> {
+export interface ScoreboardUser {
+  division: number;
+  username: string;
+  puzzle_points: number;
+  scenario_points: number;
+}
+
+export async function fetchScoreboard(): Promise<ScoreboardUser[] | null> {
   const allUsers: User[] | null = await fetchAllUsers();
   if (!allUsers) return null;
 
-  const scoreboard: Object[] = [];
+  const scoreboard: ScoreboardUser[] = [];
 
   allUsers.forEach((user) => {
     scoreboard.push({

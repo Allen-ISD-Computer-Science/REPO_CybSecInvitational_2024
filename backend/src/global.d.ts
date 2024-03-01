@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 declare global {
   interface User {
     _id: ObjectId;
@@ -19,6 +21,15 @@ declare global {
     category: string; //
     answer: string;
   }
+
+  interface BattleRoundPuzzle {
+    _id: ObjectId;
+    name: string;
+    description: string;
+    answer: string;
+  }
+
+  export const lerp = (a: number, b: number, t: number) => a + t * (b - a);
 }
 
 export {};
