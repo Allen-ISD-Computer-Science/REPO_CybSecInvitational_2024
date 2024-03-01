@@ -42,7 +42,7 @@
 |27        |New phone who dis                      |Done               |           |       |
 |28        |Which Photo                            |Done               |           |       |
 
-
+400 commits lol
 ## BashBasics
 
 
@@ -97,7 +97,7 @@
 |11        |Breakdown!                             |                   |           |       |
 |12        |Never Back Down Never What?            |                   |           |       |
 |13        |Scrambled Binary                       |                   |           |       |
-|14        |Out In The Open                        |Done               |           |       |
+|14        |Out In The Open                        |Done               |Done       |       |
 |15        |Minor Hacking                          |                   |           |       |
 |16        |Packets                                |                   |           |       |
 |17        |Tampered Packets                       |                   |           |       |
