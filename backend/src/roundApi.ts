@@ -1,4 +1,5 @@
-import { ScoreboardUser, addPointsToUser, fetchScoreboard, fetchUser } from "mongoApi";
+import { ScoreboardUser, addPointsToUser, fetchBattleRoundPuzzles, fetchScoreboard, fetchUser } from "mongoApi";
+const config = require("../config.json");
 
 export class Round {
   startTime: number;
@@ -158,7 +159,13 @@ export function startPuzzleRound(duration: number, id: string): boolean {
   return startRound(round);
 }
 
-// export function startBattleRound(duration: number, id: string): boolean {
-//   let round = new BattleRound(duration, id);
-//   return startRound(round);
-// }
+export async function startBattleRound(duration: number, id: string): Promise<boolean> {
+  const roundConfig = config.battle_rounds[id];
+  if (!roundConfig || !roundConfig.min_bid) return false;
+
+  const roundPuzzles = await fetchBattleRoundPuzzles(id);
+  if (!roundPuzzles) return false;
+
+  let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles);
+  return startRound(round);
+}

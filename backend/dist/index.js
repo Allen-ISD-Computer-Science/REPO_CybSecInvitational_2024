@@ -29,6 +29,7 @@ const loginApi = __importStar(require("./loginApi"));
 const userApi = __importStar(require("./usersApi"));
 const puzzleApi = __importStar(require("./puzzleApi"));
 const socketApi = __importStar(require("./socketApi"));
+const mongoApi = __importStar(require("./mongoApi"));
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
 server_1.app.get("/home", loginApi.validateLoginToken, (req, res) => {
@@ -54,3 +55,7 @@ setInterval(() => {
     let updatePacket = {};
     // console.log("updating");
 }, 5000);
+mongoApi.client.db("admin").command({
+    renameCollection: mongoApi.puzzlesColName,
+    to: "Production",
+});

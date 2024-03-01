@@ -130,7 +130,6 @@ function fetchAllUsers() {
     });
 }
 exports.fetchAllUsers = fetchAllUsers;
-// fetches all users with only data pertaining to scoreboard
 function fetchScoreboard() {
     return __awaiter(this, void 0, void 0, function* () {
         const allUsers = yield fetchAllUsers();

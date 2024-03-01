@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = void 0;
+exports.startBattleRound = exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.BattleRound = exports.PuzzleRound = exports.Round = void 0;
 const mongoApi_1 = require("mongoApi");
+const config = require("../config.json");
 class Round {
     constructor(duration, type, id, callback = () => { }) {
         this.startTime = Date.now();
@@ -21,6 +22,7 @@ class Round {
         this._endTimeout = setTimeout(endCurrentRound, duration);
     }
 }
+exports.Round = Round;
 class PuzzleRound extends Round {
     static _onEnd() {
         console.log("Puzzle Round Ended");
@@ -30,14 +32,36 @@ class PuzzleRound extends Round {
         this.type = "PuzzleRound"; // ensure the type of round
     }
 }
+exports.PuzzleRound = PuzzleRound;
 class BattleRound extends Round {
     static _onEnd() {
         return __awaiter(this, void 0, void 0, function* () {
             if (!exports.currentRound || (exports.currentRound === null || exports.currentRound === void 0 ? void 0 : exports.currentRound.type) != "BattleRound")
                 return;
             let scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
+            if (!scoreboard) {
+                console.log("Failed to end battle round, scoreboard missing");
+                return;
+            }
             let round = exports.currentRound;
             let promises = [];
+            scoreboard.forEach((user) => {
+                let contestant = round.contestants[user.username];
+                if (contestant) {
+                    // ! Currently only takes number of puzzles completed into account
+                    let puzzleCount = Object.values(round.puzzles).length;
+                    let completedCount = Object.values(contestant.completedBattleRoundPuzzles).length;
+                    let ratio = completedCount / puzzleCount;
+                    let rewardMultiplier = lerp(0.9, 2, ratio);
+                    let awardedPoints = contestant.raw_bid * rewardMultiplier - contestant.raw_bid;
+                    promises.push((0, mongoApi_1.addPointsToUser)(user.username, awardedPoints, "puzzle_points"));
+                }
+                else {
+                    // ! Currently removes min bid viable with user's current puzzle points
+                    promises.push((0, mongoApi_1.addPointsToUser)(user.username, user.puzzle_points * round.min_bid * -1, "puzzle_points"));
+                }
+            });
+            yield Promise.all(promises);
             console.log("Battle Round Ended");
         });
     }
@@ -52,20 +76,27 @@ class BattleRound extends Round {
             return { acknowledged: true, notFound: false, alreadyCompleted: true, correct: false }; // Already completed puzzle
         if (puzzle.answer !== answer)
             return { acknowledged: true, notFound: false, alreadyCompleted: false, correct: false }; // Wrong answer
+        contestant.completedBattleRoundPuzzles[name] = { timeCompleted: Date.now() };
         return { acknowledged: true, notFound: false, alreadyCompleted: false, correct: true };
     }
     joinRound(username, bid) {
-        let boundedBid = Math.max(0, Math.min(bid, 1));
-        if (boundedBid < this.min_bid) {
-            return false;
-        }
-        let contestant = {
-            username: username,
-            completedBattleRoundPuzzles: {},
-            bid: boundedBid,
-        };
-        this.contestants[username] = contestant;
-        return true;
+        return __awaiter(this, void 0, void 0, function* () {
+            let user = yield (0, mongoApi_1.fetchUser)(username);
+            if (!user)
+                return { acknowledged: false, success: false };
+            let boundedBid = Math.max(0, Math.min(bid, 1));
+            if (boundedBid < this.min_bid) {
+                return { acknowledged: true, success: false };
+            }
+            let contestant = {
+                username: username,
+                completedBattleRoundPuzzles: {},
+                bid: boundedBid,
+                raw_bid: Math.min(user.puzzle_points * boundedBid),
+            };
+            this.contestants[username] = contestant;
+            return { acknowledged: true, success: true };
+        });
     }
     constructor(duration, id, minBid, puzzles) {
         super(duration, "BattleRound", id, BattleRound._onEnd);
@@ -75,6 +106,7 @@ class BattleRound extends Round {
         this.contestants = {};
     }
 }
+exports.BattleRound = BattleRound;
 // * Module Parameters
 exports.currentRound = null;
 //
@@ -105,7 +137,16 @@ function startPuzzleRound(duration, id) {
     return startRound(round);
 }
 exports.startPuzzleRound = startPuzzleRound;
-// export function startBattleRound(duration: number, id: string): boolean {
-//   let round = new BattleRound(duration, id);
-//   return startRound(round);
-// }
+function startBattleRound(duration, id) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const roundConfig = config.battle_rounds[id];
+        if (!roundConfig || !roundConfig.min_bid)
+            return false;
+        const roundPuzzles = yield (0, mongoApi_1.fetchBattleRoundPuzzles)(id);
+        if (!roundPuzzles)
+            return false;
+        let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles);
+        return startRound(round);
+    });
+}
+exports.startBattleRound = startBattleRound;
