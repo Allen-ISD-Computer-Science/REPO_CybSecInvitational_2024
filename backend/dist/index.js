@@ -22,37 +22,57 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = __importStar(require("path"));
 const server_1 = require("./server");
-const loginApi = __importStar(require("./loginApi"));
-const userApi = __importStar(require("./usersApi"));
-const puzzleApi = __importStar(require("./puzzleApi"));
-const socketApi = __importStar(require("./socketApi"));
+const socketApi_1 = require("./socketApi");
 const roundApi_1 = require("./roundApi");
+const loginApi_1 = require("./loginApi");
+const usersApi_1 = require("./usersApi");
+const puzzleApi_1 = require("./puzzleApi");
+const mongoApi_1 = require("./mongoApi");
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
-server_1.app.get("/home", loginApi.validateLoginToken, (req, res) => {
+server_1.app.get("/home", loginApi_1.validateLoginToken, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/home.html"));
 });
 server_1.app.get("/", (req, res) => {
     res.redirect("login");
 });
-server_1.app.use("/", loginApi.router);
-server_1.app.use("/", userApi.router);
-server_1.app.use("/", puzzleApi.router);
+server_1.app.use("/", loginApi_1.router);
+server_1.app.use("/", usersApi_1.router);
+server_1.app.use("/", puzzleApi_1.router);
 // Initialize Socket Server
-socketApi.init();
+(0, socketApi_1.init)();
 // Initialize Puzzles
-puzzleApi.replicatePuzzles();
+(0, puzzleApi_1.replicatePuzzles)();
 // Host http server at port
 server_1.server.listen(Number(config.host_port), function () {
     console.log(server_1.server.address());
     console.log("server at http://localhost:%s/", server_1.server.address().port);
 });
 // Update Loop
-setInterval(() => {
-    let updatePacket = {};
-    // console.log("updating");
-}, 5000);
+setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Updating");
+    const scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
+    if (!scoreboard) {
+        console.warn("Failed to fetch scoreboard");
+        return;
+    }
+    let updatePacket = {
+        scoreboard: scoreboard,
+        currentRound: roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.getSummary(),
+    };
+    console.log(updatePacket);
+    socketApi_1.io.emit("update_event", updatePacket);
+}), 5000);
 (0, roundApi_1.startPuzzleRound)(120000, "TestPuzzleRound");

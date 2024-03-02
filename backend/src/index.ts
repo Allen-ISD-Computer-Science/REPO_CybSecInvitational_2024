@@ -2,16 +2,16 @@ import { Request, Response } from "express";
 import * as path from "path";
 
 import { app, server } from "./server";
-import * as loginApi from "./loginApi";
-import * as userApi from "./usersApi";
-import * as puzzleApi from "./puzzleApi";
-import * as socketApi from "./socketApi";
-import * as mongoApi from "./mongoApi";
-import { startPuzzleRound } from "./roundApi";
+import { init as initSocketConnection, io } from "./socketApi";
+import { Round, currentRound, startPuzzleRound } from "./roundApi";
+import { router as loginRouter, validateLoginToken } from "./loginApi";
+import { router as userRouter } from "./usersApi";
+import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
+import { ScoreboardUser, fetchScoreboard } from "./mongoApi";
 
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
-app.get("/home", loginApi.validateLoginToken, (req: Request, res: Response) => {
+app.get("/home", validateLoginToken, (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/home.html"));
 });
 
@@ -19,15 +19,15 @@ app.get("/", (req: Request, res: Response) => {
   res.redirect("login");
 });
 
-app.use("/", loginApi.router);
-app.use("/", userApi.router);
-app.use("/", puzzleApi.router);
+app.use("/", loginRouter);
+app.use("/", userRouter);
+app.use("/", puzzleRouter);
 
 // Initialize Socket Server
-socketApi.init();
+initSocketConnection();
 
 // Initialize Puzzles
-puzzleApi.replicatePuzzles();
+replicatePuzzles();
 
 // Host http server at port
 server.listen(Number(config.host_port), function () {
@@ -35,13 +35,28 @@ server.listen(Number(config.host_port), function () {
   console.log("server at http://localhost:%s/", server.address().port);
 });
 
-interface UpdatePacket {}
+interface UpdatePacket {
+  scoreboard: ScoreboardUser[];
+  currentRound: { [property: string]: any } | undefined;
+}
 
 // Update Loop
-setInterval(() => {
-  let updatePacket: UpdatePacket = {};
+setInterval(async () => {
+  console.log("Updating");
+  const scoreboard: ScoreboardUser[] | null = await fetchScoreboard();
+  if (!scoreboard) {
+    console.warn("Failed to fetch scoreboard");
+    return;
+  }
 
-  // console.log("updating");
+  let updatePacket: UpdatePacket = {
+    scoreboard: scoreboard,
+    currentRound: currentRound?.getSummary(),
+  };
+
+  console.log(updatePacket);
+
+  io.emit("update_event", updatePacket);
 }, 5000);
 
 startPuzzleRound(120000, "TestPuzzleRound");

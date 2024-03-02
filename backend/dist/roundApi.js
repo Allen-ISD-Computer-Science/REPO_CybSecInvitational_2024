@@ -13,6 +13,14 @@ exports.startBattleRound = exports.startPuzzleRound = exports.startRound = expor
 const mongoApi_1 = require("./mongoApi");
 const config = require("../config.json");
 class Round {
+    getSummary() {
+        return {
+            startTime: this.startTime,
+            endTime: this.endTime,
+            type: this.type,
+            id: this.id,
+        };
+    }
     constructor(duration, type, id, callback = () => { }) {
         this.startTime = Date.now();
         this.endTime = this.startTime + duration;

@@ -117,6 +117,10 @@ export async function fetchScoreboard(): Promise<ScoreboardUser[] | null> {
     });
   });
 
+  scoreboard.sort((a: ScoreboardUser, b: ScoreboardUser): number => {
+    return a.puzzle_points + a.scenario_points - (b.puzzle_points + b.scenario_points);
+  });
+
   return scoreboard;
 }
 

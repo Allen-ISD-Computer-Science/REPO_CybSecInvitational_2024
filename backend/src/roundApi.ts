@@ -9,6 +9,15 @@ export class Round {
   id: string;
   _endTimeout: NodeJS.Timeout; // Used to force end a timeout
 
+  getSummary(): { [property: string]: any } {
+    return {
+      startTime: this.startTime,
+      endTime: this.endTime,
+      type: this.type,
+      id: this.id,
+    };
+  }
+
   constructor(duration: number, type: string, id: string, callback: Function = () => {}) {
     this.startTime = Date.now();
     this.endTime = this.startTime + duration;

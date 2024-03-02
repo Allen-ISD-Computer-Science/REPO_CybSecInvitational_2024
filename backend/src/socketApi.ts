@@ -1,8 +1,7 @@
 import { server, sessionMiddleWare } from "./server";
-const { Server } = require("socket.io");
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
-export const io = new Server(server);
+export const io: Server = new Server(server);
 io.engine.use(sessionMiddleWare);
 
 export function init() {

@@ -144,6 +144,9 @@ function fetchScoreboard() {
                 scenario_points: user.scenario_points,
             });
         });
+        scoreboard.sort((a, b) => {
+            return a.puzzle_points + a.scenario_points - (b.puzzle_points + b.scenario_points);
+        });
         return scoreboard;
     });
 }
