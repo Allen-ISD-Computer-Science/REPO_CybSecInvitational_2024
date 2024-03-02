@@ -1,4 +1,4 @@
-import { ScoreboardUser, addPointsToUser, fetchBattleRoundPuzzles, fetchScoreboard, fetchUser } from "mongoApi";
+import { ScoreboardUser, addPointsToUser, fetchBattleRoundPuzzles, fetchScoreboard, fetchUser } from "./mongoApi";
 const config = require("../config.json");
 
 export class Round {
@@ -146,6 +146,8 @@ export async function endCurrentRound() {
 }
 
 export function startRound(round: Round): boolean {
+  console.log("Attempting Round Start");
+
   if (currentRound) {
     return false;
   } else {

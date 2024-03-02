@@ -10,7 +10,7 @@ if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection nam
 if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
 if (!process.env.ADMINISTRATOR_COLLECTION) throw Error("Missing administrator collection name");
 
-import { UpdateResult, MongoClient, ServerApiVersion, UnorderedBulkOperation } from "mongodb";
+import { UpdateResult, MongoClient, ServerApiVersion, UnorderedBulkOperation, Collection } from "mongodb";
 
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
@@ -123,11 +123,26 @@ export async function fetchScoreboard(): Promise<ScoreboardUser[] | null> {
 // returns true if successfully added, false if not
 export async function addPointsToUser(username: string, amount: number, category: "puzzle_points" | "scenario_points"): Promise<boolean> {
   try {
-    const cursor: UpdateResult = await client
+    const result: UpdateResult = await client
       .db(mainDbName)
       .collection(usersColName)
       .updateOne({ username: username, [category]: { $exists: true } }, { $inc: { [category]: amount } });
-    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    if (result.matchedCount <= 0 || result.modifiedCount <= 0) return false;
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
+
+//
+export async function onPuzzleCorrect(username: string, amount: number, puzzleName: string): Promise<boolean> {
+  try {
+    const result: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${puzzleName}`]: true } });
+    if (result.matchedCount <= 0 || result.modifiedCount <= 0) return false;
     return true;
   } catch (err) {
     console.log(err);

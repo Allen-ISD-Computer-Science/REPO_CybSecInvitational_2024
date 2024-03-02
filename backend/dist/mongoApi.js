@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setPointsOfUser = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 const config = require("../config.json");
@@ -152,11 +152,11 @@ exports.fetchScoreboard = fetchScoreboard;
 function addPointsToUser(username, amount, category) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cursor = yield exports.client
+            const result = yield exports.client
                 .db(exports.mainDbName)
                 .collection(exports.usersColName)
                 .updateOne({ username: username, [category]: { $exists: true } }, { $inc: { [category]: amount } });
-            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+            if (result.matchedCount <= 0 || result.modifiedCount <= 0)
                 return false;
             return true;
         }
@@ -167,6 +167,25 @@ function addPointsToUser(username, amount, category) {
     });
 }
 exports.addPointsToUser = addPointsToUser;
+//
+function onPuzzleCorrect(username, amount, puzzleName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username }, { $inc: { puzzle_points: amount }, $set: { [`completed_puzzles.${puzzleName}`]: true } });
+            if (result.matchedCount <= 0 || result.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (err) {
+            console.log(err);
+            return false;
+        }
+    });
+}
+exports.onPuzzleCorrect = onPuzzleCorrect;
 // returns true if successfully set, false if not
 function setPointsOfUser(username, amount, category) {
     return __awaiter(this, void 0, void 0, function* () {

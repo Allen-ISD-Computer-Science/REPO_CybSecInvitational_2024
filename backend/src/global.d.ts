@@ -6,7 +6,7 @@ declare global {
     division: 0 | 1 | 2; // Silver, Gold, Platinum
     username: string;
     password: string;
-    completed_puzzles: { String: boolean };
+    completed_puzzles: { [name: string]: boolean };
     puzzle_points: number;
     scenario_points: number;
   }

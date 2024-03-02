@@ -29,7 +29,7 @@ const loginApi = __importStar(require("./loginApi"));
 const userApi = __importStar(require("./usersApi"));
 const puzzleApi = __importStar(require("./puzzleApi"));
 const socketApi = __importStar(require("./socketApi"));
-const mongoApi = __importStar(require("./mongoApi"));
+const roundApi_1 = require("./roundApi");
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
 server_1.app.get("/home", loginApi.validateLoginToken, (req, res) => {
@@ -39,8 +39,8 @@ server_1.app.get("/", (req, res) => {
     res.redirect("login");
 });
 server_1.app.use("/", loginApi.router);
-server_1.app.use("/", puzzleApi.router);
 server_1.app.use("/", userApi.router);
+server_1.app.use("/", puzzleApi.router);
 // Initialize Socket Server
 socketApi.init();
 // Initialize Puzzles
@@ -55,7 +55,4 @@ setInterval(() => {
     let updatePacket = {};
     // console.log("updating");
 }, 5000);
-mongoApi.client.db("admin").command({
-    renameCollection: mongoApi.puzzlesColName,
-    to: "Production",
-});
+(0, roundApi_1.startPuzzleRound)(120000, "TestPuzzleRound");

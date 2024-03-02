@@ -7,6 +7,7 @@ import * as userApi from "./usersApi";
 import * as puzzleApi from "./puzzleApi";
 import * as socketApi from "./socketApi";
 import * as mongoApi from "./mongoApi";
+import { startPuzzleRound } from "./roundApi";
 
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
@@ -19,8 +20,8 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/", loginApi.router);
-app.use("/", puzzleApi.router);
 app.use("/", userApi.router);
+app.use("/", puzzleApi.router);
 
 // Initialize Socket Server
 socketApi.init();
@@ -42,3 +43,5 @@ setInterval(() => {
 
   // console.log("updating");
 }, 5000);
+
+startPuzzleRound(120000, "TestPuzzleRound");

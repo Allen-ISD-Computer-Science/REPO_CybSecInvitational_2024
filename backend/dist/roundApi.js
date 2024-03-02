@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startBattleRound = exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.BattleRound = exports.PuzzleRound = exports.Round = void 0;
-const mongoApi_1 = require("mongoApi");
+const mongoApi_1 = require("./mongoApi");
 const config = require("../config.json");
 class Round {
     constructor(duration, type, id, callback = () => { }) {
@@ -123,6 +123,7 @@ function endCurrentRound() {
 }
 exports.endCurrentRound = endCurrentRound;
 function startRound(round) {
+    console.log("Attempting Round Start");
     if (exports.currentRound) {
         return false;
     }

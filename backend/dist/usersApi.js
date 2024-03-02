@@ -25,7 +25,9 @@ exports.router.post("/getUser", loginApi_1.validateLoginToken, (req, res) => __a
     // fetch user from token
     const user = (_a = (0, loginApi_1.fetchLoginToken)(req.cookies["LoginToken"])) === null || _a === void 0 ? void 0 : _a.data;
     if (!user) {
+        console.log("user not found!");
         res.status(404).send("User Not Found");
+        return;
     }
     const userData = (yield (0, mongoApi_1.fetchUser)(user.username));
     delete userData._id;

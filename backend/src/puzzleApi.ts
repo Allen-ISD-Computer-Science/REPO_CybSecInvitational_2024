@@ -1,9 +1,11 @@
 import * as path from "path";
 import express, { Request, Response, Router } from "express";
 
-import { addPointsToUser, battleRoundPuzzlesColName, client, mainDbName, puzzlesColName } from "./mongoApi";
-import { fetchLoginToken, validateLoginToken } from "./loginApi";
 require("../config.json");
+
+import { addPointsToUser, battleRoundPuzzlesColName, client, fetchUser, mainDbName, onPuzzleCorrect, puzzlesColName } from "./mongoApi";
+import { fetchLoginToken, validateLoginToken } from "./loginApi";
+import { currentRound } from "./roundApi";
 
 // * Module Type Declarations
 interface PuzzleDescription {
@@ -23,8 +25,10 @@ interface PuzzleData {
 
 export class PuzzleSubmitResult {
   correct: boolean;
+  alreadyCompleted: boolean;
 
-  constructor(correct: boolean) {
+  constructor(alreadyCompleted: boolean, correct: boolean) {
+    this.alreadyCompleted = alreadyCompleted;
     this.correct = correct;
   }
 }
@@ -87,6 +91,15 @@ export function fetchPuzzleDescription(name: string): PuzzleDescription | null {
 // * Routes
 export const router: Router = express.Router();
 
+// router middleware
+router.use((req: Request, res: Response, next: Function) => {
+  if (currentRound?.type !== "PuzzleRound") {
+    res.redirect("home");
+  }
+
+  next();
+});
+
 // serves puzzle page
 router.get("/puzzles", validateLoginToken, async (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/puzzles.html"));
@@ -124,7 +137,16 @@ router.post("/submitPuzzle", validateLoginToken, async (req: Request, res: Respo
   }
 
   // fetch user from token
-  const user = fetchLoginToken(req.cookies["LoginToken"])?.data as unknown as User;
+  const userData = fetchLoginToken(req.cookies["LoginToken"])?.data as unknown as User;
+  const user = await fetchUser(userData.username);
+  if (!user) {
+    res.status(404).send("User Not Found");
+    return;
+  }
+  if (user.completed_puzzles[name]) {
+    res.json(new PuzzleSubmitResult(true, false));
+    return;
+  }
 
   // ? May not be needed due to typescript consistency
   // check if token contains user
@@ -142,11 +164,17 @@ router.post("/submitPuzzle", validateLoginToken, async (req: Request, res: Respo
 
   // process submission then send result back
   if (puzzle.answer === answer) {
-    addPointsToUser(user.username, puzzle.point_value, "puzzle_points"); // reward! yay!
+    const result = onPuzzleCorrect(user.username, puzzle.point_value, puzzle.name);
+    if (!result) {
+      res.sendStatus(500);
+      return;
+    }
 
-    res.json(new PuzzleSubmitResult(true));
+    res.json(new PuzzleSubmitResult(false, true));
+    return;
   } else {
-    res.json(new PuzzleSubmitResult(false));
+    res.json(new PuzzleSubmitResult(false, false));
+    return;
   }
 });
 

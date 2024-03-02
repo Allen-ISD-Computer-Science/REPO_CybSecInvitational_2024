@@ -286,6 +286,9 @@ puzzleSubmitButton.onclick = async function (evt) {
   const data = await result.json();
   if (data.correct) {
     puzzleAlert.innerHTML = `<p class="text-success mb-0 align-self-center">Success!</p>`;
+    const card = document.querySelectorAll(`[data-puzzlename=${puzzleModalHeader.textContent}]`)[0];
+    if (card) card.style = "background-color: #eaecf4 !important";
+
     return;
   } else if (data.alreadyCompleted) {
     puzzleAlert.innerHTML = `<p class="text-warning mb-0 align-self-center">Already Completed</p>`;

@@ -38,11 +38,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
+require("../config.json");
 const mongoApi_1 = require("./mongoApi");
 const loginApi_1 = require("./loginApi");
-require("../config.json");
+const roundApi_1 = require("./roundApi");
 class PuzzleSubmitResult {
-    constructor(correct) {
+    constructor(alreadyCompleted, correct) {
+        this.alreadyCompleted = alreadyCompleted;
         this.correct = correct;
     }
 }
@@ -102,6 +104,13 @@ function fetchPuzzleDescription(name) {
 exports.fetchPuzzleDescription = fetchPuzzleDescription;
 // * Routes
 exports.router = express_1.default.Router();
+// router middleware
+exports.router.use((req, res, next) => {
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "PuzzleRound") {
+        res.redirect("home");
+    }
+    next();
+});
 // serves puzzle page
 exports.router.get("/puzzles", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.sendFile(path.join(__dirname, "../public/puzzles.html"));
@@ -134,7 +143,16 @@ exports.router.post("/submitPuzzle", loginApi_1.validateLoginToken, (req, res) =
         return;
     }
     // fetch user from token
-    const user = (_a = (0, loginApi_1.fetchLoginToken)(req.cookies["LoginToken"])) === null || _a === void 0 ? void 0 : _a.data;
+    const userData = (_a = (0, loginApi_1.fetchLoginToken)(req.cookies["LoginToken"])) === null || _a === void 0 ? void 0 : _a.data;
+    const user = yield (0, mongoApi_1.fetchUser)(userData.username);
+    if (!user) {
+        res.status(404).send("User Not Found");
+        return;
+    }
+    if (user.completed_puzzles[name]) {
+        res.json(new PuzzleSubmitResult(true, false));
+        return;
+    }
     // ? May not be needed due to typescript consistency
     // check if token contains user
     // if (!user) {
@@ -149,11 +167,17 @@ exports.router.post("/submitPuzzle", loginApi_1.validateLoginToken, (req, res) =
     }
     // process submission then send result back
     if (puzzle.answer === answer) {
-        (0, mongoApi_1.addPointsToUser)(user.username, puzzle.point_value, "puzzle_points"); // reward! yay!
-        res.json(new PuzzleSubmitResult(true));
+        const result = (0, mongoApi_1.onPuzzleCorrect)(user.username, puzzle.point_value, puzzle.name);
+        if (!result) {
+            res.sendStatus(500);
+            return;
+        }
+        res.json(new PuzzleSubmitResult(false, true));
+        return;
     }
     else {
-        res.json(new PuzzleSubmitResult(false));
+        res.json(new PuzzleSubmitResult(false, false));
+        return;
     }
 }));
 //
