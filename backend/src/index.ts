@@ -6,6 +6,7 @@ import { init as initSocketConnection, io } from "./socketApi";
 import { Round, currentRound, startPuzzleRound } from "./roundApi";
 import { router as loginRouter, validateLoginToken } from "./loginApi";
 import { router as userRouter } from "./usersApi";
+import { router as scoreboardRouter } from "./scoreboardApi";
 import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
 import { ScoreboardUser, fetchScoreboard } from "./mongoApi";
 
@@ -22,6 +23,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/", loginRouter);
 app.use("/", userRouter);
 app.use("/", puzzleRouter);
+app.use("/", scoreboardRouter);
 
 // Initialize Socket Server
 initSocketConnection();
