@@ -11,5 +11,5 @@ import { fetchLoginToken, validateLoginToken } from "./loginApi";
 export const router: Router = express.Router();
 
 router.get("/scoreboard", validateLoginToken, (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../public/puzzles.html"));
+  res.sendFile(path.join(__dirname, "../public/scoreboard.html"));
 });

@@ -38,6 +38,7 @@ const socketApi_1 = require("./socketApi");
 const roundApi_1 = require("./roundApi");
 const loginApi_1 = require("./loginApi");
 const usersApi_1 = require("./usersApi");
+const scoreboardApi_1 = require("./scoreboardApi");
 const puzzleApi_1 = require("./puzzleApi");
 const mongoApi_1 = require("./mongoApi");
 const config = require(path.join(__dirname, "../config.json"));
@@ -51,6 +52,7 @@ server_1.app.get("/", (req, res) => {
 server_1.app.use("/", loginApi_1.router);
 server_1.app.use("/", usersApi_1.router);
 server_1.app.use("/", puzzleApi_1.router);
+server_1.app.use("/", scoreboardApi_1.router);
 // Initialize Socket Server
 (0, socketApi_1.init)();
 // Initialize Puzzles
@@ -72,7 +74,6 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         scoreboard: scoreboard,
         currentRound: roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.getSummary(),
     };
-    console.log(updatePacket);
     socketApi_1.io.emit("update_event", updatePacket);
 }), 5000);
-(0, roundApi_1.startPuzzleRound)(120000, "TestPuzzleRound");
+(0, roundApi_1.startPuzzleRound)("TestPuzzleRound", 120000);

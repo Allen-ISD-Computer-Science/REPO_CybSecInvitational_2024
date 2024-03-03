@@ -48,6 +48,17 @@ interface BattleRoundConfig {
 }
 
 // * Methods
+
+export async function fetchAdmin(username: string): Promise<User | null> {
+  try {
+    const result = await client.db(mainDbName).collection(adminColName).findOne({ username: username });
+    return result as unknown as Promise<User | null>;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
 export async function fetchBattleRoundPuzzles(roundId: string): Promise<{ [name: string]: Puzzle } | null> {
   const roundConfig: BattleRoundConfig | null = config.battle_rounds[roundId];
   if (!roundConfig || !roundConfig.puzzles || !roundConfig.min_bid) {
@@ -102,6 +113,7 @@ export interface ScoreboardUser {
   scenario_points: number;
 }
 
+// fetches every users data sorted according to total number of points
 export async function fetchScoreboard(): Promise<ScoreboardUser[] | null> {
   const allUsers: User[] | null = await fetchAllUsers();
   if (!allUsers) return null;
@@ -139,7 +151,7 @@ export async function addPointsToUser(username: string, amount: number, category
   }
 }
 
-//
+// adds puzzle points to user and sets puzzle as completed
 export async function onPuzzleCorrect(username: string, amount: number, puzzleName: string): Promise<boolean> {
   try {
     const result: UpdateResult = await client
@@ -165,6 +177,48 @@ export async function setPointsOfUser(username: string, amount: number, category
     return true;
   } catch (err) {
     console.log(err);
+    return false;
+  }
+}
+
+// sets a puzzle as completed in a specified user
+export async function markPuzzleAsCompleted(username: string, name: string): Promise<boolean> {
+  try {
+    const cursor: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $set: { [`completed_puzzles.${name}`]: true } });
+    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// sets a puzzle as not completed in a specified user
+export async function markPuzzleAsNotCompleted(username: string, name: string): Promise<boolean> {
+  try {
+    const cursor: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $unset: { [`completed_puzzles.${name}`]: true } });
+    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// sets the division of specified user
+export async function setDivisionOfUser(username: string, division: number): Promise<boolean> {
+  try {
+    const cursor: UpdateResult = await client
+      .db(mainDbName)
+      .collection(usersColName)
+      .updateOne({ username: username }, { $set: { division: division } });
+    if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
+    return true;
+  } catch {
     return false;
   }
 }

@@ -1,3 +1,4 @@
+import { io } from "./socketApi";
 import { ScoreboardUser, addPointsToUser, fetchBattleRoundPuzzles, fetchScoreboard, fetchUser } from "./mongoApi";
 const config = require("../config.json");
 
@@ -152,25 +153,26 @@ export async function endCurrentRound() {
   clearTimeout(currentRound._endTimeout); // Force stop timeout
   await currentRound.callback();
   currentRound = null;
+  io.emit("round_end");
 }
 
 export function startRound(round: Round): boolean {
   console.log("Attempting Round Start");
-
   if (currentRound) {
     return false;
   } else {
     currentRound = round;
+    io.emit("round_start", currentRound.getSummary());
     return true;
   }
 }
 
-export function startPuzzleRound(duration: number, id: string): boolean {
+export function startPuzzleRound(id: string, duration: number = config.puzzle_round_duration): boolean {
   let round = new PuzzleRound(duration, id);
   return startRound(round);
 }
 
-export async function startBattleRound(duration: number, id: string): Promise<boolean> {
+export async function startBattleRound(id: string, duration: number = config.battle_round_duration): Promise<boolean> {
   const roundConfig = config.battle_rounds[id];
   if (!roundConfig || !roundConfig.min_bid) return false;
 
@@ -178,5 +180,6 @@ export async function startBattleRound(duration: number, id: string): Promise<bo
   if (!roundPuzzles) return false;
 
   let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles);
+
   return startRound(round);
 }

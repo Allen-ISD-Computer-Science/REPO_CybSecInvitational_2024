@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.setDivisionOfUser = exports.markPuzzleAsNotCompleted = exports.markPuzzleAsCompleted = exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.fetchAdmin = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 const config = require("../config.json");
@@ -77,6 +77,19 @@ process.on("SIGINT", () => {
     });
 });
 // * Methods
+function fetchAdmin(username) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield exports.client.db(exports.mainDbName).collection(exports.adminColName).findOne({ username: username });
+            return result;
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    });
+}
+exports.fetchAdmin = fetchAdmin;
 function fetchBattleRoundPuzzles(roundId) {
     return __awaiter(this, void 0, void 0, function* () {
         const roundConfig = config.battle_rounds[roundId];
@@ -130,6 +143,7 @@ function fetchAllUsers() {
     });
 }
 exports.fetchAllUsers = fetchAllUsers;
+// fetches every users data sorted according to total number of points
 function fetchScoreboard() {
     return __awaiter(this, void 0, void 0, function* () {
         const allUsers = yield fetchAllUsers();
@@ -170,7 +184,7 @@ function addPointsToUser(username, amount, category) {
     });
 }
 exports.addPointsToUser = addPointsToUser;
-//
+// adds puzzle points to user and sets puzzle as completed
 function onPuzzleCorrect(username, amount, puzzleName) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -208,3 +222,57 @@ function setPointsOfUser(username, amount, category) {
     });
 }
 exports.setPointsOfUser = setPointsOfUser;
+// sets a puzzle as completed in a specified user
+function markPuzzleAsCompleted(username, name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username }, { $set: { [`completed_puzzles.${name}`]: true } });
+            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (_a) {
+            return false;
+        }
+    });
+}
+exports.markPuzzleAsCompleted = markPuzzleAsCompleted;
+// sets a puzzle as not completed in a specified user
+function markPuzzleAsNotCompleted(username, name) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username }, { $unset: { [`completed_puzzles.${name}`]: true } });
+            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (_a) {
+            return false;
+        }
+    });
+}
+exports.markPuzzleAsNotCompleted = markPuzzleAsNotCompleted;
+// sets the division of specified user
+function setDivisionOfUser(username, division) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cursor = yield exports.client
+                .db(exports.mainDbName)
+                .collection(exports.usersColName)
+                .updateOne({ username: username }, { $set: { division: division } });
+            if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0)
+                return false;
+            return true;
+        }
+        catch (_a) {
+            return false;
+        }
+    });
+}
+exports.setDivisionOfUser = setDivisionOfUser;

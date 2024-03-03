@@ -35,5 +35,5 @@ const loginApi_1 = require("./loginApi");
 // * Routes
 exports.router = express_1.default.Router();
 exports.router.get("/scoreboard", loginApi_1.validateLoginToken, (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/puzzles.html"));
+    res.sendFile(path.join(__dirname, "../public/scoreboard.html"));
 });

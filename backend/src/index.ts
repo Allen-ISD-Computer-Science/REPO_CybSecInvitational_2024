@@ -56,9 +56,7 @@ setInterval(async () => {
     currentRound: currentRound?.getSummary(),
   };
 
-  console.log(updatePacket);
-
   io.emit("update_event", updatePacket);
 }, 5000);
 
-startPuzzleRound(120000, "TestPuzzleRound");
+startPuzzleRound("TestPuzzleRound", 120000);

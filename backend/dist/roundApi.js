@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.startBattleRound = exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.BattleRound = exports.PuzzleRound = exports.Round = void 0;
+const socketApi_1 = require("./socketApi");
 const mongoApi_1 = require("./mongoApi");
 const config = require("../config.json");
 class Round {
@@ -127,6 +128,7 @@ function endCurrentRound() {
         clearTimeout(exports.currentRound._endTimeout); // Force stop timeout
         yield exports.currentRound.callback();
         exports.currentRound = null;
+        socketApi_1.io.emit("round_end");
     });
 }
 exports.endCurrentRound = endCurrentRound;
@@ -137,16 +139,17 @@ function startRound(round) {
     }
     else {
         exports.currentRound = round;
+        socketApi_1.io.emit("round_start", exports.currentRound.getSummary());
         return true;
     }
 }
 exports.startRound = startRound;
-function startPuzzleRound(duration, id) {
+function startPuzzleRound(id, duration = config.puzzle_round_duration) {
     let round = new PuzzleRound(duration, id);
     return startRound(round);
 }
 exports.startPuzzleRound = startPuzzleRound;
-function startBattleRound(duration, id) {
+function startBattleRound(id, duration = config.battle_round_duration) {
     return __awaiter(this, void 0, void 0, function* () {
         const roundConfig = config.battle_rounds[id];
         if (!roundConfig || !roundConfig.min_bid)
