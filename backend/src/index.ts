@@ -9,6 +9,12 @@ import { router as userRouter } from "./usersApi";
 import { router as scoreboardRouter } from "./scoreboardApi";
 import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
 import { ScoreboardUser, fetchScoreboard } from "./mongoApi";
+import { router as adminRouter } from "./adminApi";
+
+app.use("*", (req, res, next) => {
+  console.log(req.url, req.baseUrl);
+  next();
+});
 
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
@@ -21,6 +27,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 app.use("/", loginRouter);
+app.use("/", adminRouter);
 app.use("/", userRouter);
 app.use("/", puzzleRouter);
 app.use("/", scoreboardRouter);
@@ -44,7 +51,6 @@ interface UpdatePacket {
 
 // Update Loop
 setInterval(async () => {
-  console.log("Updating");
   const scoreboard: ScoreboardUser[] | null = await fetchScoreboard();
   if (!scoreboard) {
     console.warn("Failed to fetch scoreboard");
@@ -59,4 +65,4 @@ setInterval(async () => {
   io.emit("update_event", updatePacket);
 }, 5000);
 
-startPuzzleRound("TestPuzzleRound", 120000);
+// startPuzzleRound("TestPuzzleRound", 120000);

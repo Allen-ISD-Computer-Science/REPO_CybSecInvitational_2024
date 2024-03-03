@@ -130,9 +130,9 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
   ["DIVISION"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     const target: string = tokens[2];
-    const division: number = Number(tokens[2]);
+    const division: number = Number(tokens[3]);
 
-    if (!operator || !target || !division) {
+    if (!operator || !target || (!division && division != 0)) {
       res.status(400).send("Missing or Invalid Options");
       return;
     }
@@ -245,7 +245,7 @@ router.post("/adminCommand", validateLoginToken, async (req: Request, res: Respo
   parseCommand(command, res);
 });
 
-router.post("/adminLogin", validateLoginToken, async (req: Request, res: Response) => {
+router.post("/adminLogin", async (req: Request, res: Response) => {
   console.log("attempting login");
   const username: string | undefined = req.body.username;
   const password: string | undefined = req.body.password;
@@ -266,17 +266,25 @@ router.post("/adminLogin", validateLoginToken, async (req: Request, res: Respons
   }
 
   const id = loginTokenGroup.createNewToken(user);
-  res.cookie("AdminLoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).redirect("home");
+  res.cookie("AdminLoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).redirect("admin");
+});
+
+router.get("/admin", validateLoginToken, (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../public/admin.html"));
 });
 
 router.get("/adminLogin", (req: Request, res: Response) => {
   const loginTokenId = req.cookies["AdminLoginToken"];
 
+  console.log(res.getHeaders());
+  console.log(res.headersSent);
+
   if (loginTokenId && loginTokenGroup.findTokenOfId(loginTokenId)) {
-    res.redirect("home");
+    res.redirect("admin");
+    console.log(res.headersSent);
     return;
   }
-
+  console.log(res.headersSent);
   res.sendFile(path.join(__dirname, "../public/adminLogin.html"));
 });
 

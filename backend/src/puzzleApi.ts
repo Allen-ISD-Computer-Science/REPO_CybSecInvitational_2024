@@ -92,16 +92,16 @@ export function fetchPuzzleDescription(name: string): PuzzleDescription | null {
 export const router: Router = express.Router();
 
 // router middleware
-router.use((req: Request, res: Response, next: Function) => {
+export function verifyPuzzleRound(req: Request, res: Response, next: Function) {
   if (currentRound?.type !== "PuzzleRound") {
     res.redirect("home");
   }
 
   next();
-});
+}
 
 // serves puzzle page
-router.get("/puzzles", validateLoginToken, async (req: Request, res: Response) => {
+router.get("/puzzles", validateLoginToken, verifyPuzzleRound, async (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/puzzles.html"));
 });
 

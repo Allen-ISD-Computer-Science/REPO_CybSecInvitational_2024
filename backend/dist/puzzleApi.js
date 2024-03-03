@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
+exports.verifyPuzzleRound = exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 require("../config.json");
@@ -105,14 +105,15 @@ exports.fetchPuzzleDescription = fetchPuzzleDescription;
 // * Routes
 exports.router = express_1.default.Router();
 // router middleware
-exports.router.use((req, res, next) => {
+function verifyPuzzleRound(req, res, next) {
     if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "PuzzleRound") {
         res.redirect("home");
     }
     next();
-});
+}
+exports.verifyPuzzleRound = verifyPuzzleRound;
 // serves puzzle page
-exports.router.get("/puzzles", loginApi_1.validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.router.get("/puzzles", loginApi_1.validateLoginToken, verifyPuzzleRound, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.sendFile(path.join(__dirname, "../public/puzzles.html"));
 }));
 // used to fetch puzzle description from client side

@@ -177,8 +177,8 @@ const commands = {
     ["DIVISION"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         const target = tokens[2];
-        const division = Number(tokens[2]);
-        if (!operator || !target || !division) {
+        const division = Number(tokens[3]);
+        if (!operator || !target || (!division && division != 0)) {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
@@ -289,7 +289,7 @@ exports.router.post("/adminCommand", validateLoginToken, (req, res) => __awaiter
     }
     parseCommand(command, res);
 }));
-exports.router.post("/adminLogin", validateLoginToken, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.router.post("/adminLogin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("attempting login");
     const username = req.body.username;
     const password = req.body.password;
@@ -306,14 +306,21 @@ exports.router.post("/adminLogin", validateLoginToken, (req, res) => __awaiter(v
         res.status(400).send("Incorrect Credentials!");
     }
     const id = exports.loginTokenGroup.createNewToken(user);
-    res.cookie("AdminLoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).redirect("home");
+    res.cookie("AdminLoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).redirect("admin");
 }));
+exports.router.get("/admin", validateLoginToken, (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/admin.html"));
+});
 exports.router.get("/adminLogin", (req, res) => {
     const loginTokenId = req.cookies["AdminLoginToken"];
+    console.log(res.getHeaders());
+    console.log(res.headersSent);
     if (loginTokenId && exports.loginTokenGroup.findTokenOfId(loginTokenId)) {
-        res.redirect("home");
+        res.redirect("admin");
+        console.log(res.headersSent);
         return;
     }
+    console.log(res.headersSent);
     res.sendFile(path.join(__dirname, "../public/adminLogin.html"));
 });
 exports.router.get("/adminLogout", validateLoginToken, (req, res) => {

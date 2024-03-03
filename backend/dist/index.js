@@ -41,6 +41,11 @@ const usersApi_1 = require("./usersApi");
 const scoreboardApi_1 = require("./scoreboardApi");
 const puzzleApi_1 = require("./puzzleApi");
 const mongoApi_1 = require("./mongoApi");
+const adminApi_1 = require("./adminApi");
+server_1.app.use("*", (req, res, next) => {
+    console.log(req.url, req.baseUrl);
+    next();
+});
 const config = require(path.join(__dirname, "../config.json"));
 // Initialize Routes
 server_1.app.get("/home", loginApi_1.validateLoginToken, (req, res) => {
@@ -50,6 +55,7 @@ server_1.app.get("/", (req, res) => {
     res.redirect("login");
 });
 server_1.app.use("/", loginApi_1.router);
+server_1.app.use("/", adminApi_1.router);
 server_1.app.use("/", usersApi_1.router);
 server_1.app.use("/", puzzleApi_1.router);
 server_1.app.use("/", scoreboardApi_1.router);
@@ -64,7 +70,6 @@ server_1.server.listen(Number(config.host_port), function () {
 });
 // Update Loop
 setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("Updating");
     const scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
     if (!scoreboard) {
         console.warn("Failed to fetch scoreboard");
@@ -76,4 +81,4 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     };
     socketApi_1.io.emit("update_event", updatePacket);
 }), 5000);
-(0, roundApi_1.startPuzzleRound)("TestPuzzleRound", 120000);
+// startPuzzleRound("TestPuzzleRound", 120000);
