@@ -12,7 +12,7 @@ Goals: The 5 goals for the 2024 Allen Cyber Games Invitational include:
 
 # Event Details
 * When: Saturday, April 27, 2024 
-* Where: Venue TBD (see Venue Requirements below)
+* Where: [Stephen G. Terrell Recreation Center](https://www.cityofallen.org/2414/Rentals-at-Terrell-Recreation-Center)
 
 # Roles
 Skill Development and Mentors
@@ -36,6 +36,7 @@ As part of this effort, students will not only leverage (and improve) upon their
   - Back-End Engineer
 - DBA: Faraz Piracha, FarazPir [Digital Portfolio](https://codermerlin.academy/users/faraz-piracha/Digital%20Portfolio/index.html) 
   - Marketing Management
+- Social Media Manager: Sara Vaughan, SV0508 [Digital Portfolio](https://www.codermerlin.academy/users/sara-vaughan/Digital%20Portfolio/index.html)
 - Website Consultant: Marisa Patel, marisapatel5 [Digital Portfolio](https://codermerlin.academy/users/marisa-patel/Digital%20Portfolio/index.html) 
 
 # Roles with Mentors
