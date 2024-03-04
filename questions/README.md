@@ -63,7 +63,7 @@
 |13        |Path of the Puzzled                    |Done               |           |       |
 |14        |Encryption Enigma                      |                   |           |       |
 |15        |Flagception                            |Done               |           |       |
-|16        |Scrambled                       zz       |                   |           |       |
+|16        |Scrambled                              |                   |           |       |
 |17        |Shell Hijinks                          |Done               |           |       |
 |18        |Binary Obscurity                       |Done               |           |       |
 |19        |Command and Control                    |                   |           |       |
