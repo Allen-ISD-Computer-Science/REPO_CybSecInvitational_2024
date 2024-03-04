@@ -7,7 +7,6 @@
         "category": "",
         "answer": ""
     },
-
 */
 
 
@@ -123,7 +122,7 @@
 
     {
         "name": "Step by Step",
-        "description": "<h1>Step by step</h1><h3>Cryptography</h3><p>Your boss has given you a <a href=\"link\">file</a>that seems to have been split in half. It is first half has 13% ROT and the second half has 14% ROT.</p>",
+        "description": "<h1>Step by step</h1><h3>Cryptography</h3><p>Your boss has given you a <a href=\"link\">flag</a>that seems to have been split in half. It is first half has 13% ROT and the second half has 14% ROT.</p>",
         "points_value": 10,
         "difficulty": 1,
         "category": "Cryptography",
@@ -149,7 +148,7 @@
 
     {
         "name": "Stego",
-        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"link\">Image</a></p>? That’s unheard of! Or is it?<",
+        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"link\">Image</a></p>? That’s unheard of! Or is it?</p>",
         "points_value": 20,
         "difficulty": 1,
         "category": "Cryptography",
@@ -172,5 +171,50 @@
         "difficulty": 2,
         "category": "Cryptography",
         "answer": "AHSINV{d83638633b691b9352f36d9a475456d4}"
+    },
+
+    {
+        "name": "Scrambled",
+        "description": "<h1>Scrambled</h1><h3>Cryptography</h3><p>Given 3 images, extract the <a href=\"link\">Flag</a> from them.</p>",
+        "points_value": 25,
+        "difficulty": 1,
+        "category": "Cryptography",
+        "answer": "AHSINV{39ce8272982dbd69c69a023b3721ce96}"
+    },
+
+    {
+        "name": "TheMask",
+        "description": "<h1>TheMask</h1><h3>Cryptography</h3><p>Given a movie poster, find the <a href=\"link\">Flag</a> that is embedded in the file somewhere.</p>",
+        "points_value": 15,
+        "difficulty": 1,
+        "category": "Cryptography",
+        "answer": "AHSINV{b096447dd764e883f7ca20161881ce49}"
+    },
+
+    {
+        "name": "Which Photo",
+        "description": "<h1>Which Photo</h1><h3>Cryptography</h3><p>You are in the case of an infamous art thief. They were sloppy this time, and left a breadcrumb trail. Track them down and report back the flag.<a href=\"link\">Start Here!</a></p>",
+        "points_value": 50,
+        "difficulty": 3,
+        "category": "Cryptography",
+        "answer": "AHSINV{8f2155f8f42f17a10ce14145d722de45}"
+    },
+
+    {
+        "name": "GetTheW",
+        "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"link\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
+        "points_value": 5,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{0b974ec3cc1b8cad08a2d7b2b9a34b4c}"
+    },
+
+    {
+        "name": "Autofill",
+        "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"link\">open it?</a></p>",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{62e0f103e7717b4a112b825b95b88bfb}"
     }
 ]
