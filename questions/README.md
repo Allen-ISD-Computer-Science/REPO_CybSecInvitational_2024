@@ -63,7 +63,7 @@
 |13        |Path of the Puzzled                    |Done               |           |       |
 |14        |Encryption Enigma                      |                   |           |       |
 |15        |Flagception                            |Done               |           |       |
-|16        |Scrambled                              |                   |           |       |
+|16        |Scrambled                       zz       |                   |           |       |
 |17        |Shell Hijinks                          |Done               |           |       |
 |18        |Binary Obscurity                       |Done               |           |       |
 |19        |Command and Control                    |                   |           |       |
@@ -74,7 +74,7 @@
 |24        |Elaborate Script Obfuscation           |                   |           |       |
 |25        |Cryptic Bash Script                    |                   |           |       |
 |26        |Recursive Challenge (Advanced)         |                   |           |       |
-|27        |Piping Commands                        |                   |           |       |
+|27        |Greptastic                             |Done               |           |       |
 |28        |It's rude to interrupt!                |Done               |Done       |       |
 |29        |Autofill                               |Done               |Done       |       |
 
