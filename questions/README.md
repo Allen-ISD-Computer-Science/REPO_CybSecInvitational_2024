@@ -77,6 +77,7 @@
 |27        |Piping Commands                        |                   |           |       |
 |28        |It's rude to interrupt!                |Done               |Done       |       |
 |29        |Autofill                               |Done               |Done       |       |
+|30        |Invisible                              |Done               |Done       |       |
 
 
 ## Exploitation
@@ -84,7 +85,7 @@
 
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
-|1         |Disassemble The Stack                  |P                  |           |       |
+|1         |Disassemble The Stack                  |Done               |Done       |       |
 |2         |Negative Energy                        |Done               |Done       |Done   |
 |3         |Workflow Disruption                    |                   |           |       |
 |4         |Luck of the Draw                       |                   |           |       |
