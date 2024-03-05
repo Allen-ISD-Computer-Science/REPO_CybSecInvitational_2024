@@ -40,7 +40,7 @@
 |25        |The Mask                               |Done               |Done       |       |
 |26        |Scrambled                              |Done               |Done       |       |
 |27        |New phone who dis                      |Done               |           |       |
-|28        |Which Photo                            |                   |           |       |
+|28        |Which Photo                            |Done               |Done       |       |
 
 
 ## BashBasics
@@ -74,7 +74,7 @@
 |24        |Elaborate Script Obfuscation           |                   |           |       |
 |25        |Cryptic Bash Script                    |                   |           |       |
 |26        |Recursive Challenge (Advanced)         |                   |           |       |
-|27        |Piping Commands                        |                   |           |       |
+|27        |Greptastic                             |Done               |           |       |
 |28        |It's rude to interrupt!                |Done               |Done       |       |
 |29        |Autofill                               |Done               |Done       |       |
 |30        |Invisible                              |Done               |Done       |       |
