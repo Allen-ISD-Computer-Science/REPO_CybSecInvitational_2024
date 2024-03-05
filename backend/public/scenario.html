@@ -14,24 +14,24 @@
       0% {
         rotate: 0deg;
       }
-      25% {
-        rotate: 90deg;
-      }
-      50% {
-        rotate: 180deg;
-      }
-      50% {
-        rotate: 270deg;
-      }
+
       100% {
-        rotate: 0deg;
+        rotate: 360deg;
       }
     }
   </style>
 
-  <body class="h-100 w-100 overflow-hidden" style="background-color: black">
-    <div class="d-flex position-absolute" style="top: 50%; left: 50%; transform: translate(-50%, 0)">
-      <img style="animation: rotate 5s" src="https://explorer1.jpl.nasa.gov/assets/images/galleries/1972_BlueMarble_115334main_image_feature_329_ys_full.jpg" />
+  <body class="overflow-hidden" style="background-color: black">
+    <div class="w-50">
+      <img class="position-absolute w-75" src="img/scenario/International_Space_Station_0000_Solar-Panels.png" />
+      <img class="position-absolute w-75" src="img/scenario/International_Space_Station_0001_Truss.png" />
+      <img class="position-absolute w-75" src="img/scenario/International_Space_Station_0002_Docking.png" />
+      <img class="position-absolute w-75" src="img/scenario/International_Space_Station_0003_Life-Support.png" />
+      <img class="position-absolute w-75" src="img/scenario/International_Space_Station_0004_comms.png" />
+    </div>
+
+    <div class="d-flex justify-content-center position-absolute" style="z-index: -1; width: 200%; top: 60%; left: 50%; transform: translate(-50%, 0)">
+      <img class="w-100" style="animation: rotate 300s linear infinite" src="https://explorer1.jpl.nasa.gov/assets/images/galleries/1972_BlueMarble_115334main_image_feature_329_ys_full.jpg" />
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
