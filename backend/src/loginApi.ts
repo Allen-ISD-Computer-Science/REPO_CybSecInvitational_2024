@@ -79,6 +79,10 @@ export class TokenGroup {
   }
 }
 
+export interface LoginToken extends Token {
+  readonly data: User;
+}
+
 // * Module Parameters
 export const loginTokenGroup = new TokenGroup(120000);
 
@@ -97,6 +101,10 @@ export async function validateLoginToken(req: Request, res: Response, next: Func
   res.locals.token = token;
 
   next();
+}
+
+export function fetchLoginTokenFromRequest(req: Request): Token | null {
+  return fetchLoginToken(req.cookies["LoginToken"]);
 }
 
 export function fetchLoginToken(id: string): Token | null {

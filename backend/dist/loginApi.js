@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.router = exports.fetchLoginToken = exports.validateLoginToken = exports.loginTokenGroup = exports.TokenGroup = exports.Token = void 0;
+exports.router = exports.fetchLoginToken = exports.fetchLoginTokenFromRequest = exports.validateLoginToken = exports.loginTokenGroup = exports.TokenGroup = exports.Token = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 const mongoApi_1 = require("./mongoApi");
@@ -110,6 +110,10 @@ function validateLoginToken(req, res, next) {
     });
 }
 exports.validateLoginToken = validateLoginToken;
+function fetchLoginTokenFromRequest(req) {
+    return fetchLoginToken(req.cookies["LoginToken"]);
+}
+exports.fetchLoginTokenFromRequest = fetchLoginTokenFromRequest;
 function fetchLoginToken(id) {
     return exports.loginTokenGroup.findTokenOfId(id);
 }

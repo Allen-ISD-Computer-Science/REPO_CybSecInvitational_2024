@@ -61,6 +61,8 @@ export interface BattleRoundJoinResult {
   success: boolean;
 }
 
+const lerp = (a: number, b: number, t: number) => a + t * (b - a);
+
 export class BattleRound extends Round {
   type: "BattleRound";
   puzzles: { [name: string]: BattleRoundPuzzle };
@@ -86,12 +88,12 @@ export class BattleRound extends Round {
         let completedCount = Object.values(contestant.completedBattleRoundPuzzles).length;
         let ratio = completedCount / puzzleCount;
         let rewardMultiplier = lerp(0.9, 2, ratio);
-        let awardedPoints = contestant.raw_bid * rewardMultiplier - contestant.raw_bid;
+        let awardedPoints = Math.floor(contestant.raw_bid * rewardMultiplier - contestant.raw_bid);
 
         promises.push(addPointsToUser(user.username, awardedPoints, "puzzle_points"));
       } else {
         // ! Currently removes min bid viable with user's current puzzle points
-        promises.push(addPointsToUser(user.username, user.puzzle_points * round.min_bid * -1, "puzzle_points"));
+        promises.push(addPointsToUser(user.username, Math.floor(user.puzzle_points * round.min_bid) * -1, "puzzle_points"));
       }
     });
     await Promise.all(promises);

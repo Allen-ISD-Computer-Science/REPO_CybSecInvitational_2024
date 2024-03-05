@@ -42,6 +42,7 @@ const scoreboardApi_1 = require("./scoreboardApi");
 const puzzleApi_1 = require("./puzzleApi");
 const mongoApi_1 = require("./mongoApi");
 const adminApi_1 = require("./adminApi");
+const battleRound_1 = require("./battleRound");
 server_1.app.use("*", (req, res, next) => {
     console.log(req.url, req.baseUrl);
     next();
@@ -59,6 +60,7 @@ server_1.app.use("/", adminApi_1.router);
 server_1.app.use("/", usersApi_1.router);
 server_1.app.use("/", puzzleApi_1.router);
 server_1.app.use("/", scoreboardApi_1.router);
+server_1.app.use("/battleRound", battleRound_1.router);
 // Initialize Socket Server
 (0, socketApi_1.init)();
 // Initialize Puzzles

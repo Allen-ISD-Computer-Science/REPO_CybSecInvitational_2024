@@ -42,6 +42,7 @@ class PuzzleRound extends Round {
     }
 }
 exports.PuzzleRound = PuzzleRound;
+const lerp = (a, b, t) => a + t * (b - a);
 class BattleRound extends Round {
     static _onEnd() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -62,12 +63,12 @@ class BattleRound extends Round {
                     let completedCount = Object.values(contestant.completedBattleRoundPuzzles).length;
                     let ratio = completedCount / puzzleCount;
                     let rewardMultiplier = lerp(0.9, 2, ratio);
-                    let awardedPoints = contestant.raw_bid * rewardMultiplier - contestant.raw_bid;
+                    let awardedPoints = Math.floor(contestant.raw_bid * rewardMultiplier - contestant.raw_bid);
                     promises.push((0, mongoApi_1.addPointsToUser)(user.username, awardedPoints, "puzzle_points"));
                 }
                 else {
                     // ! Currently removes min bid viable with user's current puzzle points
-                    promises.push((0, mongoApi_1.addPointsToUser)(user.username, user.puzzle_points * round.min_bid * -1, "puzzle_points"));
+                    promises.push((0, mongoApi_1.addPointsToUser)(user.username, Math.floor(user.puzzle_points * round.min_bid) * -1, "puzzle_points"));
                 }
             });
             yield Promise.all(promises);

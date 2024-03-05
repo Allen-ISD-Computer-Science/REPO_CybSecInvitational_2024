@@ -275,6 +275,7 @@ function parseCommand(command, res) {
         const commandFunc = commands[commandTokens[0]];
         if (!commandFunc) {
             res.status(404).send("Command Not Found");
+            return;
         }
         commandFunc(commandTokens, res);
     });
