@@ -1,29 +1,23 @@
-def xor_binary(binary_string, key):
-    result = ""
-    key_length = len(key)
-    for i in range(len(binary_string)):
-        result += str(int(binary_string[i]) ^ int(key[i % key_length]))
-    return result
-
-def binary_to_text(binary_string):
-    text = ""
-    for i in range(0, len(binary_string), 8):
-        byte = binary_string[i:i+8]
-        text += chr(int(byte, 2))
-    return text
-
-def main():
-    input_file = input("Enter the name of the file containing binary data: ")
-
-    with open(input_file, 'r') as file:
-        binary_data = file.read().strip()
-
-    key = "0101"
-    result_binary = xor_binary(binary_data, key)
-    translated_text = binary_to_text(result_binary)
-
-    print("Translated text:")
-    print(translated_text)
-
-if __name__ == "__main__":
-    main()
+def xor_binary (O00O0O0O0OO00O0O0 ,O0O0O00O0O0000OOO ):#line:1
+    O000O0O0O0OOO0000 =""#line:2
+    O0O000O0OOOOOO000 =len (O0O0O00O0O0000OOO )#line:3
+    for OO00O0O00OO0OOOOO in range (len (O00O0O0O0OO00O0O0 )):#line:4
+        O000O0O0O0OOO0000 +=str (int (O00O0O0O0OO00O0O0 [OO00O0O00OO0OOOOO ])^int (O0O0O00O0O0000OOO [OO00O0O00OO0OOOOO %O0O000O0OOOOOO000 ]))#line:5
+    return O000O0O0O0OOO0000 #line:6
+def binary_to_text (OO0OOO00000OOOO0O ):#line:8
+    O00OOO0OOO0O00000 =""#line:9
+    for OOO00000O000OOO00 in range (0 ,len (OO0OOO00000OOOO0O ),8 ):#line:10
+        O0O0OOO0OO00O0O0O =OO0OOO00000OOOO0O [OOO00000O000OOO00 :OOO00000O000OOO00 +8 ]#line:11
+        O00OOO0OOO0O00000 +=chr (int (O0O0OOO0OO00O0O0O ,2 ))#line:12
+    return O00OOO0OOO0O00000 #line:13
+def main ():#line:15
+    OOO0O00000O0000OO =input ("Enter the name of the file containing binary data: ")#line:16
+    with open (OOO0O00000O0000OO ,'r')as O0O0O0O0OO00O0000 :#line:18
+        O00O0000OO0O0O00O =O0O0O0O0OO00O0000 .read ().strip ()#line:19
+    OO00OO0O0OOO00000 ="0101"#line:21
+    OOO0OOOO00OOO0OO0 =xor_binary (O00O0000OO0O0O00O ,OO00OO0O0OOO00000 )#line:22
+    OOOOOO0000OO000O0 =binary_to_text (OOO0OOOO00OOO0OO0 )#line:23
+    print ("Translated text:")#line:25
+    print (OOOOOO0000OO000O0 )#line:26
+if __name__ =="__main__":#line:28
+    main ()#line:29
