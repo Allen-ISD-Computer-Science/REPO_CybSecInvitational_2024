@@ -135,7 +135,7 @@ router.post("/login", async (req: Request, res: Response) => {
   }
 
   const id = loginTokenGroup.createNewToken(user);
-  res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).redirect("home");
+  res.cookie("LoginToken", id, { secure: true, maxAge: loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
 });
 
 router.get("/login", (req: Request, res: Response) => {

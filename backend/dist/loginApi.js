@@ -53,6 +53,7 @@ class Token {
         }, this.duration);
     }
     destroy(withCallback) {
+        console.log("destroying token");
         if (withCallback) {
             this._callback();
             clearTimeout(this._timeout);
@@ -91,7 +92,7 @@ class TokenGroup {
 exports.TokenGroup = TokenGroup;
 TokenGroup.defaultDuration = 120000;
 // * Module Parameters
-exports.loginTokenGroup = new TokenGroup(120000);
+exports.loginTokenGroup = new TokenGroup(10000);
 // * Methods
 function validateLoginToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -137,7 +138,7 @@ exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(400).send("Incorrect Credentials!");
     }
     const id = exports.loginTokenGroup.createNewToken(user);
-    res.cookie("LoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).redirect("home");
+    res.cookie("LoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
 }));
 exports.router.get("/login", (req, res) => {
     const loginTokenId = req.cookies["LoginToken"];

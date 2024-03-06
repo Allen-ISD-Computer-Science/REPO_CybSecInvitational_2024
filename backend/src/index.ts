@@ -11,6 +11,7 @@ import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
 import { ScoreboardUser, fetchScoreboard } from "./mongoApi";
 import { router as adminRouter } from "./adminApi";
 import { router as battleRoundRouter } from "./battleRound";
+import { router as scenarioRouter } from "./scenario";
 
 app.use("*", (req, res, next) => {
   console.log(req.url, req.baseUrl);
@@ -33,6 +34,7 @@ app.use("/", userRouter);
 app.use("/", puzzleRouter);
 app.use("/", scoreboardRouter);
 app.use("/battleRound", battleRoundRouter);
+app.use("/", scenarioRouter);
 
 // Initialize Socket Server
 initSocketConnection();

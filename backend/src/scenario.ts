@@ -8,7 +8,7 @@ import { currentRound } from "./roundApi";
 export const router: Router = express.Router();
 
 // router middleware
-export function verifyPuzzleRound(req: Request, res: Response, next: Function) {
+export function verifyScenarioRound(req: Request, res: Response, next: Function) {
   if (currentRound?.type !== "ScenarioRound") {
     res.redirect("home");
   }
@@ -16,4 +16,6 @@ export function verifyPuzzleRound(req: Request, res: Response, next: Function) {
   next();
 }
 
-router.get("/scenario", (req: Request, res: Response) => {});
+router.get("/scenario", verifyScenarioRound, (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../public/scenario.html"));
+});
