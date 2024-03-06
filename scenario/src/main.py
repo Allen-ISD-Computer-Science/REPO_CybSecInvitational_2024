@@ -57,16 +57,21 @@ def command_login():
         print("Already Logged In")
 
 def command_info():
-    print(f'Token Expires: {datetime.datetime.fromtimestamp(float(os.getenv("LoginTokenExpires"))).isoformat()}')
+    expireTime = datetime.datetime.fromtimestamp(float(os.getenv("LoginTokenExpires")))
+    now = datetime.datetime.today()
+    diff = expireTime - now
+    print(f'Token Expires At: {expireTime.isoformat()}')
+    print(f'Token Expires In: {diff.seconds} seconds')
 
 def command_help():
     print(
         """
         help
-        log
+        info
         test
         exit
         login
+        clear
         """
         )
 
@@ -84,6 +89,8 @@ def parseCommand():
             command_exit()
         case "login":
             command_login()
+        case "clear":
+            os.system("cls")
         case _:
             print("Invalid Command")
 
