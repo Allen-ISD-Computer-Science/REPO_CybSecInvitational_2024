@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startBattleRound = exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.BattleRound = exports.PuzzleRound = exports.Round = void 0;
+exports.startBattleRound = exports.startScenarioRound = exports.startPuzzleRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.ScenarioRound = exports.BattleRound = exports.PuzzleRound = exports.Round = void 0;
 const socketApi_1 = require("./socketApi");
 const mongoApi_1 = require("./mongoApi");
 const config = require("../config.json");
@@ -22,13 +22,15 @@ class Round {
             id: this.id,
         };
     }
-    constructor(duration, type, id, callback = () => { }) {
+    constructor(duration, type, id, divisions = { "0": true, "1": true, "2": true }, callback = () => { }) {
         this.startTime = Date.now();
         this.endTime = this.startTime + duration;
         this.callback = callback;
         this.type = type;
         this.id = id;
         this._endTimeout = setTimeout(endCurrentRound, duration);
+        this.divisions = divisions;
+        console.log(this.divisions);
     }
 }
 exports.Round = Round;
@@ -36,8 +38,12 @@ class PuzzleRound extends Round {
     static _onEnd() {
         console.log("Puzzle Round Ended");
     }
-    constructor(duration, id) {
-        super(duration, "PuzzleRound", id, PuzzleRound._onEnd);
+    constructor(duration, id, divisions) {
+        let divisionsObj = {};
+        divisions.forEach((val) => {
+            divisionsObj[val] = true;
+        });
+        super(duration, "PuzzleRound", id, divisionsObj, PuzzleRound._onEnd);
         this.type = "PuzzleRound"; // ensure the type of round
     }
 }
@@ -56,6 +62,9 @@ class BattleRound extends Round {
             let round = exports.currentRound;
             let promises = [];
             scoreboard.forEach((user) => {
+                if (!round.divisions[user.division]) {
+                    return;
+                }
                 let contestant = round.contestants[user.username];
                 if (contestant) {
                     // ! Currently only takes number of puzzles completed into account
@@ -108,8 +117,12 @@ class BattleRound extends Round {
             return { acknowledged: true, success: true };
         });
     }
-    constructor(duration, id, minBid, puzzles) {
-        super(duration, "BattleRound", id, BattleRound._onEnd);
+    constructor(duration, id, minBid, puzzles, divisions) {
+        let divisionsObj = {};
+        divisions.forEach((val) => {
+            divisionsObj[val] = true;
+        });
+        super(duration, "BattleRound", id, divisionsObj, BattleRound._onEnd);
         this.type = "BattleRound"; // ensure the type of round
         this.puzzles = puzzles;
         this.min_bid = minBid;
@@ -117,6 +130,20 @@ class BattleRound extends Round {
     }
 }
 exports.BattleRound = BattleRound;
+class ScenarioRound extends Round {
+    static _onEnd() {
+        console.log("Puzzle Round Ended");
+    }
+    constructor(duration, id, divisions) {
+        let divisionsObj = {};
+        divisions.forEach((val) => {
+            divisionsObj[val] = true;
+        });
+        super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
+        this.type = "ScenarioRound"; // ensure the type of round
+    }
+}
+exports.ScenarioRound = ScenarioRound;
 // * Module Parameters
 exports.currentRound = null;
 //
@@ -145,12 +172,17 @@ function startRound(round) {
     }
 }
 exports.startRound = startRound;
-function startPuzzleRound(id, duration = config.puzzle_round_duration) {
-    let round = new PuzzleRound(duration, id);
+function startPuzzleRound(id, divisions, duration = config.puzzle_round_duration) {
+    let round = new PuzzleRound(duration, id, divisions);
     return startRound(round);
 }
 exports.startPuzzleRound = startPuzzleRound;
-function startBattleRound(id, duration = config.battle_round_duration) {
+function startScenarioRound(id, divisions, duration = config.puzzle_round_duration) {
+    let round = new ScenarioRound(duration, id, divisions);
+    return startRound(round);
+}
+exports.startScenarioRound = startScenarioRound;
+function startBattleRound(id, divisions, duration = config.battle_round_duration) {
     return __awaiter(this, void 0, void 0, function* () {
         const roundConfig = config.battle_rounds[id];
         if (!roundConfig || !roundConfig.min_bid)
@@ -158,7 +190,7 @@ function startBattleRound(id, duration = config.battle_round_duration) {
         const roundPuzzles = yield (0, mongoApi_1.fetchBattleRoundPuzzles)(id);
         if (!roundPuzzles)
             return false;
-        let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles);
+        let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles, divisions);
         return startRound(round);
     });
 }

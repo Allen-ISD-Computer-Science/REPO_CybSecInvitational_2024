@@ -2,7 +2,7 @@ import * as path from "path";
 import express, { Request, Response, Router } from "express";
 import { Token, TokenGroup } from "./loginApi";
 import { addPointsToUser, fetchAdmin, markPuzzleAsCompleted, markPuzzleAsNotCompleted, setDivisionOfUser, setPointsOfUser } from "./mongoApi";
-import { endCurrentRound, startBattleRound, startPuzzleRound } from "./roundApi";
+import { endCurrentRound, startBattleRound, startPuzzleRound, startScenarioRound } from "./roundApi";
 import { io } from "./socketApi";
 
 // * Module Parameters
@@ -151,9 +151,10 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
   },
   ["BATTLE_ROUND"]: async (tokens: string[], res: Response) => {
     const id = tokens[1];
-    const duration = Number(tokens[2]);
+    const divisions = tokens[2]?.split(",");
+    const duration = Number(tokens[3]);
 
-    if (!id) {
+    if (!id || !divisions) {
       res.status(400).send("Missing or Invalid Options");
       return;
     }
@@ -161,9 +162,9 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
     let result = undefined;
     if (duration) {
       // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-      result = await startBattleRound(id, duration);
+      result = await startBattleRound(id, divisions, duration);
     } else {
-      result = await startBattleRound(id);
+      result = await startBattleRound(id, divisions);
     }
     if (result) {
       res.sendStatus(200);
@@ -173,9 +174,10 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
   },
   ["PUZZLE_ROUND"]: async (tokens: string[], res: Response) => {
     const id = tokens[1];
-    const duration = Number(tokens[2]);
+    const divisions = tokens[2]?.split(",");
+    const duration = Number(tokens[3]);
 
-    if (!id) {
+    if (!id || !divisions) {
       res.status(400).send("Missing or Invalid Options");
       return;
     }
@@ -183,9 +185,32 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
     let result = undefined;
     if (duration) {
       // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-      result = startPuzzleRound(id, duration);
+      result = startPuzzleRound(id, divisions, duration);
     } else {
-      result = startPuzzleRound(id);
+      result = startPuzzleRound(id, divisions);
+    }
+    if (result) {
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(500);
+    }
+  },
+  ["SCENARIO_ROUND"]: async (tokens: string[], res: Response) => {
+    const id = tokens[1];
+    const divisions = tokens[2]?.split(",");
+    const duration = Number(tokens[3]);
+
+    if (!id || !divisions) {
+      res.status(400).send("Missing or Invalid Options");
+      return;
+    }
+
+    let result = undefined;
+    if (duration) {
+      // Number() returns NaN when not a number, making sure that the function doesn't use NaN
+      result = startScenarioRound(id, divisions, duration);
+    } else {
+      result = startScenarioRound(id, divisions);
     }
     if (result) {
       res.sendStatus(200);

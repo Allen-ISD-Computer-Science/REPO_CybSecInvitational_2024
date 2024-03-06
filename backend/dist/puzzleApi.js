@@ -106,8 +106,14 @@ exports.fetchPuzzleDescription = fetchPuzzleDescription;
 exports.router = express_1.default.Router();
 // router middleware
 function verifyPuzzleRound(req, res, next) {
-    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "PuzzleRound") {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    if (!token) {
+        res.sendStatus(500);
+        return;
+    }
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "PuzzleRound" || !roundApi_1.currentRound.divisions[token.data.division.toString()]) {
         res.redirect("home");
+        return;
     }
     next();
 }

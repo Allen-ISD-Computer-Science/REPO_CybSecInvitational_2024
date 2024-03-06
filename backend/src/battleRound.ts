@@ -7,8 +7,15 @@ import * as path from "path";
 export const router: Router = express.Router();
 
 export function verifyBattleRound(req: Request, res: Response, next: Function) {
-  if (currentRound?.type != "BattleRound") {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  if (!token) {
+    res.sendStatus(500);
+    return;
+  }
+
+  if (currentRound?.type != "BattleRound" || !currentRound.divisions[token.data.division.toString()]) {
     res.redirect("home");
+    return;
   }
   next();
 }

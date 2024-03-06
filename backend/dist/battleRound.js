@@ -43,8 +43,14 @@ const path = __importStar(require("path"));
 //* Routes
 exports.router = express_1.default.Router();
 function verifyBattleRound(req, res, next) {
-    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) != "BattleRound") {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    if (!token) {
+        res.sendStatus(500);
+        return;
+    }
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) != "BattleRound" || !roundApi_1.currentRound.divisions[token.data.division.toString()]) {
         res.redirect("home");
+        return;
     }
     next();
 }

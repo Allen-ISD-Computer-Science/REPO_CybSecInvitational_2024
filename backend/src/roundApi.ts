@@ -10,6 +10,8 @@ export class Round {
   id: string;
   _endTimeout: NodeJS.Timeout; // Used to force end a timeout
 
+  divisions: { [id: string]: boolean };
+
   getSummary(): { [property: string]: any } {
     return {
       startTime: this.startTime,
@@ -19,13 +21,16 @@ export class Round {
     };
   }
 
-  constructor(duration: number, type: string, id: string, callback: Function = () => {}) {
+  constructor(duration: number, type: string, id: string, divisions: { [id: string]: boolean } = { "0": true, "1": true, "2": true }, callback: Function = () => {}) {
     this.startTime = Date.now();
     this.endTime = this.startTime + duration;
     this.callback = callback;
     this.type = type;
     this.id = id;
     this._endTimeout = setTimeout(endCurrentRound, duration);
+    this.divisions = divisions;
+
+    console.log(this.divisions);
   }
 }
 
@@ -36,8 +41,13 @@ export class PuzzleRound extends Round {
     console.log("Puzzle Round Ended");
   }
 
-  constructor(duration: number, id: string) {
-    super(duration, "PuzzleRound", id, PuzzleRound._onEnd);
+  constructor(duration: number, id: string, divisions: string[]) {
+    let divisionsObj: { [division: string]: boolean } = {};
+    divisions.forEach((val) => {
+      divisionsObj[val] = true;
+    });
+
+    super(duration, "PuzzleRound", id, divisionsObj, PuzzleRound._onEnd);
     this.type = "PuzzleRound"; // ensure the type of round
   }
 }
@@ -81,6 +91,10 @@ export class BattleRound extends Round {
     let round: BattleRound = currentRound as unknown as BattleRound;
     let promises: Promise<any>[] = [];
     scoreboard.forEach((user: ScoreboardUser) => {
+      if (!round.divisions[user.division]) {
+        return;
+      }
+
       let contestant = round.contestants[user.username];
       if (contestant) {
         // ! Currently only takes number of puzzles completed into account
@@ -134,12 +148,35 @@ export class BattleRound extends Round {
     return { acknowledged: true, success: true };
   }
 
-  constructor(duration: number, id: string, minBid: number, puzzles: { [name: string]: BattleRoundPuzzle }) {
-    super(duration, "BattleRound", id, BattleRound._onEnd);
+  constructor(duration: number, id: string, minBid: number, puzzles: { [name: string]: BattleRoundPuzzle }, divisions: string[]) {
+    let divisionsObj: { [division: string]: boolean } = {};
+    divisions.forEach((val) => {
+      divisionsObj[val] = true;
+    });
+
+    super(duration, "BattleRound", id, divisionsObj, BattleRound._onEnd);
     this.type = "BattleRound"; // ensure the type of round
     this.puzzles = puzzles;
     this.min_bid = minBid;
     this.contestants = {};
+  }
+}
+
+export class ScenarioRound extends Round {
+  type: "ScenarioRound";
+
+  private static _onEnd() {
+    console.log("Puzzle Round Ended");
+  }
+
+  constructor(duration: number, id: string, divisions: string[]) {
+    let divisionsObj: { [division: string]: boolean } = {};
+    divisions.forEach((val) => {
+      divisionsObj[val] = true;
+    });
+
+    super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
+    this.type = "ScenarioRound"; // ensure the type of round
   }
 }
 
@@ -169,19 +206,24 @@ export function startRound(round: Round): boolean {
   }
 }
 
-export function startPuzzleRound(id: string, duration: number = config.puzzle_round_duration): boolean {
-  let round = new PuzzleRound(duration, id);
+export function startPuzzleRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
+  let round = new PuzzleRound(duration, id, divisions);
   return startRound(round);
 }
 
-export async function startBattleRound(id: string, duration: number = config.battle_round_duration): Promise<boolean> {
+export function startScenarioRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
+  let round = new ScenarioRound(duration, id, divisions);
+  return startRound(round);
+}
+
+export async function startBattleRound(id: string, divisions: string[], duration: number = config.battle_round_duration): Promise<boolean> {
   const roundConfig = config.battle_rounds[id];
   if (!roundConfig || !roundConfig.min_bid) return false;
 
   const roundPuzzles = await fetchBattleRoundPuzzles(id);
   if (!roundPuzzles) return false;
 
-  let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles);
+  let round = new BattleRound(duration, id, roundConfig.min_bid, roundPuzzles, divisions);
 
   return startRound(round);
 }

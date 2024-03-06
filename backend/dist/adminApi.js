@@ -197,19 +197,21 @@ const commands = {
         }
     }),
     ["BATTLE_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         const id = tokens[1];
-        const duration = Number(tokens[2]);
-        if (!id) {
+        const divisions = (_a = tokens[2]) === null || _a === void 0 ? void 0 : _a.split(",");
+        const duration = Number(tokens[3]);
+        if (!id || !divisions) {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
         let result = undefined;
         if (duration) {
             // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-            result = yield (0, roundApi_1.startBattleRound)(id, duration);
+            result = yield (0, roundApi_1.startBattleRound)(id, divisions, duration);
         }
         else {
-            result = yield (0, roundApi_1.startBattleRound)(id);
+            result = yield (0, roundApi_1.startBattleRound)(id, divisions);
         }
         if (result) {
             res.sendStatus(200);
@@ -219,19 +221,45 @@ const commands = {
         }
     }),
     ["PUZZLE_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _b;
         const id = tokens[1];
-        const duration = Number(tokens[2]);
-        if (!id) {
+        const divisions = (_b = tokens[2]) === null || _b === void 0 ? void 0 : _b.split(",");
+        const duration = Number(tokens[3]);
+        if (!id || !divisions) {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
         let result = undefined;
         if (duration) {
             // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-            result = (0, roundApi_1.startPuzzleRound)(id, duration);
+            result = (0, roundApi_1.startPuzzleRound)(id, divisions, duration);
         }
         else {
-            result = (0, roundApi_1.startPuzzleRound)(id);
+            result = (0, roundApi_1.startPuzzleRound)(id, divisions);
+        }
+        if (result) {
+            res.sendStatus(200);
+        }
+        else {
+            res.sendStatus(500);
+        }
+    }),
+    ["SCENARIO_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+        var _c;
+        const id = tokens[1];
+        const divisions = (_c = tokens[2]) === null || _c === void 0 ? void 0 : _c.split(",");
+        const duration = Number(tokens[3]);
+        if (!id || !divisions) {
+            res.status(400).send("Missing or Invalid Options");
+            return;
+        }
+        let result = undefined;
+        if (duration) {
+            // Number() returns NaN when not a number, making sure that the function doesn't use NaN
+            result = (0, roundApi_1.startScenarioRound)(id, divisions, duration);
+        }
+        else {
+            result = (0, roundApi_1.startScenarioRound)(id, divisions);
         }
         if (result) {
             res.sendStatus(200);

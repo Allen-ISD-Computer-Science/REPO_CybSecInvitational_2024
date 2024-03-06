@@ -4,7 +4,7 @@ import express, { Request, Response, Router } from "express";
 require("../config.json");
 
 import { addPointsToUser, battleRoundPuzzlesColName, client, fetchUser, mainDbName, onPuzzleCorrect, puzzlesColName } from "./mongoApi";
-import { fetchLoginToken, validateLoginToken } from "./loginApi";
+import { LoginToken, fetchLoginToken, fetchLoginTokenFromRequest, validateLoginToken } from "./loginApi";
 import { currentRound } from "./roundApi";
 
 // * Module Type Declarations
@@ -93,8 +93,15 @@ export const router: Router = express.Router();
 
 // router middleware
 export function verifyPuzzleRound(req: Request, res: Response, next: Function) {
-  if (currentRound?.type !== "PuzzleRound") {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  if (!token) {
+    res.sendStatus(500);
+    return;
+  }
+
+  if (currentRound?.type !== "PuzzleRound" || !currentRound.divisions[token.data.division.toString()]) {
     res.redirect("home");
+    return;
   }
 
   next();
