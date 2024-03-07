@@ -42,6 +42,8 @@ const loginApi_1 = require("./loginApi");
 const mongoApi_1 = require("./mongoApi");
 const roundApi_1 = require("./roundApi");
 const socketApi_1 = require("./socketApi");
+const battleRound_1 = require("./battleRound");
+const puzzleApi_1 = require("./puzzleApi");
 // * Module Parameters
 exports.loginTokenGroup = new loginApi_1.TokenGroup(120000);
 // * Methods
@@ -208,10 +210,10 @@ const commands = {
         let result = undefined;
         if (duration) {
             // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-            result = yield (0, roundApi_1.startBattleRound)(id, divisions, duration);
+            result = yield (0, battleRound_1.startBattleRound)(id, divisions, duration);
         }
         else {
-            result = yield (0, roundApi_1.startBattleRound)(id, divisions);
+            result = yield (0, battleRound_1.startBattleRound)(id, divisions);
         }
         if (result) {
             res.sendStatus(200);
@@ -232,10 +234,10 @@ const commands = {
         let result = undefined;
         if (duration) {
             // Number() returns NaN when not a number, making sure that the function doesn't use NaN
-            result = (0, roundApi_1.startPuzzleRound)(id, divisions, duration);
+            result = (0, puzzleApi_1.startPuzzleRound)(id, divisions, duration);
         }
         else {
-            result = (0, roundApi_1.startPuzzleRound)(id, divisions);
+            result = (0, puzzleApi_1.startPuzzleRound)(id, divisions);
         }
         if (result) {
             res.sendStatus(200);

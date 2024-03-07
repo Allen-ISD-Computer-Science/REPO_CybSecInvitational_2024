@@ -2,8 +2,10 @@ import * as path from "path";
 import express, { Request, Response, Router } from "express";
 import { Token, TokenGroup } from "./loginApi";
 import { addPointsToUser, fetchAdmin, markPuzzleAsCompleted, markPuzzleAsNotCompleted, setDivisionOfUser, setPointsOfUser } from "./mongoApi";
-import { endCurrentRound, startBattleRound, startPuzzleRound, startScenarioRound } from "./roundApi";
+import { endCurrentRound, startScenarioRound } from "./roundApi";
 import { io } from "./socketApi";
+import { startBattleRound } from "./battleRound";
+import { startPuzzleRound } from "./puzzleApi";
 
 // * Module Parameters
 export const loginTokenGroup = new TokenGroup(120000);

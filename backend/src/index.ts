@@ -3,7 +3,7 @@ import * as path from "path";
 
 import { app, server } from "./server";
 import { init as initSocketConnection, io } from "./socketApi";
-import { Round, currentRound, startPuzzleRound } from "./roundApi";
+import { Round, currentRound } from "./roundApi";
 import { router as loginRouter, validateLoginToken } from "./loginApi";
 import { router as userRouter } from "./usersApi";
 import { router as scoreboardRouter } from "./scoreboardApi";

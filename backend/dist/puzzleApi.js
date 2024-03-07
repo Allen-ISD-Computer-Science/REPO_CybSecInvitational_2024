@@ -35,10 +35,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyPuzzleRound = exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleSubmitResult = void 0;
+exports.verifyPuzzleRound = exports.router = exports.fetchPuzzleDescription = exports.fetchAllPuzzleData = exports.fetchPuzzle = exports.replicatePuzzles = exports.startPuzzleRound = exports.battleRoundPuzzles = exports.puzzles = exports.PuzzleRound = exports.PuzzleSubmitResult = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
-require("../config.json");
+const config = require("../config.json");
 const mongoApi_1 = require("./mongoApi");
 const loginApi_1 = require("./loginApi");
 const roundApi_1 = require("./roundApi");
@@ -49,10 +49,30 @@ class PuzzleSubmitResult {
     }
 }
 exports.PuzzleSubmitResult = PuzzleSubmitResult;
+class PuzzleRound extends roundApi_1.Round {
+    static _onEnd() {
+        console.log("Puzzle Round Ended");
+    }
+    constructor(duration, id, divisions) {
+        let divisionsObj = {};
+        divisions.forEach((val) => {
+            divisionsObj[val] = true;
+        });
+        super(duration, "PuzzleRound", id, divisionsObj, PuzzleRound._onEnd);
+        this.type = "PuzzleRound"; // ensure the type of round
+    }
+}
+exports.PuzzleRound = PuzzleRound;
 // * Module Parameters
 exports.puzzles = {};
 exports.battleRoundPuzzles = {};
 // * Methods
+//
+function startPuzzleRound(id, divisions, duration = config.puzzle_round_duration) {
+    let round = new PuzzleRound(duration, id, divisions);
+    return (0, roundApi_1.startRound)(round);
+}
+exports.startPuzzleRound = startPuzzleRound;
 // Replicates all current puzzles in db to puzzles variable
 function replicatePuzzles() {
     return __awaiter(this, void 0, void 0, function* () {

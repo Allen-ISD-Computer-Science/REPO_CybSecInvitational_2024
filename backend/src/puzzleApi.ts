@@ -1,11 +1,10 @@
 import * as path from "path";
 import express, { Request, Response, Router } from "express";
-
-require("../config.json");
+const config = require("../config.json");
 
 import { addPointsToUser, battleRoundPuzzlesColName, client, fetchUser, mainDbName, onPuzzleCorrect, puzzlesColName } from "./mongoApi";
 import { LoginToken, fetchLoginToken, fetchLoginTokenFromRequest, validateLoginToken } from "./loginApi";
-import { currentRound } from "./roundApi";
+import { Round, currentRound, startRound } from "./roundApi";
 
 // * Module Type Declarations
 interface PuzzleDescription {
@@ -33,11 +32,35 @@ export class PuzzleSubmitResult {
   }
 }
 
+export class PuzzleRound extends Round {
+  type: "PuzzleRound";
+
+  private static _onEnd() {
+    console.log("Puzzle Round Ended");
+  }
+
+  constructor(duration: number, id: string, divisions: string[]) {
+    let divisionsObj: { [division: string]: boolean } = {};
+    divisions.forEach((val) => {
+      divisionsObj[val] = true;
+    });
+
+    super(duration, "PuzzleRound", id, divisionsObj, PuzzleRound._onEnd);
+    this.type = "PuzzleRound"; // ensure the type of round
+  }
+}
+
 // * Module Parameters
 export var puzzles: { [name: string]: Puzzle } = {};
 export var battleRoundPuzzles: { [name: string]: Puzzle } = {};
 
 // * Methods
+//
+export function startPuzzleRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
+  let round = new PuzzleRound(duration, id, divisions);
+  return startRound(round);
+}
+
 // Replicates all current puzzles in db to puzzles variable
 export async function replicatePuzzles() {
   try {
