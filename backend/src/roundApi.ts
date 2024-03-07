@@ -162,8 +162,25 @@ export class BattleRound extends Round {
   }
 }
 
+export class ScenarioRoundUserState {
+  username: string;
+  systemStatus = {
+    solar_panel: true,
+    truss_integrity: true,
+    docking_port: true,
+    life_support: true,
+    communications: true,
+  };
+
+  constructor(username: string) {
+    this.username = username;
+  }
+}
+
 export class ScenarioRound extends Round {
   type: "ScenarioRound";
+
+  state: { [username: string]: ScenarioRoundUserState } = {};
 
   private static _onEnd() {
     console.log("Puzzle Round Ended");
@@ -177,6 +194,18 @@ export class ScenarioRound extends Round {
 
     super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
     this.type = "ScenarioRound"; // ensure the type of round
+  }
+
+  async init(): Promise<boolean> {
+    const scoreboard = await fetchScoreboard();
+    if (!scoreboard) {
+      return false;
+    }
+
+    scoreboard.forEach((member) => {
+      this.state[member.username] = new ScenarioRoundUserState(member.username);
+    });
+    return true;
   }
 }
 
