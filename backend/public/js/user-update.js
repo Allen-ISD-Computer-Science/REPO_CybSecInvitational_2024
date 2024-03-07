@@ -96,6 +96,8 @@ function updateTimer() {
 }
 
 function updateCurrentRoundUI(data) {
+  if (!data) return;
+
   if (Object.values(data).length <= 0) {
     label.textContent = "No Round Started Yet!";
     timer.innerHTML = "";
@@ -116,6 +118,7 @@ function updateUserUI(user) {
 }
 
 socket.on("update_event", async (data) => {
+  console.log(data);
   updateCurrentRoundUI(data.currentRound);
   user = await fetchUser();
   updateUserUI(user);
