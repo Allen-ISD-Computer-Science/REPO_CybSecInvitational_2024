@@ -34,59 +34,6 @@ export class Round {
   }
 }
 
-export class ScenarioRoundUserState {
-  username: string;
-  status = {
-    solar_panel: true,
-    truss_integrity: true,
-    docking_port: true,
-    life_support: true,
-    communications: true,
-  };
-
-  users = {};
-
-  constructor(username: string) {
-    this.username = username;
-  }
-}
-
-export class ScenarioRound extends Round {
-  type: "ScenarioRound";
-
-  state: { [username: string]: ScenarioRoundUserState } = {};
-
-  private static _onEnd() {
-    console.log("Puzzle Round Ended");
-  }
-
-  constructor(duration: number, id: string, divisions: string[]) {
-    let divisionsObj: { [division: string]: boolean } = {};
-    divisions.forEach((val) => {
-      divisionsObj[val] = true;
-    });
-
-    super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
-    this.type = "ScenarioRound"; // ensure the type of round
-  }
-
-  async init(): Promise<boolean> {
-    const scoreboard = await fetchScoreboard();
-    if (!scoreboard) {
-      return false;
-    }
-
-    scoreboard.forEach((member) => {
-      this.state[member.username] = new ScenarioRoundUserState(member.username);
-    });
-    return true;
-  }
-
-  getUserState(username: string): ScenarioRoundUserState | null {
-    return this.state[username];
-  }
-}
-
 // * Module Parameters
 export var currentRound: Round | null = null;
 
@@ -111,9 +58,4 @@ export function startRound(round: Round): boolean {
     io.emit("round_start", currentRound.getSummary());
     return true;
   }
-}
-
-export function startScenarioRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
-  let round = new ScenarioRound(duration, id, divisions);
-  return startRound(round);
 }
