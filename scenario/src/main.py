@@ -67,6 +67,7 @@ def findUser(username: str):
 def removeUser(username: str):
     lineNum = findUser(username)
     if lineNum is None:
+        print("User Not Found")
         return
     file = open(users_path, "rw")
     for number, line in enumerate(file):
@@ -84,8 +85,7 @@ def getUsers():
 
         print(line.strip())
 
-
-def command_users(tokens):
+def command_user(tokens):
     try :
         match tokens[1]:
             case "add":
@@ -97,7 +97,7 @@ def command_users(tokens):
             case _:
                 print("Invalid Flag")
     except IndexError:
-        users = getUsers()
+        getUsers()
 
 ## Debug
 def command_test(tokens):
@@ -160,7 +160,7 @@ commands = {
     "exit": command_exit,
     "login": command_login,
     "clear": command_clear,
-    "users": command_users
+    "user": command_user
 }
 
 def parseCommand():
