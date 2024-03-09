@@ -35,12 +35,12 @@
 |20        |Mix and Match                          |                   |           |       |
 |21        |Packing Digits                         |                   |           |       |
 |22        |Cryptographic Asylum                   |                   |           |       |
-|23        |Two Hops This Time                     |Done               |Done       |       |
+|23        |Two Hops This Time                     |Done               |Done       |Done   |
 |24        |Network Nuisance                       |Done               |           |       |
-|25        |The Mask                               |Done               |Done       |       |
-|26        |Scrambled                              |Done               |Done       |       |
+|25        |The Mask                               |Done               |Done       |Done   |
+|26        |Scrambled                              |Done               |Done       |Done   |
 |27        |New phone who dis                      |Done               |           |       |
-|28        |Which Photo                            |Done               |Done       |       |
+|28        |Which Photo                            |Done               |Done       |Done   |
 
 
 ## BashBasics
