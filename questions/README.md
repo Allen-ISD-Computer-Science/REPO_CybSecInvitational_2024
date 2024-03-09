@@ -50,9 +50,9 @@
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |9 Lives                                |Done               |Done       |Done   |
 |2         |C Deez Flags                           |Done               |Done       |Done   |
-|3         |PS I Have A Secret                     |Done               |Done       |       |
+|3         |PS I Have A Secret                     |Done               |Done       |Done   |
 |4         |Internet Cat                           |                   |           |       |
-|5         |Grep Grep Grep!                        |Done               |Done       |       |
+|5         |Grep Grep Grep!                        |Done               |Done       |Done   |
 |6         |Get That W                             |Done               |Done       |       |
 |7         |Zip Zap                                |Done               |Done       |       |
 |8         |Maybe we should call Mario             |Done               |           |       |

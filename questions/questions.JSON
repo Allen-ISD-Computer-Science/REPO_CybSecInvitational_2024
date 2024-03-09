@@ -14,7 +14,7 @@
 [
     {
         "name": "9 Lives",
-        "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"login\">Use Me!</a>",
+        "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"context/cat.txt\">Use Me!</a>",
         "points_value": 5,
         "difficulty": 0,
         "category": "BashBasics",
@@ -23,7 +23,7 @@
 
     {
         "name": "C Deez Flags",
-        "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"link\">directory</a>, but how do I get to it?</p>",
+        "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"context/checkThisOut.zip\">directory</a>, but how do I get to it?</p>",
         "points_value": 5,
         "difficulty": 0,
         "category": "BashBasics",
@@ -202,7 +202,7 @@
 
     {
         "name": "GetTheW",
-        "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"link\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
+        "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"context/Flag.html\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
         "points_value": 5,
         "difficulty": 0,
         "category": "BashBasics",
@@ -211,7 +211,7 @@
 
     {
         "name": "Autofill",
-        "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"link\">open it?</a></p>",
+        "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"context/GrAMM3r  C0nv3nti0nS aRe h4rD,,. 0#@\">open it?</a></p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "BashBasics",
@@ -229,7 +229,7 @@
     
     {
         "name": "Invisible",
-        "description": "<h1>Invisible</h1><h3>BashBasics</h3><p>The file in this<a href=\"link\">directory</a>looks suspicious. Seems like there is more than meets the eye.</p>",
+        "description": "<h1>Invisible</h1><h3>BashBasics</h3><p>The file in this<a href=\"context/.flag\">directory</a>looks suspicious. Seems like there is more than meets the eye.</p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "BashBasics",
@@ -238,7 +238,7 @@
 
     {
         "name": "GrepGrepGrep",
-        "description": "<h1>GrepGrepGrep</h1><h3>BashBasics</h3><p>Your boss has given you the script for the world famous play Romeo and Juliet. Find the embedded message<a href=\"link\">(Flag)</a>.</p>",
+        "description": "<h1>GrepGrepGrep</h1><h3>BashBasics</h3><p>Your boss has given you the script for the world famous play Romeo and Juliet. Find the embedded message<a href=\"context/Romeo.txt\">(Flag)</a>.</p>",
         "points_value": 15,
         "difficulty": 1,
         "category": "BashBasics",
@@ -252,5 +252,37 @@
         "difficulty": 1,
         "category": "BashBasics",
         "answer": "AHSINV{244abf05f9f9eade2dd0b521512d9631}"
-    }
+    },
+    {
+        "name": "PSIHaveASecret",
+        "description": "<h1>PSIHaveASecret</h1><h3>BashBasics</h3><p>Your boss has told you to find the file that matches your shell environment.<a href=\"context/PSSSS.zip\">file</a></p>",
+        "points_value": 5,
+        "difficulty": 1,
+        "category": "BashBasics",
+        "answer": "AHSINV{f27a3286c4741944c2c6f7cd00f330b9}"
+    },
+    {
+        "name": "Zip Zap",
+        "description": "<h1>Zip Zap</h1><h3>BashBasics</h3><p>My boss gave me this zipped folder containing a lot of files. Can you retrieve the contents of the file named <a href=\"context/file_cabinet.zip\">Idiosyncratic.txt</a>?</p>",
+        "points_value": 10,
+        "difficulty": 1,
+        "category": "BashBasics",
+        "answer": "AHSINV{6cadd48f24087c9e13e7b42e5ae9c38b}"
+    },    
+    {
+        "name": "Greptastic",
+        "description": "<h1>Greptastic</h1><h3>Greptastic</h3><p>It’s like a traffic jam up in here. If only there was a way to clear the mess, or at least find the <a href=\"context/Greptastic.zip\">flag…</a></p>",
+        "points_value": 20,
+        "difficulty": 2,
+        "category": "BashBasics",
+        "answer": "AHSINV{0aa129841f2226ecd53dee66d2dbb9eb}"
+    },    
+    {
+        "name": "It's rude to interrupt!",
+        "description": "<h1>It's rude to interrupt!</h1><h3>BashBasics</h3><p>I’m waiting for this file to finish running, but it’s taking forever! I wish I could just walk away…<a href=\"context/process.py\">file</a></p>",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{b944c6b22abbd13bdc8f17c816bffdb7}"
+    },
 ]
