@@ -77,7 +77,7 @@
 
     {
         "name": "Two Hops This Time",
-        "description": "<h1>Two Hops This Time</h1><h3>Decoding Fun</h3><p>Somehow whenever the string in this file plays baseball, it finds a way to get to the imaginary 16th base. What is the <a href=\"link\">Flag</a> that enables it to do this?</p>",
+        "description": "<h1>Two Hops This Time</h1><h3>Decoding Fun</h3><p>Somehow whenever the string in this file plays baseball, it finds a way to get to the imaginary 16th base. What is the <a href=\"context/dump.txt\">Flag</a> that enables it to do this?</p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "Cryptography",
@@ -184,7 +184,7 @@
 
     {
         "name": "TheMask",
-        "description": "<h1>TheMask</h1><h3>Cryptography</h3><p>Given a movie poster, find the <a href=\"link\">Flag</a> that is embedded in the file somewhere.</p>",
+        "description": "<h1>TheMask</h1><h3>Cryptography</h3><p>Given a movie poster, find the <a href=\"context/TheMASK.jpg\">Flag</a> that is embedded in the file somewhere.</p>",
         "points_value": 15,
         "difficulty": 1,
         "category": "Cryptography",
@@ -193,7 +193,7 @@
 
     {
         "name": "Which Photo",
-        "description": "<h1>Which Photo</h1><h3>Cryptography</h3><p>You are in the case of an infamous art thief. They were sloppy this time, and left a breadcrumb trail. Track them down and report back the flag.<a href=\"link\">Start Here!</a></p>",
+        "description": "<h1>Which Photo</h1><h3>Cryptography</h3><p>You are in the case of an infamous art thief. They were sloppy this time, and left a breadcrumb trail. Track them down and report back the flag.<a href=\"context/whichPhoto.zip\">Start Here!</a></p>",
         "points_value": 50,
         "difficulty": 3,
         "category": "Cryptography",
