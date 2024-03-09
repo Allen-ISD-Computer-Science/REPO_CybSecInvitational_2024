@@ -55,7 +55,7 @@
 |5         |Grep Grep Grep!                        |Done               |Done       |Done   |
 |6         |Get That W                             |Done               |Done       |       |
 |7         |Zip Zap                                |Done               |Done       |       |
-|8         |Maybe we should call Mario             |Done               |           |       |
+|8         |Maybe we should call Mario             |                   |           |       |
 |9         |Locked Doors 1                         |Done               |           |       |
 |10        |Locked Doors 2                         |Done               |           |       |
 |11        |Locked Doors 3                         |                   |           |       |
@@ -70,7 +70,7 @@
 |20        |Dark Web of Encryption                 |                   |           |       |
 |21        |Code Injection Challenge               |                   |           |       |
 |22        |Unraveling Secrets                     |                   |           |       |
-|23        |Hidden Within The Noise                |                   |           |       |
+|23        |Hidden Within The Noise                |Done               |Done       |       |
 |24        |Elaborate Script Obfuscation           |                   |           |       |
 |25        |Cryptic Bash Script                    |                   |           |       |
 |26        |Recursive Challenge (Advanced)         |                   |           |       |
