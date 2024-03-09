@@ -48,11 +48,11 @@ async function fetchPuzzles() {
   return response.json();
 }
 
-async function fetchPuzzle(id) {
+async function fetchPuzzle(name) {
   const response = await fetch("battleRound/getPuzzle", {
     method: "POST",
     body: JSON.stringify({
-      id: id,
+      name: name,
     }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
@@ -66,10 +66,10 @@ async function fetchPuzzle(id) {
   return response.json();
 }
 
-async function submitPuzzle(id, answer) {
+async function submitPuzzle(name, answer) {
   const response = await fetch("battleRound/submitPuzzle", {
     method: "POST",
-    body: JSON.stringify({ id: id, answer: answer }),
+    body: JSON.stringify({ name: name, answer: answer }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },

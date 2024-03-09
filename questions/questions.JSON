@@ -216,5 +216,41 @@
         "difficulty": 0,
         "category": "BashBasics",
         "answer": "AHSINV{62e0f103e7717b4a112b825b95b88bfb}"
+    },
+
+    {
+        "name": "It's rude to interrupt!",
+        "description": "<h1>It's rude to interrupt!</h1><h3>Bash Basics</h3><p>I'm waiting for this<a href=\"link\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{b944c6b22abbd13bdc8f17c816bffdb7}"
+    },
+    
+    {
+        "name": "Invisible",
+        "description": "<h1>Invisible</h1><h3>BashBasics</h3><p>The file in this<a href=\"link\">directory</a>looks suspicious. Seems like there is more than meets the eye.</p>",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{d001eb85d4f024ab2e2d2b6a5df955fc}"
+    },
+
+    {
+        "name": "GrepGrepGrep",
+        "description": "<h1>GrepGrepGrep</h1><h3>BashBasics</h3><p>Your boss has given you the script for the world famous play Romeo and Juliet. Find the embedded message<a href=\"link\">(Flag)</a>.</p>",
+        "points_value": 15,
+        "difficulty": 1,
+        "category": "BashBasics",
+        "answer": "AHSINV{Juliet}"
+    }, 
+
+    {
+        "name": "PathOfThePuzzled",
+        "description": "<h1>PathOfThePuzzled</h1><h3>BashBasics</h3><p>Your boss wants you to find the right file inside this big <a href=\"link\">file</a>tree</p>",
+        "points_value": 15,
+        "difficulty": 1,
+        "category": "BashBasics",
+        "answer": "AHSINV{244abf05f9f9eade2dd0b521512d9631}"
     }
 ]

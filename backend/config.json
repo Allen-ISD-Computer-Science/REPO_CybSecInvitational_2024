@@ -1,5 +1,6 @@
 {
   "host_port": 11278,
+  "host_path": "",
 
   "internal_tick_rate": 10000,
 
@@ -8,6 +9,12 @@
   "battle_round_duration": 60000,
   "battle_round_min_multiplier": 0.5,
   "battle_round_max_multiplier": 2,
+
+  "puzzle_rounds": {
+    "puzzle_round_1": {
+      "multiplier": 1
+    }
+  },
 
   "battle_rounds": {
     "battle_round_1": {

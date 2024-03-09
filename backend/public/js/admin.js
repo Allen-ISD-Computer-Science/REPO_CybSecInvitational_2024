@@ -1,21 +1,33 @@
-async function submitOperation(operation, operand, arguments) {
-  console.log(operation, operand, arguments);
-
-  const response = await fetch("admin/command", {
+async function submitOperation(command) {
+  const response = await fetch("adminCommand", {
     method: "POST",
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
     body: JSON.stringify({
-      operation: operation,
-      operand: operand,
-      arguments: arguments,
+      command: command,
     }),
   });
   console.log(response);
 
   return response;
 }
+
+const commandBar = document.getElementById("admin_command_bar");
+const output = document.getElementById("admin_output");
+
+commandBar.addEventListener("keypress", async (evt) => {
+  if (evt.key === "Enter") {
+    evt.preventDefault();
+    console.log(commandBar.value);
+    const result = await submitOperation(commandBar.value);
+    if (result.ok) {
+      output.innerHTML += "Success!" + "<br />";
+    } else {
+      output.innerHTML += (await result.text()) + "<br />";
+    }
+  }
+});
 
 const pointsSection = document.getElementById("admin_points_section");
 const pointsOperation = document.getElementById("admin_points_operation");
