@@ -53,8 +53,8 @@
 |3         |PS I Have A Secret                     |Done               |Done       |Done   |
 |4         |Internet Cat                           |                   |           |       |
 |5         |Grep Grep Grep!                        |Done               |Done       |Done   |
-|6         |Get That W                             |Done               |Done       |       |
-|7         |Zip Zap                                |Done               |Done       |       |
+|6         |Get That W                             |Done               |Done       |Done   |
+|7         |Zip Zap                                |Done               |Done       |Done   |
 |8         |Maybe we should call Mario             |Done               |           |       |
 |9         |Locked Doors 1                         |Done               |           |       |
 |10        |Locked Doors 2                         |Done               |           |       |
@@ -74,10 +74,10 @@
 |24        |Elaborate Script Obfuscation           |                   |           |       |
 |25        |Cryptic Bash Script                    |                   |           |       |
 |26        |Recursive Challenge (Advanced)         |                   |           |       |
-|27        |Greptastic                             |Done               |           |       |
-|28        |It's rude to interrupt!                |Done               |Done       |       |
-|29        |Autofill                               |Done               |Done       |       |
-|30        |Invisible                              |Done               |Done       |       |
+|27        |Greptastic                             |Done               |Done       |Done   |
+|28        |It's rude to interrupt!                |Done               |Done       |Done   |
+|29        |Autofill                               |Done               |Done       |Done   |
+|30        |Invisible                              |Done               |Done       |Done   |
 
 
 ## Exploitation
