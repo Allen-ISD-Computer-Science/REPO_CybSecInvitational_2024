@@ -98,7 +98,7 @@
 |11        |Breakdown!                             |                   |           |       |
 |12        |Never Back Down Never What?            |                   |           |       |
 |13        |Scrambled Binary                       |                   |           |       |
-|14        |Out In The Open                        |Done               |Done       |       |
+|14        |Out In The Open                        |Done               |Done       |Done   |
 |15        |Minor Hacking                          |                   |           |       |
 |16        |Packets                                |                   |           |       |
 |17        |Tampered Packets                       |                   |           |       |
@@ -115,8 +115,8 @@
 |28        |Brain Surgery                          |                   |           |       |
 |29        |Binary Enigma                          |                   |           |       |
 |30        |Cryptic Network Traversal              |                   |           |       |
-|31        |1-100000                               |Done               |           |       |
-|32        |JohnII                                 |Done               |           |       |
+|31        |1-100000                               |Done               |Done       |Done   |
+|32        |JohnII                                 |Done               |Done       |Done   |
 |33        |Hash Your Mind Away                    |Done               |           |       |
 |34        |JohnI                                  |Done               |           |       |
 

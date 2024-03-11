@@ -41,7 +41,7 @@
 
     {
         "name": "Julius Caesar",
-        "description": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
+        "description": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"context/Bandiera.txt\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
         "points_value": 15,
         "difficulty": 0,
         "category": "Cryptography",
@@ -284,5 +284,45 @@
         "difficulty": 0,
         "category": "BashBasics",
         "answer": "AHSINV{b944c6b22abbd13bdc8f17c816bffdb7}"
+    },    
+    {
+        "name": "Disassemble The Stack",
+        "description": "<h1>Disassemble The Stack</h1><h3>Exploitation</h3><p>How does a program store information? It would be a real shame if the data could just be pulled out from the program. Sounds like that would cause a lot of problems.<a href=\"context/\">file</a></p>",
+        "points_value": 40,
+        "difficulty": 3,
+        "category": "Binary Exploit",
+        "answer": "AHSINV{2c2b3b45330a04cfaea9bd96ace28615}"
+    },    
+    {
+        "name": "Out In The Open",
+        "description": "<h1>Out In The Open</h1><h3></h3><p>There are many parts of a file, and one of them identifies the file. What is the identification for this file?<a href=\"context/out.zip\">file</a></p>",
+        "points_value": 5,
+        "difficulty": 0,
+        "category": "Binary Exploit",
+        "answer": "AHSINV{ea32e97cbb994bf7862c8981d7b9d49c}"
+    },
+    {
+        "name": "1-100000",
+        "description": "<h1>1-100000</h1><h3>Exploitation</h3><p><a href=\"context/main.cpython-312.opt-2.pyc\">file</a></p>",
+        "points_value": 10,
+        "difficulty": 0,
+        "category": "Binary Exploit",
+        "answer": "AHSINV{e86597c1c6891d84afa86b2d049072d6}"
+    },
+    {
+        "name": "John II",
+        "description": "<h1>John II</h1><h3>Exploitation</h3><p>Your boss wants you to crack this zip <a href=\"context/archive.zip\">file</a>. Use this public <a href =\"https://codermerlin.academy/users/nathan-koch/Digital%20Portfolio/index.html\">website</a> to build a word list of the target. Good luck special agent!(No spaces)</p>",
+        "points_value": 30,
+        "difficulty": 2,
+        "category": "Binary Exploit",
+        "answer": "AHSINV{06271d19d45e3ba01c76802484abf184}"
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p><a href=\"context\">file</a></p>",
+        "points_value": ,
+        "difficulty": ,
+        "category": "",
+        "answer": ""
     },
 ]
