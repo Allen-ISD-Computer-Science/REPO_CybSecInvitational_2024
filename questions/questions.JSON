@@ -50,7 +50,7 @@
 
     {
         "name": "Glass Too Full",
-        "description": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"link\">program</a> how to count to 100?</p>",
+        "description": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"\">program</a> how to count to 100?</p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "Binary Exploit",
@@ -59,7 +59,7 @@
 
     {
         "name": "Negative Energy",
-        "description": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"link\">this</a> program's math problem.</p>",
+        "description": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"context/NegativeEnergy.class\">this</a> program's math problem.</p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "Binary Exploit",
