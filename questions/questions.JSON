@@ -220,7 +220,7 @@
 
     {
         "name": "It's rude to interrupt!",
-        "description": "<h1>It's rude to interrupt!</h1><h3>Bash Basics</h3><p>I'm waiting for this<a href=\"link\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
+        "description": "<h1>It's rude to interrupt!</h1><h3>Bash Basics</h3><p>I'm waiting for this<a href=\"context/interrupted.zip\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
         "points_value": 10,
         "difficulty": 0,
         "category": "BashBasics",
@@ -316,13 +316,5 @@
         "difficulty": 2,
         "category": "Binary Exploit",
         "answer": "AHSINV{06271d19d45e3ba01c76802484abf184}"
-    },
-    {
-        "name": "",
-        "description": "<h1></h1><h3></h3><p><a href=\"context\">file</a></p>",
-        "points_value": ,
-        "difficulty": ,
-        "category": "",
-        "answer": ""
-    },
+    }
 ]
