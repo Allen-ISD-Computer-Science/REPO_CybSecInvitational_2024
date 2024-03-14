@@ -30,6 +30,9 @@ declare global {
   }
 
   export const lerp = (a: number, b: number, t: number) => a + t * (b - a);
+
+  export const applyEnvelope = (a: number, e: number) => a + Math.floor(Math.random() - 0.5) * e;
+  export const applyEnvelopeFloat = (a: number, e: number) => a + (Math.random() - 0.5) * e;
 }
 
 export {};
