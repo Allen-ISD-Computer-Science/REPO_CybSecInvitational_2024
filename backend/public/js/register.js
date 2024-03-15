@@ -53,8 +53,6 @@ const register2Grade = document.getElementById("register_2_grade");
 const register2ShirtSize = document.getElementById("register_2_shirt_size");
 const register2DietaryRestriction = document.getElementById("register_2_dietary_restriction");
 
-const registerSubmit = document.getElementById("register_submit");
-
 const problemAlert = document.getElementById("problem_alert");
 function alertProblem(message) {
   problemAlert.textContent = message;
@@ -162,13 +160,6 @@ async function attemptRegister() {
   sent = false;
 }
 
-registerSubmit.onsubmit = async (evt) => {
-  console.log("button clicked");
-  if (sent) return;
-  evt.preventDefault();
-  attemptRegister();
-};
-
 const addMemberButton = document.getElementById("addMemberButton");
 const removeMemberButton = document.getElementById("removeMemberButton");
 const addMemberMenu = document.getElementById("addMember");
@@ -185,4 +176,12 @@ document.getElementById("addMemberButton").addEventListener("click", () => {
   addMemberButton.classList.replace("d-flex", "d-none");
   removeMemberButton.classList.replace("d-none", "d-flex");
   addMemberMenu.classList.replace("d-none", "d-inline");
+});
+
+const form = document.getElementById("formSubmit");
+form.addEventListener("submit", function (event) {
+  console.log("submitting");
+  event.preventDefault();
+  if (sent) return;
+  attemptRegister();
 });

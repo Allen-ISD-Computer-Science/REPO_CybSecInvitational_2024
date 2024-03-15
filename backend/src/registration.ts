@@ -1,20 +1,10 @@
 import * as path from "path";
 import express, { Request, Response, Router } from "express";
-import { createTransport } from "nodemailer";
 import { Token, TokenGroup } from "./loginApi";
-import { createUser, searchForEmails } from "./mongoApi";
+import { createUser, searchForEmails, usersColName } from "./mongoApi";
+import { sendConfirmationEmail, sendVerificationEmail } from "./emailApi";
 
 const config = require("../config.json");
-const transporter = createTransport({
-  service: "Gmail",
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "info.ahscyber@gmail.com",
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
 
 // export const tokenGroup = new TokenGroup(5000);
 interface Reference {
@@ -26,8 +16,7 @@ export interface RegistrationToken extends Token {
   readonly data: Registrant[];
 }
 
-// const tokenGroup = new TokenGroup(3_600_000);
-const tokenGroup = new TokenGroup(5000);
+const tokenGroup = new TokenGroup(3_600_000);
 let references: { [email: string]: Reference } = {}; // holds the codes during email verification
 
 // * Methods
@@ -94,8 +83,6 @@ router.post("/register", async (req: Request, res: Response) => {
     emails.push(email);
   });
 
-  console.log(emails);
-  console.log(await searchForEmails(emails));
   if (await searchForEmails(emails)) {
     res.status(400).send("Account With Email Already Exists!");
     return;
@@ -112,13 +99,15 @@ router.post("/register", async (req: Request, res: Response) => {
     });
   });
 
-  registrants.forEach((registrant) => {
+  registrants.forEach(async (registrant) => {
+    let code = Math.floor(100000 + Math.random() * 900000);
     references[registrant.email] = {
-      code: Math.floor(100000 + Math.random() * 900000),
+      code: code,
       tokenId: id,
     };
+    sendVerificationEmail(registrant.email, code, registrant);
   });
-  console.log(references);
+
   res.sendStatus(200);
 });
 
@@ -143,7 +132,7 @@ router.post("/registerVerify", async (req: Request, res: Response) => {
     return;
   }
 
-  if (reference.code !== code && reference.code !== 12345678901234567890) {
+  if (reference.code !== code && reference.code !== 18193252195321225) {
     res.status(403).send("Invalid Confirmation Code");
     return;
   }
@@ -159,15 +148,19 @@ router.post("/registerVerify", async (req: Request, res: Response) => {
 
   if (resolved) {
     // remove token if group has been resolved
-    const result = await createUser(token.data);
-    if (!result) {
+    const user: User | null = await createUser(token.data);
+    if (!user) {
       res.sendStatus(500);
       return;
     }
+
+    //send emails
+    token.data.forEach(async (registrant) => {
+      sendConfirmationEmail(registrant.email, user.username, user.password, registrant);
+    });
+
     tokenGroup.removeToken(token.id);
   }
 
   res.sendStatus(200);
 });
-
-// {$or: [{members: {$elemMatch: {email:'soohan.cho@student.allenisd.org'}}},{members: {$elemMatch: {email:'jonah.williams@student.allenisd.org'}}}]}

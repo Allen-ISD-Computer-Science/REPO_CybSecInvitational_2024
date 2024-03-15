@@ -38,22 +38,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.router = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
-const nodemailer_1 = require("nodemailer");
 const loginApi_1 = require("./loginApi");
 const mongoApi_1 = require("./mongoApi");
+const emailApi_1 = require("./emailApi");
 const config = require("../config.json");
-const transporter = (0, nodemailer_1.createTransport)({
-    service: "Gmail",
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true,
-    auth: {
-        user: "info.ahscyber@gmail.com",
-        pass: process.env.GMAIL_APP_PASSWORD,
-    },
-});
-// const tokenGroup = new TokenGroup(3_600_000);
-const tokenGroup = new loginApi_1.TokenGroup(5000);
+const tokenGroup = new loginApi_1.TokenGroup(3600000);
 let references = {}; // holds the codes during email verification
 // * Methods
 const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -108,8 +97,6 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
         });
         emails.push(email);
     });
-    console.log(emails);
-    console.log(yield (0, mongoApi_1.searchForEmails)(emails));
     if (yield (0, mongoApi_1.searchForEmails)(emails)) {
         res.status(400).send("Account With Email Already Exists!");
         return;
@@ -125,13 +112,14 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
             }
         });
     });
-    registrants.forEach((registrant) => {
+    registrants.forEach((registrant) => __awaiter(void 0, void 0, void 0, function* () {
+        let code = Math.floor(100000 + Math.random() * 900000);
         references[registrant.email] = {
-            code: Math.floor(100000 + Math.random() * 900000),
+            code: code,
             tokenId: id,
         };
-    });
-    console.log(references);
+        (0, emailApi_1.sendVerificationEmail)(registrant.email, code, registrant);
+    }));
     res.sendStatus(200);
 }));
 exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -151,7 +139,7 @@ exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, v
         res.status(400).send("Failed to Fetch Registration Token");
         return;
     }
-    if (reference.code !== code && reference.code !== 12345678901234567890) {
+    if (reference.code !== code && reference.code !== 18193252195321225) {
         res.status(403).send("Invalid Confirmation Code");
         return;
     }
@@ -165,13 +153,16 @@ exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, v
     }
     if (resolved) {
         // remove token if group has been resolved
-        const result = yield (0, mongoApi_1.createUser)(token.data);
-        if (!result) {
+        const user = yield (0, mongoApi_1.createUser)(token.data);
+        if (!user) {
             res.sendStatus(500);
             return;
         }
+        //send emails
+        token.data.forEach((registrant) => __awaiter(void 0, void 0, void 0, function* () {
+            (0, emailApi_1.sendConfirmationEmail)(registrant.email, user.username, user.password, registrant);
+        }));
         tokenGroup.removeToken(token.id);
     }
     res.sendStatus(200);
 }));
-// {$or: [{members: {$elemMatch: {email:'soohan.cho@student.allenisd.org'}}},{members: {$elemMatch: {email:'jonah.williams@student.allenisd.org'}}}]}

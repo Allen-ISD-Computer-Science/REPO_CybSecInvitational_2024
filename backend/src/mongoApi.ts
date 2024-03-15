@@ -66,7 +66,7 @@ function genRandHex(size: number): string {
   return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
 }
 
-export async function createUser(participants: Registrant[]) {
+export async function createUser(participants: Registrant[]): Promise<User | null> {
   try {
     const user: User = {
       division: 0,
@@ -83,13 +83,13 @@ export async function createUser(participants: Registrant[]) {
     let result = await client.db(mainDbName).collection(usersColName).insertOne(user);
 
     if (result.acknowledged) {
-      return true;
+      return user;
     } else {
-      return false;
+      return null;
     }
   } catch (err) {
     console.log(err);
-    return false;
+    return null;
   }
 }
 

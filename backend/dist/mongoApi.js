@@ -110,15 +110,15 @@ function createUser(participants) {
             console.log(user);
             let result = yield exports.client.db(exports.mainDbName).collection(exports.usersColName).insertOne(user);
             if (result.acknowledged) {
-                return true;
+                return user;
             }
             else {
-                return false;
+                return null;
             }
         }
         catch (err) {
             console.log(err);
-            return false;
+            return null;
         }
     });
 }
