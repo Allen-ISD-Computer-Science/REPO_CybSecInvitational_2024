@@ -78,8 +78,6 @@ export async function createUser(participants: Registrant[]): Promise<User | nul
       scenario_points: 0,
     };
 
-    console.log(user);
-
     let result = await client.db(mainDbName).collection(usersColName).insertOne(user);
 
     if (result.acknowledged) {
