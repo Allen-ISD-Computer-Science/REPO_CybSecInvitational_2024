@@ -27,7 +27,7 @@
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">Welcome to the <br />AHS Invitational!</h1>
                 </div>
-                <form class="user">
+                <form id="formSubmit" class="user">
                   <div class="form-group">
                     <input type="text" name="username" class="form-control form-control-user" id="inputUsername" placeholder="Username" />
                   </div>
@@ -40,14 +40,13 @@
                       <label class="custom-control-label" for="customCheck">Remember Me</label>
                     </div>
                   </div>
-                  <button id="formSubmit" type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                  <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                 </form>
                 <hr />
                 <div class="text-center">
                   <a class="small" href="register">Not registered? Register team!</a>
                 </div>
               </div>
-              <div id="invalidAlert" class="alert alert-danger ml-5 mr-5 mb-5">Invalid Password or Username</div>
               <div id="badRequestAlert" class="alert alert-danger ml-5 mr-5 mb-5">Bad Request</div>
             </div>
           </div>

@@ -26,7 +26,8 @@ export interface RegistrationToken extends Token {
   readonly data: Registrant[];
 }
 
-const tokenGroup = new TokenGroup(3_600_000);
+// const tokenGroup = new TokenGroup(3_600_000);
+const tokenGroup = new TokenGroup(5000);
 let references: { [email: string]: Reference } = {}; // holds the codes during email verification
 
 // * Methods
@@ -101,6 +102,7 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 
   const id = tokenGroup.createNewToken(registrants, () => {
+    //delete references once token expires
     registrants.forEach((registrant) => {
       try {
         delete references[registrant.email];
@@ -108,7 +110,6 @@ router.post("/register", async (req: Request, res: Response) => {
         return;
       }
     });
-    console.log("GONE!", references);
   });
 
   registrants.forEach((registrant) => {
@@ -117,9 +118,8 @@ router.post("/register", async (req: Request, res: Response) => {
       tokenId: id,
     };
   });
-
-  //   console.log(registrants);
   console.log(references);
+  res.sendStatus(200);
 });
 
 router.post("/registerVerify", async (req: Request, res: Response) => {
@@ -160,12 +160,13 @@ router.post("/registerVerify", async (req: Request, res: Response) => {
   if (resolved) {
     // remove token if group has been resolved
     const result = await createUser(token.data);
-    console.log("resolved!");
+    if (!result) {
+      res.sendStatus(500);
+      return;
+    }
     tokenGroup.removeToken(token.id);
   }
 
-  console.log(tokenGroup.tokens);
-  console.log(references);
   res.sendStatus(200);
 });
 

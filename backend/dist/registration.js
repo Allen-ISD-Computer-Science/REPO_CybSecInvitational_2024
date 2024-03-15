@@ -52,7 +52,8 @@ const transporter = (0, nodemailer_1.createTransport)({
         pass: process.env.GMAIL_APP_PASSWORD,
     },
 });
-const tokenGroup = new loginApi_1.TokenGroup(3600000);
+// const tokenGroup = new TokenGroup(3_600_000);
+const tokenGroup = new loginApi_1.TokenGroup(5000);
 let references = {}; // holds the codes during email verification
 // * Methods
 const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
@@ -114,6 +115,7 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
         return;
     }
     const id = tokenGroup.createNewToken(registrants, () => {
+        //delete references once token expires
         registrants.forEach((registrant) => {
             try {
                 delete references[registrant.email];
@@ -122,7 +124,6 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
                 return;
             }
         });
-        console.log("GONE!", references);
     });
     registrants.forEach((registrant) => {
         references[registrant.email] = {
@@ -130,8 +131,8 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
             tokenId: id,
         };
     });
-    //   console.log(registrants);
     console.log(references);
+    res.sendStatus(200);
 }));
 exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = String(req.body.email);
@@ -165,11 +166,12 @@ exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, v
     if (resolved) {
         // remove token if group has been resolved
         const result = yield (0, mongoApi_1.createUser)(token.data);
-        console.log("resolved!");
+        if (!result) {
+            res.sendStatus(500);
+            return;
+        }
         tokenGroup.removeToken(token.id);
     }
-    console.log(tokenGroup.tokens);
-    console.log(references);
     res.sendStatus(200);
 }));
 // {$or: [{members: {$elemMatch: {email:'soohan.cho@student.allenisd.org'}}},{members: {$elemMatch: {email:'jonah.williams@student.allenisd.org'}}}]}

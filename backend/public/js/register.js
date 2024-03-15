@@ -62,15 +62,42 @@ function alertProblem(message) {
 }
 
 function isRegister1Valid() {
-  return register1FirstName.value && register1LastName.value && register1Email.value && register1EmailConfirm.value && register1School.value && register1Grade.value && register1ShirtSize.value && register1DietaryRestriction.value;
+  return (
+    register1FirstName.value &&
+    register1LastName.value &&
+    register1Email.value &&
+    register1EmailConfirm.value &&
+    register1School.value &&
+    register1Grade.value &&
+    register1ShirtSize.value &&
+    register1DietaryRestriction.value
+  );
 }
 
 function isRegister2Valid() {
-  return register2FirstName.value && register2LastName.value && register2Email.value && register2EmailConfirm.value && register2School.value && register2Grade.value && register2ShirtSize.value && register2DietaryRestriction.value;
+  return (
+    register2FirstName.value &&
+    register2LastName.value &&
+    register2Email.value &&
+    register2EmailConfirm.value &&
+    register2School.value &&
+    register2Grade.value &&
+    register2ShirtSize.value &&
+    register2DietaryRestriction.value
+  );
 }
 
 function isSecondMember() {
-  return register2FirstName.value || register2LastName.value || register2Email.value || register2EmailConfirm.value || register2School.value || register2Grade.value || register2ShirtSize.value || register2DietaryRestriction.value;
+  return (
+    register2FirstName.value ||
+    register2LastName.value ||
+    register2Email.value ||
+    register2EmailConfirm.value ||
+    register2School.value ||
+    register2Grade.value ||
+    register2ShirtSize.value ||
+    register2DietaryRestriction.value
+  );
 }
 
 function resetMember2() {
@@ -95,10 +122,7 @@ function resetMember2() {
 // }
 
 var sent = false;
-registerSubmit.onclick = async (evt) => {
-  if (sent) return;
-  evt.preventDefault();
-
+async function attemptRegister() {
   if (isSecondMember()) {
     secondMember = true;
   } else {
@@ -128,17 +152,6 @@ registerSubmit.onclick = async (evt) => {
     return;
   }
 
-  // if (!checkEmailDomain(register1Email.value)) {
-  //   alertProblem("Email Domain Not Allowed");
-  //   return;
-  // }
-  // if (secondMember) {
-  //   if (!checkEmailDomain(register2Email.value)) {
-  //     alertProblem("Email Domain Not Allowed");
-  //     return;
-  //   }
-  // }
-
   sent = true; //debounce
   let response = await sendRequest();
   if (!response.ok) {
@@ -147,6 +160,13 @@ registerSubmit.onclick = async (evt) => {
     window.location.href = "confirm";
   }
   sent = false;
+}
+
+registerSubmit.onsubmit = async (evt) => {
+  console.log("button clicked");
+  if (sent) return;
+  evt.preventDefault();
+  attemptRegister();
 };
 
 const addMemberButton = document.getElementById("addMemberButton");

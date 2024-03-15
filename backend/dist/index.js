@@ -87,7 +87,3 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     };
     socketApi_1.io.emit("update_event", updatePacket);
 }), 5000);
-// startPuzzleRound("TestPuzzleRound", 120000);
-(0, mongoApi_1.searchForEmails)(["soohan.cho@student.allenisd.org"]).then((res) => {
-    console.log(res);
-});
