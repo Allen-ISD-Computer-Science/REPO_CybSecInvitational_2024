@@ -1,12 +1,22 @@
 import { ObjectId } from "mongodb";
 
 declare global {
+  interface Registrant {
+    email: string;
+    firstName: string;
+    lastName: string;
+    school: string;
+    gradeLevel: string;
+    shirtSize: string;
+    dietaryRestriction: string;
+  }
+
   interface User {
-    _id: ObjectId;
     division: 0 | 1 | 2; // Silver, Gold, Platinum
     username: string;
     password: string;
     completed_puzzles: { [name: string]: boolean };
+    members: Registrant[];
     puzzle_points: number;
     scenario_points: number;
   }

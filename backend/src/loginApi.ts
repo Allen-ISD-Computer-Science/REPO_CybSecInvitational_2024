@@ -52,10 +52,11 @@ export class TokenGroup {
     this.duration = duration;
   }
 
-  createNewToken(data: Object = {}): string {
+  createNewToken(data: Object = {}, callback: Function = () => {}): string {
     const newToken = new Token(
       () => {
         delete this.tokens[newToken.id];
+        callback();
       },
       data,
       this.duration

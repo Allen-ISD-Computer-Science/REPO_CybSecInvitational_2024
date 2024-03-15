@@ -68,6 +68,7 @@ class Service {
     constructor(onUpdate) {
         this._onUpdate = onUpdate;
         this.active = true;
+        this.updateService();
     }
     updateService() {
         this._onUpdate(this);
@@ -101,10 +102,9 @@ class PanelSection {
     boot() {
         if (this.status != 0)
             return false;
-        this.status = 4;
+        this.changeStatus(4);
         setTimeout(() => {
-            this.status = 1;
-            console.log(this.status);
+            this.changeStatus(1);
         }, (0, exports.applyEnvelopeFloat)(PanelSection.defaultBootTime, PanelSection.bootTimeEnvelope));
         return true;
     }
@@ -112,10 +112,9 @@ class PanelSection {
         if (this.status == 3 || this.status == 4)
             return false;
         if (this.status == 2) {
-            this.status = 3;
+            this.changeStatus(3);
             setTimeout(() => {
-                this.status = 0;
-                console.log(this.status);
+                this.changeStatus(0);
             }, (0, exports.applyEnvelopeFloat)(PanelSection.defaultRepairTime, PanelSection.repairTimeEnvelope));
             return true;
         }
@@ -130,10 +129,55 @@ PanelSection.repairTimeEnvelope = 4000;
 PanelSection.defaultBootTime = 3000;
 PanelSection.bootTimeEnvelope = 1000;
 class SolarPanelService extends Service {
-    static updateService() { }
+    static updateService() {
+        this.active = true;
+        for (let groupName in this.groups) {
+            let group = this.groups[groupName];
+            for (let id in group) {
+                let panel = group[id];
+                if (panel.getStatus() != 1) {
+                    this.active = false;
+                    return;
+                }
+            }
+        }
+    }
+    fetchPanel(groupName, id) {
+        return this.groups[groupName][id];
+    }
+    rebootPanel(groupName, id) {
+        let panel = this.fetchPanel(groupName, id);
+        if (!panel)
+            return false;
+        return panel.boot();
+    }
+    repairPanel(groupName, id) {
+        let panel = this.fetchPanel(groupName, id);
+        if (!panel)
+            return false;
+        return panel.repair();
+    }
+    getStatus(groupName, id) {
+        let panel = this.fetchPanel(groupName, id);
+        if (!panel)
+            return null;
+        return panel.getStatus();
+    }
+    getReport() {
+        let report = {};
+        for (let groupName in this.groups) {
+            let group = this.groups[groupName];
+            report[groupName] = {};
+            for (let id in group) {
+                let panel = group[id];
+                report[groupName][id] = panel.getStatus();
+            }
+        }
+        return report;
+    }
     constructor() {
         super(SolarPanelService.updateService);
-        this.sections = {
+        this.groups = {
             a: {
                 1: new PanelSection(1),
                 2: new PanelSection(1),
@@ -160,16 +204,18 @@ class SolarPanelService extends Service {
 }
 exports.SolarPanelService = SolarPanelService;
 class ScenarioRoundState {
+    update() {
+        for (let name in this.services) {
+            let service = this.services[name];
+            service._onUpdate();
+        }
+    }
     constructor(username) {
         this.groups = {
             user: new ScenarioRoundGroup("user", 0, "d---"),
         };
-        this.status = {
-            solar_panel: true,
-            truss_integrity: true,
-            docking_port: true,
-            life_support: true,
-            communications: true,
+        this.services = {
+            solar_panels: new SolarPanelService(),
         };
         // default state on round start
         this.users = {
@@ -185,6 +231,10 @@ ScenarioRoundState.default_groups = {
 };
 class ScenarioRound extends roundApi_1.Round {
     static _onEnd() {
+        if (!roundApi_1.currentRound || (roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) != "BattleRound")
+            return;
+        let round = roundApi_1.currentRound;
+        clearInterval(round.updateInterval);
         console.log("Puzzle Round Ended");
     }
     constructor(duration, id, divisions) {
@@ -194,6 +244,12 @@ class ScenarioRound extends roundApi_1.Round {
         });
         super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
         this.state = {};
+        this.updateInterval = setInterval(() => {
+            for (let username in this.state) {
+                let userState = this.state[username];
+                userState.update();
+            }
+        }, 5000);
         this.type = "ScenarioRound"; // ensure the type of round
     }
     init() {

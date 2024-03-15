@@ -84,15 +84,15 @@ function resetMember2() {
   register2DietaryRestriction.value = "";
 }
 
-let allowedDomains = [/@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@student.allenisd.org\s*$/, /@friscoisd.org\s*$/, /@prosper-isd.net\s*$/];
-function checkEmailDomain(email) {
-  for (let regexDomain of allowedDomains) {
-    if (regexDomain.test(email)) {
-      return true;
-    }
-  }
-  return false;
-}
+// let allowedDomains = [/@lovejoyisd.com\s*$/, /@student.mckinneyisd.net\s*$/, /@wylieisd.net\s*$/, /@mypisd.net\s*$/, /@student.allenisd.org\s*$/, /@friscoisd.org\s*$/, /@prosper-isd.net\s*$/];
+// function checkEmailDomain(email) {
+//   for (let regexDomain of allowedDomains) {
+//     if (regexDomain.test(email)) {
+//       return true;
+//     }
+//   }
+//   return false;
+// }
 
 var sent = false;
 registerSubmit.onclick = async (evt) => {
@@ -128,16 +128,16 @@ registerSubmit.onclick = async (evt) => {
     return;
   }
 
-  if (!checkEmailDomain(register1Email.value)) {
-    alertProblem("Email Domain Not Allowed");
-    return;
-  }
-  if (secondMember) {
-    if (!checkEmailDomain(register2Email.value)) {
-      alertProblem("Email Domain Not Allowed");
-      return;
-    }
-  }
+  // if (!checkEmailDomain(register1Email.value)) {
+  //   alertProblem("Email Domain Not Allowed");
+  //   return;
+  // }
+  // if (secondMember) {
+  //   if (!checkEmailDomain(register2Email.value)) {
+  //     alertProblem("Email Domain Not Allowed");
+  //     return;
+  //   }
+  // }
 
   sent = true; //debounce
   let response = await sendRequest();
