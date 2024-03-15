@@ -107,7 +107,6 @@ function createUser(participants) {
                 puzzle_points: 0,
                 scenario_points: 0,
             };
-            console.log(user);
             let result = yield exports.client.db(exports.mainDbName).collection(exports.usersColName).insertOne(user);
             if (result.acknowledged) {
                 return user;

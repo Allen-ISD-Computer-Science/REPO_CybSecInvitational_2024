@@ -112,8 +112,8 @@ router.post("/register", async (req: Request, res: Response) => {
 });
 
 router.post("/registerVerify", async (req: Request, res: Response) => {
-  const email: string = String(req.body.email);
-  const code: number = Number(req.body.code);
+  const email: string = req.body.email;
+  const code: string = req.body.code;
 
   if (!email || !code) {
     res.status(400).send("Missing Parameters");
@@ -132,7 +132,7 @@ router.post("/registerVerify", async (req: Request, res: Response) => {
     return;
   }
 
-  if (reference.code !== code && reference.code !== 18193252195321225) {
+  if (reference.code !== Number(code) && code !== process.env.ADMIN_CONFIRM_EMAIL_PIN) {
     res.status(403).send("Invalid Confirmation Code");
     return;
   }

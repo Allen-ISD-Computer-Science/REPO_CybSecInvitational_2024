@@ -123,8 +123,8 @@ exports.router.post("/register", (req, res) => __awaiter(void 0, void 0, void 0,
     res.sendStatus(200);
 }));
 exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = String(req.body.email);
-    const code = Number(req.body.code);
+    const email = req.body.email;
+    const code = req.body.code;
     if (!email || !code) {
         res.status(400).send("Missing Parameters");
         return;
@@ -139,7 +139,7 @@ exports.router.post("/registerVerify", (req, res) => __awaiter(void 0, void 0, v
         res.status(400).send("Failed to Fetch Registration Token");
         return;
     }
-    if (reference.code !== code && reference.code !== 18193252195321225) {
+    if (reference.code !== Number(code) && code !== process.env.ADMIN_CONFIRM_EMAIL_PIN) {
         res.status(403).send("Invalid Confirmation Code");
         return;
     }
