@@ -9,9 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startScenarioRound = exports.startRound = exports.endCurrentRound = exports.currentRound = exports.ScenarioRound = exports.ScenarioRoundUserState = exports.Round = void 0;
+exports.startRound = exports.endCurrentRound = exports.currentRound = exports.Round = void 0;
 const socketApi_1 = require("./socketApi");
-const mongoApi_1 = require("./mongoApi");
 const config = require("../config.json");
 class Round {
     getSummary() {
@@ -34,50 +33,6 @@ class Round {
     }
 }
 exports.Round = Round;
-class ScenarioRoundUserState {
-    constructor(username) {
-        this.status = {
-            solar_panel: true,
-            truss_integrity: true,
-            docking_port: true,
-            life_support: true,
-            communications: true,
-        };
-        this.users = {};
-        this.username = username;
-    }
-}
-exports.ScenarioRoundUserState = ScenarioRoundUserState;
-class ScenarioRound extends Round {
-    static _onEnd() {
-        console.log("Puzzle Round Ended");
-    }
-    constructor(duration, id, divisions) {
-        let divisionsObj = {};
-        divisions.forEach((val) => {
-            divisionsObj[val] = true;
-        });
-        super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
-        this.state = {};
-        this.type = "ScenarioRound"; // ensure the type of round
-    }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
-            if (!scoreboard) {
-                return false;
-            }
-            scoreboard.forEach((member) => {
-                this.state[member.username] = new ScenarioRoundUserState(member.username);
-            });
-            return true;
-        });
-    }
-    getUserState(username) {
-        return this.state[username];
-    }
-}
-exports.ScenarioRound = ScenarioRound;
 // * Module Parameters
 exports.currentRound = null;
 //* Methods
@@ -106,8 +61,3 @@ function startRound(round) {
     }
 }
 exports.startRound = startRound;
-function startScenarioRound(id, divisions, duration = config.puzzle_round_duration) {
-    let round = new ScenarioRound(duration, id, divisions);
-    return startRound(round);
-}
-exports.startScenarioRound = startScenarioRound;

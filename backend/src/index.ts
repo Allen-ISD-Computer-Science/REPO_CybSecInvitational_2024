@@ -8,10 +8,11 @@ import { router as loginRouter, validateLoginToken } from "./loginApi";
 import { router as userRouter } from "./usersApi";
 import { router as scoreboardRouter } from "./scoreboardApi";
 import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
-import { ScoreboardUser, fetchScoreboard } from "./mongoApi";
+import { ScoreboardUser, fetchScoreboard, searchForEmails } from "./mongoApi";
 import { router as adminRouter } from "./adminApi";
 import { router as battleRoundRouter } from "./battleRound";
 import { router as scenarioRouter } from "./scenario";
+import { router as registrationRouter } from "./registration";
 
 app.use("*", (req, res, next) => {
   console.log(req.url, req.baseUrl);
@@ -35,6 +36,7 @@ app.use("/", puzzleRouter);
 app.use("/", scoreboardRouter);
 app.use("/battleRound", battleRoundRouter);
 app.use("/", scenarioRouter);
+app.use("/", registrationRouter);
 
 // Initialize Socket Server
 initSocketConnection();
@@ -68,5 +70,3 @@ setInterval(async () => {
 
   io.emit("update_event", updatePacket);
 }, 5000);
-
-// startPuzzleRound("TestPuzzleRound", 120000);

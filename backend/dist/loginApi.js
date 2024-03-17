@@ -69,9 +69,10 @@ class TokenGroup {
         this.tokens = {};
         this.duration = duration;
     }
-    createNewToken(data = {}) {
+    createNewToken(data = {}, callback = () => { }) {
         const newToken = new Token(() => {
             delete this.tokens[newToken.id];
+            callback();
         }, data, this.duration);
         this.tokens[newToken.id] = newToken;
         return newToken.id;

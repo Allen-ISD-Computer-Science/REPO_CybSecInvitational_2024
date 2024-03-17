@@ -30,14 +30,14 @@
                 </div>
                 <p>If a team consists of more than 1 member, <b>each member</b> needs to verify their own email.<br />Codes are <b>unique</b>!</p>
 
-                <form class="user mb-3">
+                <form id="formSubmit" class="user mb-3">
                   <div class="form-group">
                     <input type="text" name="username" class="form-control form-control-user" id="inputEmail" placeholder="Email" />
                   </div>
                   <div class="form-group">
                     <input type="text" name="password" class="form-control form-control-user" id="inputCode" placeholder="Code" />
                   </div>
-                  <button id="formSubmit" type="submit" class="btn btn-primary btn-user btn-block">
+                  <button type="submit" class="btn btn-primary btn-user btn-block">
                     <div id="submit_label">Verify</div>
                     <div id="submit_spinner" class="spinner-border" role="status" style="display: none"></div>
                     <i id="submit_check" class="bi bi-check-lg h3" style="display: none"></i>

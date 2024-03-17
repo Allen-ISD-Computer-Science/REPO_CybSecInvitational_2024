@@ -48,6 +48,48 @@ interface BattleRoundConfig {
 }
 
 // * Methods
+export async function searchForEmails(emails: string[]) {
+  console.log(emails);
+  let result = await client
+    .db(mainDbName)
+    .collection(usersColName)
+    .findOne({ members: { $elemMatch: { email: { $in: emails } } } });
+  console.log(result);
+  return result;
+}
+
+function genRandPassword(): string {
+  return Math.random().toString(36).slice(-8);
+}
+
+function genRandHex(size: number): string {
+  return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+export async function createUser(participants: Registrant[]): Promise<User | null> {
+  try {
+    const user: User = {
+      division: 0,
+      username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
+      password: genRandPassword(),
+      completed_puzzles: {},
+      members: participants,
+      puzzle_points: 0,
+      scenario_points: 0,
+    };
+
+    let result = await client.db(mainDbName).collection(usersColName).insertOne(user);
+
+    if (result.acknowledged) {
+      return user;
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
 
 export async function fetchAdmin(username: string): Promise<User | null> {
   try {

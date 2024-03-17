@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setDivisionOfUser = exports.markPuzzleAsNotCompleted = exports.markPuzzleAsCompleted = exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.fetchAdmin = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.setDivisionOfUser = exports.markPuzzleAsNotCompleted = exports.markPuzzleAsCompleted = exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.fetchAdmin = exports.createUser = exports.searchForEmails = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 const config = require("../config.json");
@@ -77,6 +77,51 @@ process.on("SIGINT", () => {
     });
 });
 // * Methods
+function searchForEmails(emails) {
+    return __awaiter(this, void 0, void 0, function* () {
+        console.log(emails);
+        let result = yield exports.client
+            .db(exports.mainDbName)
+            .collection(exports.usersColName)
+            .findOne({ members: { $elemMatch: { email: { $in: emails } } } });
+        console.log(result);
+        return result;
+    });
+}
+exports.searchForEmails = searchForEmails;
+function genRandPassword() {
+    return Math.random().toString(36).slice(-8);
+}
+function genRandHex(size) {
+    return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+function createUser(participants) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const user = {
+                division: 0,
+                username: `${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}-${genRandHex(4)}`,
+                password: genRandPassword(),
+                completed_puzzles: {},
+                members: participants,
+                puzzle_points: 0,
+                scenario_points: 0,
+            };
+            let result = yield exports.client.db(exports.mainDbName).collection(exports.usersColName).insertOne(user);
+            if (result.acknowledged) {
+                return user;
+            }
+            else {
+                return null;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            return null;
+        }
+    });
+}
+exports.createUser = createUser;
 function fetchAdmin(username) {
     return __awaiter(this, void 0, void 0, function* () {
         try {

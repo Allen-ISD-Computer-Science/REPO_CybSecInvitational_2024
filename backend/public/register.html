@@ -38,16 +38,19 @@
                 If you are signing up with a partner, use the [ + ] button to add a new member and [ - ] button to remove a member. The max number of people allowed per team is <b>Two</b> people.
                 <br />
                 <br />
-                Please use your <b>School</b> emails. Some email domains may not be allowed. In the case where you are unable to register with a valid school email, please contact this <a href="mailto:info.ahscyber@gmail.com"> email</a> (info.ahscyber@gmail.com).
+                Please use your <b>School</b> emails. Some email domains may not be allowed. In the case where you are unable to register with a valid school email, please contact this
+                <a href="mailto:info.ahscyber@gmail.com"> email</a> (info.ahscyber@gmail.com).
                 <br />
                 <br />
-                If you are registering with a partner, both member's emails will be required. <b>Both</b> members will be need to verify their email using a code that will be sent after you try to register your account.
+                If you are registering with a partner, both member's emails will be required. <b>Both</b> members will be need to verify their email using a code that will be sent after you try to
+                register your account.
                 <br />
                 <br />
                 Your username and password will be sent to you after you complete the registration process.
                 <br />
                 <br />
-                There are cases where schools will actively block external emails from reaching you. If there is an issue with the registration process, please register <a href="https://forms.gle/eUKxUmYYioMRKo486" target="_blank">here</a>.
+                There are cases where schools will actively block external emails from reaching you. If there is an issue with the registration process, please register
+                <a href="https://forms.gle/eUKxUmYYioMRKo486" target="_blank">here</a>.
               </p>
               <hr class="my-2" />
               <div class="small">Contact us <a style="text-decoration: underline" href="mailto:info.ahscyber@gmail.com">Here</a> if there are any other problems!</div>
@@ -57,7 +60,7 @@
                 <div class="text-center">
                   <h1 class="h4 text-gray-900 mb-4">Register Team</h1>
                 </div>
-                <form class="user">
+                <form id="formSubmit" class="user">
                   <div class="member1">
                     <h6>Team Member #1</h6>
                     <div class="form-group row">
@@ -113,7 +116,16 @@
                       </select>
                     </div>
                   </div>
-                  <button class="btn btn-light mb-3 w-100 rounded-pill p-0 d-flex justify-content-center" style="color: #6e707e; border-color: rgb(209, 211, 226)" id="addMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Add Team Member">
+                  <button
+                    class="btn btn-light mb-3 w-100 rounded-pill p-0 d-flex justify-content-center"
+                    style="color: #6e707e; border-color: rgb(209, 211, 226)"
+                    id="addMemberButton"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#addMember"
+                    aria-expanded="false"
+                    aria-controls="Add Team Member"
+                  >
                     <i class="h5 bi bi-plus"></i>
                   </button>
                   <div class="member2 d-none" id="addMember">
@@ -170,14 +182,23 @@
                       </select>
                     </div>
 
-                    <button class="btn btn-light mb-3 w-100 rounded-pill p-0 d-flex justify-content-center" style="color: #6e707e; border-color: rgb(209, 211, 226)" id="removeMemberButton" type="button" data-toggle="collapse" data-target="#addMember" aria-expanded="false" aria-controls="Add Team Member">
+                    <button
+                      class="btn btn-light mb-3 w-100 rounded-pill p-0 d-flex justify-content-center"
+                      style="color: #6e707e; border-color: rgb(209, 211, 226)"
+                      id="removeMemberButton"
+                      type="button"
+                      data-toggle="collapse"
+                      data-target="#addMember"
+                      aria-expanded="false"
+                      aria-controls="Add Team Member"
+                    >
                       <i class="bi bi-dash h5"></i>
                     </button>
                   </div>
 
                   <div id="problem_alert" class="alert alert-danger rounded" style="display: none" role="alert"></div>
 
-                  <a id="register_submit" class="btn btn-primary btn-user btn-block"> Register Account </a>
+                  <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
                 </form>
                 <hr />
 
@@ -193,7 +214,11 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
 
     <!-- Core plugin JavaScript-->
 
