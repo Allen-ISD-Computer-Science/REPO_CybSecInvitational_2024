@@ -261,6 +261,7 @@ class ScenarioRound extends roundApi_1.Round {
             scoreboard.forEach((member) => {
                 this.state[member.username] = new ScenarioRoundState(member.username);
             });
+            console.log(this.state);
             return true;
         });
     }
@@ -272,6 +273,7 @@ exports.ScenarioRound = ScenarioRound;
 // * Methods
 function startScenarioRound(id, divisions, duration = config.puzzle_round_duration) {
     let round = new ScenarioRound(duration, id, divisions);
+    round.init();
     return (0, roundApi_1.startRound)(round);
 }
 exports.startScenarioRound = startScenarioRound;

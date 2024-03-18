@@ -13,8 +13,6 @@ body.innerHTML += `<div id="alert_holder"></div>`;
 
 const holder = document.getElementById("alert_holder");
 socket.on("alert", (data) => {
-  console.log(data);
-
   let level = data.level;
   let message = data.message;
 
@@ -96,9 +94,7 @@ function updateTimer() {
 }
 
 function updateCurrentRoundUI(data) {
-  if (!data) return;
-
-  if (Object.values(data).length <= 0) {
+  if (!data || Object.values(data).length <= 0) {
     label.textContent = "No Round Started Yet!";
     timer.innerHTML = "";
     currentEndTime = Date.now();
@@ -118,7 +114,6 @@ function updateUserUI(user) {
 }
 
 socket.on("update_event", async (data) => {
-  console.log(data);
   updateCurrentRoundUI(data.currentRound);
   user = await fetchUser();
   updateUserUI(user);
