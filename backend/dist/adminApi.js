@@ -46,7 +46,7 @@ const battleRound_1 = require("./battleRound");
 const puzzleApi_1 = require("./puzzleApi");
 const scenario_1 = require("./scenario");
 // * Module Parameters
-exports.loginTokenGroup = new loginApi_1.TokenGroup(120000);
+exports.loginTokenGroup = new loginApi_1.TokenGroup(86400000);
 // * Methods
 function validateLoginToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -57,7 +57,8 @@ function validateLoginToken(req, res, next) {
         }
         const token = exports.loginTokenGroup.findTokenOfId(loginTokenId);
         if (!token) {
-            res.status(403).send("Unauthorized");
+            res.redirect("adminLogin");
+            // res.status(403).send("Unauthorized");
             return;
         }
         res.locals.token = token;
@@ -66,7 +67,7 @@ function validateLoginToken(req, res, next) {
 }
 exports.validateLoginToken = validateLoginToken;
 const commands = {
-    ["PUZZLE_POINTS"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["puzzle_points"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         const target = tokens[2];
         const amount = Number(tokens[3]);
@@ -74,7 +75,7 @@ const commands = {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
-        if (operator == "ADD") {
+        if (operator == "add") {
             const result = yield (0, mongoApi_1.addPointsToUser)(target, amount, "puzzle_points");
             if (result) {
                 res.sendStatus(200);
@@ -83,7 +84,7 @@ const commands = {
                 res.sendStatus(500);
             }
         }
-        else if (operator == "SUB") {
+        else if (operator == "sub") {
             const result = yield (0, mongoApi_1.addPointsToUser)(target, -amount, "puzzle_points");
             if (result) {
                 res.sendStatus(200);
@@ -92,7 +93,7 @@ const commands = {
                 res.sendStatus(500);
             }
         }
-        else if (operator == "SET") {
+        else if (operator == "set") {
             const result = yield (0, mongoApi_1.setPointsOfUser)(target, amount, "puzzle_points");
             if (result) {
                 res.sendStatus(200);
@@ -106,7 +107,7 @@ const commands = {
             return;
         }
     }),
-    ["SCENARIO_POINTS"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["scenario_points"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         const target = tokens[2];
         const amount = Number(tokens[3]);
@@ -114,7 +115,7 @@ const commands = {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
-        if (operator == "ADD") {
+        if (operator == "add") {
             const result = yield (0, mongoApi_1.addPointsToUser)(target, amount, "scenario_points");
             if (result) {
                 res.sendStatus(200);
@@ -123,7 +124,7 @@ const commands = {
                 res.sendStatus(500);
             }
         }
-        else if (operator == "SUB") {
+        else if (operator == "sub") {
             const result = yield (0, mongoApi_1.addPointsToUser)(target, -amount, "scenario_points");
             if (result) {
                 res.sendStatus(200);
@@ -132,7 +133,7 @@ const commands = {
                 res.sendStatus(500);
             }
         }
-        else if (operator == "SET") {
+        else if (operator == "set") {
             const result = yield (0, mongoApi_1.setPointsOfUser)(target, amount, "scenario_points");
             if (result) {
                 res.sendStatus(200);
@@ -146,7 +147,7 @@ const commands = {
             return;
         }
     }),
-    ["COMPLETED_PUZZLES"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["completed_puzzles"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         const target = tokens[2];
         const puzzleName = tokens[3];
@@ -154,7 +155,7 @@ const commands = {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
-        if (operator == "ADD") {
+        if (operator == "add") {
             const result = yield (0, mongoApi_1.markPuzzleAsCompleted)(target, puzzleName);
             if (result) {
                 res.sendStatus(200);
@@ -163,7 +164,7 @@ const commands = {
                 res.sendStatus(500);
             }
         }
-        else if (operator == "SUB") {
+        else if (operator == "sub") {
             const result = yield (0, mongoApi_1.markPuzzleAsNotCompleted)(target, puzzleName);
             if (result) {
                 res.sendStatus(200);
@@ -177,7 +178,7 @@ const commands = {
             return;
         }
     }),
-    ["DIVISION"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["division"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         const target = tokens[2];
         const division = Number(tokens[3]);
@@ -185,7 +186,7 @@ const commands = {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
-        if (operator == "SET") {
+        if (operator == "set") {
             const result = yield (0, mongoApi_1.setDivisionOfUser)(target, division);
             if (result) {
                 res.sendStatus(200);
@@ -199,7 +200,7 @@ const commands = {
             return;
         }
     }),
-    ["BATTLE_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["battle_round"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const id = tokens[1];
         const divisions = (_a = tokens[2]) === null || _a === void 0 ? void 0 : _a.split(",");
@@ -223,7 +224,7 @@ const commands = {
             res.sendStatus(500);
         }
     }),
-    ["PUZZLE_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["puzzle_round"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _b;
         const id = tokens[1];
         const divisions = (_b = tokens[2]) === null || _b === void 0 ? void 0 : _b.split(",");
@@ -247,7 +248,7 @@ const commands = {
             res.sendStatus(500);
         }
     }),
-    ["SCENARIO_ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["scenario_round"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         var _c;
         const id = tokens[1];
         const divisions = (_c = tokens[2]) === null || _c === void 0 ? void 0 : _c.split(",");
@@ -271,13 +272,13 @@ const commands = {
             res.sendStatus(500);
         }
     }),
-    ["ROUND"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["round"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const operator = tokens[1];
         if (!operator) {
             res.status(400).send("Missing or Invalid Options");
             return;
         }
-        if (operator == "END") {
+        if (operator == "end") {
             (0, roundApi_1.endCurrentRound)();
             res.sendStatus(200);
         }
@@ -286,7 +287,7 @@ const commands = {
             return;
         }
     }),
-    ["ALERT"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
+    ["alert"]: (tokens, res) => __awaiter(void 0, void 0, void 0, function* () {
         const level = Number(tokens[1]);
         const message = tokens.slice(2).join(" ");
         if (!level) {

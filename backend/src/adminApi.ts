@@ -9,7 +9,7 @@ import { startPuzzleRound } from "./puzzleApi";
 import { startScenarioRound } from "./scenario";
 
 // * Module Parameters
-export const loginTokenGroup = new TokenGroup(120000);
+export const loginTokenGroup = new TokenGroup(86_400_000);
 
 // * Methods
 export async function validateLoginToken(req: Request, res: Response, next: Function) {
@@ -20,7 +20,8 @@ export async function validateLoginToken(req: Request, res: Response, next: Func
   }
   const token = loginTokenGroup.findTokenOfId(loginTokenId);
   if (!token) {
-    res.status(403).send("Unauthorized");
+    res.redirect("adminLogin");
+    // res.status(403).send("Unauthorized");
     return;
   }
   res.locals.token = token;
@@ -29,7 +30,7 @@ export async function validateLoginToken(req: Request, res: Response, next: Func
 }
 
 const commands: { [command: string]: (tokens: string[], res: Response) => {} } = {
-  ["PUZZLE_POINTS"]: async (tokens: string[], res: Response) => {
+  ["puzzle_points"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     const target: string = tokens[2];
     const amount: number = Number(tokens[3]);
@@ -39,21 +40,21 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
 
-    if (operator == "ADD") {
+    if (operator == "add") {
       const result = await addPointsToUser(target, amount, "puzzle_points");
       if (result) {
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
       }
-    } else if (operator == "SUB") {
+    } else if (operator == "sub") {
       const result = await addPointsToUser(target, -amount, "puzzle_points");
       if (result) {
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
       }
-    } else if (operator == "SET") {
+    } else if (operator == "set") {
       const result = await setPointsOfUser(target, amount, "puzzle_points");
       if (result) {
         res.sendStatus(200);
@@ -65,7 +66,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
   },
-  ["SCENARIO_POINTS"]: async (tokens: string[], res: Response) => {
+  ["scenario_points"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     const target: string = tokens[2];
     const amount: number = Number(tokens[3]);
@@ -75,21 +76,21 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
 
-    if (operator == "ADD") {
+    if (operator == "add") {
       const result = await addPointsToUser(target, amount, "scenario_points");
       if (result) {
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
       }
-    } else if (operator == "SUB") {
+    } else if (operator == "sub") {
       const result = await addPointsToUser(target, -amount, "scenario_points");
       if (result) {
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
       }
-    } else if (operator == "SET") {
+    } else if (operator == "set") {
       const result = await setPointsOfUser(target, amount, "scenario_points");
       if (result) {
         res.sendStatus(200);
@@ -101,7 +102,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
   },
-  ["COMPLETED_PUZZLES"]: async (tokens: string[], res: Response) => {
+  ["completed_puzzles"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     const target: string = tokens[2];
     const puzzleName: string = tokens[3];
@@ -111,14 +112,14 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
 
-    if (operator == "ADD") {
+    if (operator == "add") {
       const result = await markPuzzleAsCompleted(target, puzzleName);
       if (result) {
         res.sendStatus(200);
       } else {
         res.sendStatus(500);
       }
-    } else if (operator == "SUB") {
+    } else if (operator == "sub") {
       const result = await markPuzzleAsNotCompleted(target, puzzleName);
       if (result) {
         res.sendStatus(200);
@@ -130,7 +131,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
   },
-  ["DIVISION"]: async (tokens: string[], res: Response) => {
+  ["division"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     const target: string = tokens[2];
     const division: number = Number(tokens[3]);
@@ -140,7 +141,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
 
-    if (operator == "SET") {
+    if (operator == "set") {
       const result = await setDivisionOfUser(target, division);
       if (result) {
         res.sendStatus(200);
@@ -152,7 +153,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
   },
-  ["BATTLE_ROUND"]: async (tokens: string[], res: Response) => {
+  ["battle_round"]: async (tokens: string[], res: Response) => {
     const id = tokens[1];
     const divisions = tokens[2]?.split(",");
     const duration = Number(tokens[3]);
@@ -175,7 +176,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       res.sendStatus(500);
     }
   },
-  ["PUZZLE_ROUND"]: async (tokens: string[], res: Response) => {
+  ["puzzle_round"]: async (tokens: string[], res: Response) => {
     const id = tokens[1];
     const divisions = tokens[2]?.split(",");
     const duration = Number(tokens[3]);
@@ -198,7 +199,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       res.sendStatus(500);
     }
   },
-  ["SCENARIO_ROUND"]: async (tokens: string[], res: Response) => {
+  ["scenario_round"]: async (tokens: string[], res: Response) => {
     const id = tokens[1];
     const divisions = tokens[2]?.split(",");
     const duration = Number(tokens[3]);
@@ -221,14 +222,14 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       res.sendStatus(500);
     }
   },
-  ["ROUND"]: async (tokens: string[], res: Response) => {
+  ["round"]: async (tokens: string[], res: Response) => {
     const operator: string = tokens[1];
     if (!operator) {
       res.status(400).send("Missing or Invalid Options");
       return;
     }
 
-    if (operator == "END") {
+    if (operator == "end") {
       endCurrentRound();
       res.sendStatus(200);
     } else {
@@ -236,7 +237,7 @@ const commands: { [command: string]: (tokens: string[], res: Response) => {} } =
       return;
     }
   },
-  ["ALERT"]: async (tokens: string[], res: Response) => {
+  ["alert"]: async (tokens: string[], res: Response) => {
     const level: number = Number(tokens[1]);
     const message: string = tokens.slice(2).join(" ");
     if (!level) {

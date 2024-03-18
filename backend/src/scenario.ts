@@ -263,9 +263,9 @@ export class ScenarioRound extends Round {
 
     scoreboard.forEach((member) => {
       this.state[member.username] = new ScenarioRoundState(member.username);
+      console.log(JSON.stringify(this.state[member.username], null, 2));
     });
 
-    console.log(this.state);
     return true;
   }
 
