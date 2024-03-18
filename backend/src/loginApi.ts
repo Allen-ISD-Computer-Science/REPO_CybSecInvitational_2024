@@ -85,7 +85,7 @@ export interface LoginToken extends Token {
 }
 
 // * Module Parameters
-export const loginTokenGroup = new TokenGroup(120000);
+export const loginTokenGroup = new TokenGroup(86_400_000);
 
 // * Methods
 export async function validateLoginToken(req: Request, res: Response, next: Function) {

@@ -10,7 +10,7 @@ if (!process.env.PUZZLES_COLLECTION) throw Error("Missing puzzles collection nam
 if (!process.env.BATTLE_ROUND_COLLECTION) throw Error("Missing battle round collection name");
 if (!process.env.ADMINISTRATOR_COLLECTION) throw Error("Missing administrator collection name");
 
-import { UpdateResult, MongoClient, ServerApiVersion, UnorderedBulkOperation, Collection } from "mongodb";
+import { UpdateResult, MongoClient, ServerApiVersion, UnorderedBulkOperation, Collection, InsertOneResult, InsertManyResult } from "mongodb";
 
 const mongo_username = encodeURIComponent(process.env.MONGODB_USERNAME);
 const mongo_password = encodeURIComponent(process.env.MONGODB_PASSWORD);
@@ -261,6 +261,20 @@ export async function setDivisionOfUser(username: string, division: number): Pro
     if (cursor.matchedCount <= 0 || cursor.modifiedCount <= 0) return false;
     return true;
   } catch {
+    return false;
+  }
+}
+
+export async function createPuzzles(puzzles: Puzzle[]): Promise<boolean> {
+  try {
+    const result: InsertManyResult = await client.db(mainDbName).collection(puzzlesColName).insertMany(puzzles);
+    if (result.acknowledged && result.insertedCount != puzzles.length) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.log(err);
     return false;
   }
 }

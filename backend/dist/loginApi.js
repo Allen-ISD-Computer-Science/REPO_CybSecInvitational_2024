@@ -92,7 +92,7 @@ class TokenGroup {
 exports.TokenGroup = TokenGroup;
 TokenGroup.defaultDuration = 120000;
 // * Module Parameters
-exports.loginTokenGroup = new TokenGroup(120000);
+exports.loginTokenGroup = new TokenGroup(86400000);
 // * Methods
 function validateLoginToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {

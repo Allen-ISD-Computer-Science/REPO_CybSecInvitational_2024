@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setDivisionOfUser = exports.markPuzzleAsNotCompleted = exports.markPuzzleAsCompleted = exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.fetchAdmin = exports.createUser = exports.searchForEmails = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
+exports.createPuzzles = exports.setDivisionOfUser = exports.markPuzzleAsNotCompleted = exports.markPuzzleAsCompleted = exports.setPointsOfUser = exports.onPuzzleCorrect = exports.addPointsToUser = exports.fetchScoreboard = exports.fetchAllUsers = exports.fetchUser = exports.fetchBattleRoundPuzzles = exports.fetchAdmin = exports.createUser = exports.searchForEmails = exports.client = exports.adminColName = exports.battleRoundPuzzlesColName = exports.puzzlesColName = exports.usersColName = exports.mainDbName = void 0;
 const env = __importStar(require("dotenv"));
 env.config();
 const config = require("../config.json");
@@ -321,3 +321,21 @@ function setDivisionOfUser(username, division) {
     });
 }
 exports.setDivisionOfUser = setDivisionOfUser;
+function createPuzzles(puzzles) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const result = yield exports.client.db(exports.mainDbName).collection(exports.puzzlesColName).insertMany(puzzles);
+            if (result.acknowledged && result.insertedCount != puzzles.length) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            return false;
+        }
+    });
+}
+exports.createPuzzles = createPuzzles;
