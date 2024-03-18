@@ -23,7 +23,7 @@ declare global {
 
   //TODO Add categories to Puzzle class
   interface Puzzle {
-    _id: ObjectId;
+    // _id: ObjectId;
     name: string;
     description: string;
     point_value: number;
