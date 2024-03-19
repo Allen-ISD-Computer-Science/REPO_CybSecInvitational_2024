@@ -2,7 +2,6 @@ import socketio
 import time
 import requests
 import datetime
-import numpy as np
 
 from pprint import pprint
 
@@ -59,10 +58,9 @@ def checkToken():
         return False
     else:
         try:
-            print(token)
             session.cookies.set("LoginToken", token)
             result = session.post(host + "checkLogin", timeout=request_timeout)
-            print(result.ok)
+
             if result.ok:
                 return True
             else:
@@ -108,17 +106,60 @@ def command_clear(tokens):
 
 def command_service_solarpanels_summary(tokens):
     try:
-        result = session.post(host + "getReport", timeout=request_timeout)
+        result = session.post(host + "service", {"name": "solarpanels", "action": "report"}, timeout=request_timeout)
+
         if not result.ok:
             print(result.text)
             return
+        data = result.json()
+        # pprint(data)
+        for section in data:
+            panels = data[section]
+            result = section + " = "
 
-        pprint(result.json())
+            count = 1
+            for panel in panels:
+                state = panels[panel]
+                result += panel + ":" + str(state)
+
+                if count < len(panels):
+                    result += ", "
+
+                count += 1
+            print(result)
+
     except TimeoutError:
-        print("Request Timed Out, Please Try Again")
+        print("Request Timed Out")
+
+def command_service_solarpanels_test(tokens):
+    try:
+        arg1 = tokens[3]
+        arg2 = tokens[4]
+
+        try:
+            result = session.post(host + "service", {"name": "solarpanels", "action": "test", "args": [arg1, arg2]}, timeout=request_timeout)
+            print(result.text)
+        except TimeoutError:
+            print("Request Timed Out")
+    except IndexError:
+        print("Invalid Arguments")
+
+def command_service_solarpanels_status(tokens):
+    try:
+        groupName = tokens[3]
+        id = tokens[4]
+
+        try:
+            result = session.post(host + "service", {"name": "solarpanels", "action": "status", "args": [groupName, id]}, timeout=request_timeout)
+            print(result.text)
+        except TimeoutError:
+            print("Request Timed Out")
+    except IndexError:
+        print("Invalid Arguments")
 
 serviceSolarPanelCommands = {
-    "summary": command_service_solarpanels_summary
+    "report": command_service_solarpanels_summary,
+    "status": command_service_solarpanels_status
 }
 
 def command_service_solarpanels(tokens):

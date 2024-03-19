@@ -308,7 +308,18 @@ exports.verifyScenarioRound = verifyScenarioRound;
 exports.router.get("/scenario", loginApi_1.validateLoginToken, verifyScenarioRoundMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/scenario.html"));
 });
-exports.router.post("/getReport", loginApi_1.validateLoginToken, verifyScenarioRound, (req, res) => {
+exports.router.post("/service", loginApi_1.validateLoginTokenPost, verifyScenarioRoundMiddleware, (req, res) => {
+    const name = req.body.name;
+    const actionName = req.body.action;
+    let args = req.body.args;
+    // allows request to exclude args if not needed
+    if (!args) {
+        args = [];
+    }
+    if (!name || !actionName) {
+        res.status(400).send("Missing Arguments");
+        return;
+    }
     const token = res.locals.token;
     const round = roundApi_1.currentRound; //validated by middleware
     const state = round.getUserState(token.data.username);
@@ -316,6 +327,59 @@ exports.router.post("/getReport", loginApi_1.validateLoginToken, verifyScenarioR
         res.status(403).send("Not In Scenario Round");
         return;
     }
-    console.log(state);
-    res.status(200).send(state.services.solar_panels.getReport());
+    if (name == "solarpanels") {
+        const action = solarPanelActions[actionName];
+        if (!action) {
+            res.status(400).send("Action Not Found");
+            return;
+        }
+        action(res, state, ...args);
+    }
+    else {
+        res.status(400).send("Service Not Found");
+    }
 });
+const solarPanelActions = {
+    reboot: (res, state, groupName, id) => {
+        if (!groupName || !id) {
+            res.status(400).send("Missing Arguments");
+            return;
+        }
+        const panel = state.services.solar_panels.fetchPanel(groupName, id);
+        if (!panel) {
+            res.status(400).send("Panel Not Found");
+            return;
+        }
+        state.services.solar_panels.rebootPanel(groupName, id);
+        res.sendStatus(200);
+    },
+    repair: (res, state, groupName, id) => {
+        if (!groupName || !id) {
+            res.status(400).send("Missing Arguments");
+            return;
+        }
+        const panel = state.services.solar_panels.fetchPanel(groupName, id);
+        if (!panel) {
+            res.status(400).send("Panel Not Found");
+            return;
+        }
+        state.services.solar_panels.repairPanel(groupName, id);
+        res.sendStatus(200);
+    },
+    status: (res, state, groupName, id) => {
+        if (!groupName || !id) {
+            res.status(400).send("Missing Arguments");
+            return;
+        }
+        const panel = state.services.solar_panels.fetchPanel(groupName, id);
+        if (!panel) {
+            res.status(400).send("Panel Not Found");
+            return;
+        }
+        state.services.solar_panels.getStatus(groupName, id);
+        res.sendStatus(200);
+    },
+    report: (res, state) => {
+        res.json(state.services.solar_panels.getReport());
+    },
+};

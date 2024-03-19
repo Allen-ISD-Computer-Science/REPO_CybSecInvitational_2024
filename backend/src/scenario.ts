@@ -2,7 +2,7 @@ import * as path from "path";
 import express, { Request, Response, Router } from "express";
 import { Round, currentRound, startRound } from "./roundApi";
 import { fetchScoreboard } from "./mongoApi";
-import { LoginToken, validateLoginToken } from "./loginApi";
+import { LoginToken, validateLoginToken, validateLoginTokenPost } from "./loginApi";
 const config = require("../config.json");
 
 export class ScenarioRoundGroup {
@@ -317,7 +317,21 @@ router.get("/scenario", validateLoginToken, verifyScenarioRoundMiddleware, (req:
   res.sendFile(path.join(__dirname, "../public/scenario.html"));
 });
 
-router.post("/getReport", validateLoginToken, verifyScenarioRound, (req: Request, res: Response) => {
+router.post("/service", validateLoginTokenPost, verifyScenarioRoundMiddleware, (req: Request, res: Response) => {
+  const name: string = req.body.name;
+  const actionName: string = req.body.action;
+  let args: any[] = req.body.args;
+
+  // allows request to exclude args if not needed
+  if (!args) {
+    args = [];
+  }
+
+  if (!name || !actionName) {
+    res.status(400).send("Missing Arguments");
+    return;
+  }
+
   const token: LoginToken = res.locals.token;
   const round: ScenarioRound = currentRound as unknown as ScenarioRound; //validated by middleware
   const state: ScenarioRoundState | null = round.getUserState(token.data.username);
@@ -327,6 +341,60 @@ router.post("/getReport", validateLoginToken, verifyScenarioRound, (req: Request
     return;
   }
 
-  console.log(state);
-  res.status(200).send(state.services.solar_panels.getReport());
+  if (name == "solarpanels") {
+    const action = solarPanelActions[actionName];
+    if (!action) {
+      res.status(400).send("Action Not Found");
+      return;
+    }
+
+    action(res, state, ...args);
+  } else {
+    res.status(400).send("Service Not Found");
+  }
 });
+
+const solarPanelActions: { [action: string]: (res: Response, state: ScenarioRoundState, ...args: any[]) => any } = {
+  reboot: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
+    if (!groupName || !id) {
+      res.status(400).send("Missing Arguments");
+      return;
+    }
+    const panel = state.services.solar_panels.fetchPanel(groupName, id);
+    if (!panel) {
+      res.status(400).send("Panel Not Found");
+      return;
+    }
+    state.services.solar_panels.rebootPanel(groupName, id);
+    res.sendStatus(200);
+  },
+  repair: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
+    if (!groupName || !id) {
+      res.status(400).send("Missing Arguments");
+      return;
+    }
+    const panel = state.services.solar_panels.fetchPanel(groupName, id);
+    if (!panel) {
+      res.status(400).send("Panel Not Found");
+      return;
+    }
+    state.services.solar_panels.repairPanel(groupName, id);
+    res.sendStatus(200);
+  },
+  status: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
+    if (!groupName || !id) {
+      res.status(400).send("Missing Arguments");
+      return;
+    }
+    const panel = state.services.solar_panels.fetchPanel(groupName, id);
+    if (!panel) {
+      res.status(400).send("Panel Not Found");
+      return;
+    }
+    const status = state.services.solar_panels.getStatus(groupName, id);
+    res.json({ status: status });
+  },
+  report: (res: Response, state: ScenarioRoundState) => {
+    res.json(state.services.solar_panels.getReport());
+  },
+};

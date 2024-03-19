@@ -11,7 +11,7 @@ import { router as puzzleRouter, replicatePuzzles } from "./puzzleApi";
 import { ScoreboardUser, fetchScoreboard, searchForEmails } from "./mongoApi";
 import { router as adminRouter } from "./adminApi";
 import { router as battleRoundRouter } from "./battleRound";
-import { router as scenarioRouter } from "./scenario";
+import { router as scenarioRouter, startScenarioRound } from "./scenario";
 import { router as registrationRouter } from "./registration";
 
 app.use("*", (req, res, next) => {
@@ -70,3 +70,5 @@ setInterval(async () => {
 
   io.emit("update_event", updatePacket);
 }, 5000);
+
+startScenarioRound("scenario_round_1", ["0", "1", "2"], 60000000);

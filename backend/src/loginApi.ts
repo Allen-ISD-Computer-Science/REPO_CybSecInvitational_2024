@@ -104,6 +104,23 @@ export async function validateLoginToken(req: Request, res: Response, next: Func
   next();
 }
 
+// returns status of redirecting
+export async function validateLoginTokenPost(req: Request, res: Response, next: Function) {
+  const loginTokenId = req.cookies["LoginToken"];
+  if (!loginTokenId) {
+    res.redirect("login");
+    return;
+  }
+  const token = loginTokenGroup.findTokenOfId(loginTokenId);
+  if (!token) {
+    res.status(403).send("Not Logged In");
+    return;
+  }
+  res.locals.token = token;
+
+  next();
+}
+
 export function fetchLoginTokenFromRequest(req: Request): Token | null {
   return fetchLoginToken(req.cookies["LoginToken"]);
 }

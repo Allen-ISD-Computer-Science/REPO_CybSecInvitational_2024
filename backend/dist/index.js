@@ -87,3 +87,4 @@ setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
     };
     socketApi_1.io.emit("update_event", updatePacket);
 }), 5000);
+(0, scenario_1.startScenarioRound)("scenario_round_1", ["0", "1", "2"], 60000000);
