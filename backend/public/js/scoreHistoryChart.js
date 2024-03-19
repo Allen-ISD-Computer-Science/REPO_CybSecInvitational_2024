@@ -161,7 +161,6 @@ updateThenRenderChart();
 var count = 0;
 document.addEventListener("user-updated", () => {
   count += 1;
-  console.log(count);
   if (count < 10) {
     return;
   }

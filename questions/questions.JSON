@@ -1,220 +1,306 @@
-/*
-    {
-        "name": "",
-        "description": "<h1></h1><h3></h3><p><a href=\"context\">file</a></p>",
-        "points_value": ,
-        "difficulty": ,
-        "category": "",
-        "answer": ""
-    },
-*/
-
-
-
 [
-    {
-        "name": "9 Lives",
-        "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"login\">Use Me!</a>",
-        "points_value": 5,
-        "difficulty": 0,
-        "category": "BashBasics",
-        "answer": "AHSINV{9ac8efe31b7a7a1e8dc66e4dad493308}"
-    },
+  {
+    "name": "9 Lives",
+    "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"context/cat.txt\">Use Me!</a>",
+    "point_value": 5,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{9ac8efe31b7a7a1e8dc66e4dad493308}"
+  },
 
-    {
-        "name": "C Deez Flags",
-        "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"link\">directory</a>, but how do I get to it?</p>",
-        "points_value": 5,
-        "difficulty": 0,
-        "category": "BashBasics",
-        "answer": "AHSINV{3cc66404a32f37c7be0206f399018c9c}"
-    },
+  {
+    "name": "C Deez Flags",
+    "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"context/checkThisOut.zip\">directory</a>, but how do I get to it?</p>",
+    "point_value": 5,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{3cc66404a32f37c7be0206f399018c9c}"
+  },
 
-    {
-        "name": "Back To Basics 64",
-        "description": "<h1>A Hidden Message?</h1><h3>Cryptography</h3><p>I was told this is the <a href=\"link\">flag</a>, but it's not right. Maybe it's in a different format?</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{50f42fd7d6b7d2caf4b1732f314941a2}"
-    },
+  {
+    "name": "Back To Basics 64",
+    "description": "<h1>A Hidden Message?</h1><h3>Cryptography</h3><p>I was told this is the <a href=\"context/encoded.txt\">flag</a>, but it's not right. Maybe it's in a different format?</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{50f42fd7d6b7d2caf4b1732f314941a2}"
+  },
 
-    {
-        "name": "Julius Caesar",
-        "description": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"link\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
-        "points_value": 15,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{8dca3fb283af6d299fb25e5840a50032}"
-    },
+  {
+    "name": "Julius Caesar",
+    "description": "<h1>Is the text that old?</h1><h3>Cryptography</h3><p>What would happen if I shifted every character in the string from this <a href=\"context/Bandiera.txt\">file</a> down by 1 index? Would the information stay the same? Just food for thought I guess.</p>",
+    "point_value": 15,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{8dca3fb283af6d299fb25e5840a50032}"
+  },
 
-    {
-        "name": "Glass Too Full",
-        "description": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"link\">program</a> how to count to 100?</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Binary Exploit",
-        "answer": "AHSINV{1279adb4a5f0fe2acf6c384a4162db8c}"
-    },
+  {
+    "name": "Glass Too Full",
+    "description": "<h1>I forgot how to count!</h1><h3>Exploitation</h3><p>Math is so hard! I forgot how to count to 100. It seems that my mind can’t hold such a large number. Can count show this <a href=\"\">program</a> how to count to 100?</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{1279adb4a5f0fe2acf6c384a4162db8c}"
+  },
 
-    {
-        "name": "Negative Energy",
-        "description": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"link\">this</a> program's math problem.</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Binary Exploit",
-        "answer": "AHSINV{46deeac62656870a6b14fdfb5805daf2}"
-    },
+  {
+    "name": "Negative Energy",
+    "description": "<h1>What is this sorcery!?</h1><h3>Exploitation</h3><p>I signed up for computer science, so why is there so much complex math?!? Please help me with <a href=\"context/NegativeEnergy.class\">this</a> program's math problem.</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{46deeac62656870a6b14fdfb5805daf2}"
+  },
 
-    {
-        "name": "Rotation",
-        "description": "<h1>Rotation</h1><h3>Cryptography</h3><p>Spinning, spinning, spinning, spinning. Maybe the encryption was making us dizzy all along. Here you do it: <a href=\"link\">File</a></p>",
-        "points_value": 10,
-        "category": "Cryptography",
-        "answer": "AHSINV{ec1a20c7fca87ae26304a0bd166d8f83}"
-        
-    },
+  {
+    "name": "Rotation",
+    "description": "<h1>Rotation</h1><h3>Cryptography</h3><p>Spinning, spinning, spinning, spinning. Maybe the encryption was making us dizzy all along. Here you do it: <a href=\"context/dizzy.txt\">File</a></p>",
+    "point_value": 10,
+    "category": "Cryptography",
+    "answer": "AHSINV{ec1a20c7fca87ae26304a0bd166d8f83}"
+  },
 
-    {
-        "name": "Two Hops This Time",
-        "description": "<h1>Two Hops This Time</h1><h3>Decoding Fun</h3><p>Somehow whenever the string in this file plays baseball, it finds a way to get to the imaginary 16th base. What is the <a href=\"link\">Flag</a> that enables it to do this?</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{f0fe7a894e2420de8d2b9900a181fac0}"
-    },
+  {
+    "name": "Two Hops This Time",
+    "description": "<h1>Two Hops This Time</h1><h3>Decoding Fun</h3><p>Somehow whenever the string in this file plays baseball, it finds a way to get to the imaginary 16th base. What is the <a href=\"context/dump.txt\">Flag</a> that enables it to do this?</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{f0fe7a894e2420de8d2b9900a181fac0}"
+  },
 
-    {
-        "name": "Long Way Home",
-        "description": "<h1>Long Way Home</h1><h3>Cryptography</h3><p>Hashes are a string generated through mathematical calculations that verify file integrity. Surround the key format (AHSINV{}) with the sha256 hash of this <a href=\"link\">file</a>.</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{587c772e863dcf74b0fc1fc367e98d5a3f35163df5cdbef04a13676e81683eb6}"
-    },
+  {
+    "name": "Long Way Home",
+    "description": "<h1>Long Way Home</h1><h3>Cryptography</h3><p>Hashes are a string generated through mathematical calculations that verify file integrity. Surround the key format (AHSINV{}) with the sha256 hash of this <a href=\"context/sha.txt\">file</a>.</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{587c772e863dcf74b0fc1fc367e98d5a3f35163df5cdbef04a13676e81683eb6}"
+  },
 
-    {
-        "name": "Rail Fence",
-        "description": "<h1>Rail Fence</h1><h3>cryptography</h3><p><Rails were essential all throughout history, but these rails aren’t the same. They’re still used for transferring data though. Maybe you can figure out how to do it in this <a href=\"link\">file</a>?/p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{1E8C8E18F53C6F74B8E2430F52E8EC22}"
-    },
+  {
+    "name": "Rail Fence",
+    "description": "<h1>Rail Fence</h1><h3>cryptography</h3><p><Rails were essential all throughout history, but these rails aren’t the same. They’re still used for transferring data though. Maybe you can figure out how to do it in this <a href=\"context/rolling.txt\">file</a>?/p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{1E8C8E18F53C6F74B8E2430F52E8EC22}"
+  },
 
-    {
-        "name": "Dots & Lines",
-        "description": "<h1>Dots & Lines</h1><h3>Cryptography</h3><p>Your boss has given you this Civil War era<a href=\"link\">communication</a>.Decrypt the message.Switch out “/” with “{}”!</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{1D874C9DEF8D64704C36E577A56768C2}"
-    },
+  {
+    "name": "Dots & Lines",
+    "description": "<h1>Dots & Lines</h1><h3>Cryptography</h3><p>Your boss has given you this Civil War era<a href=\"context/Samuel.txt\">communication</a>.Decrypt the message.Switch out “/” with “{}”!</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{1D874C9DEF8D64704C36E577A56768C2}"
+  },
 
-    {
-        "name": "Listen Carefully",
-        "description": "<h1>Listen Carefully</h1><h3>Cryptography</h3><p>Your boss has given you a transcription of a morse code<a href=\"link\">communication</a>Decode it and submit.</p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "Cryptography",
-        "answer": "AHSINV{36cfe1630424d834ce8feb7de3724fb0}"
-    },
+  {
+    "name": "Listen Carefully",
+    "description": "<h1>Listen Carefully</h1><h3>Cryptography</h3><p>Your boss has given you a transcription of a morse code<a href=\"context/sounds.zip\">communication</a>Decode it and submit.</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Cryptography",
+    "answer": "AHSINV{36cfe1630424d834ce8feb7de3724fb0}"
+  },
 
-    {
-        "name": "Step by Step",
-        "description": "<h1>Step by step</h1><h3>Cryptography</h3><p>Your boss has given you a <a href=\"link\">flag</a>that seems to have been split in half. It is first half has 13% ROT and the second half has 14% ROT.</p>",
-        "points_value": 10,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{040179ad7cda1aeced48ca53f2559710}"
-    }, 
-    {
-        "name": "One Fish Two Fish Red Fish Blue Fish",
-        "description": "<h1>One Fish Two Fish Red Fish Blue Fish</h1><h3>Cryptography</h3><p>One fish, two fish, red fish, blue fish The secret fish is a blowfish.The contents of this <a href=\"link\">file</a> must not make you riled.To unlock the string you seek,“Dr. Seuss” holds the key, though he is slightly weak.</p>",
-        "points_value": 20,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV<onefishtwofishgetthiscodethis>"
-    },
+  {
+    "name": "Step by Step",
+    "description": "<h1>Step by step</h1><h3>Cryptography</h3><p>Your boss has given you a <a href=\"context/step.txt\">flag</a>that seems to have been split in half. It is first half has 13% ROT and the second half has 14% ROT.</p>",
+    "point_value": 10,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV{040179ad7cda1aeced48ca53f2559710}"
+  },
+  {
+    "name": "One Fish Two Fish Red Fish Blue Fish",
+    "description": "<h1>One Fish Two Fish Red Fish Blue Fish</h1><h3>Cryptography</h3><p>One fish, two fish, red fish, blue fish The secret fish is a blowfish.The contents of this <a href=\"context/riddle.txt\">file</a> must not make you riled.To unlock the string you seek,“Dr. Seuss” holds the key, though he is slightly weak.</p>",
+    "point_value": 20,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV<onefishtwofishgetthiscodethis>"
+  },
 
-    {
-        "name": "What Do They Mean Mason",
-        "description": "<h1>What Do They Mean Mason</h1><h3>Cryptography</h3><p>Given a <a href=\"link\">file</a> with an encoded string, decode the string.</p>",
-        "points_value": 10,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{faedccb891142eece84b18a696047de2}"
-    },
+  {
+    "name": "What Do They Mean Mason",
+    "description": "<h1>What Do They Mean Mason</h1><h3>Cryptography</h3><p>Given a <a href=\"context/WhatDoTheyMeanMason.txt\">file</a> with an encoded string, decode the string.</p>",
+    "point_value": 10,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV{faedccb891142eece84b18a696047de2}"
+  },
 
-    {
-        "name": "Stego",
-        "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"link\">Image</a></p>? That’s unheard of! Or is it?</p>",
-        "points_value": 20,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{6b4973aa0fed1fc5c66e7790710e6f76}"
-    },
+  {
+    "name": "Stego",
+    "description": "<h1>Stego</h1><h3>Cryptography</h3><p>Text inside an <a href=\"context/secret.jpeg\">Image</a></p>? That’s unheard of! Or is it?</p>",
+    "point_value": 20,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV{6b4973aa0fed1fc5c66e7790710e6f76}"
+  },
 
-    {
-        "name": "Rotationlly Challenged",
-        "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p><a href=\"context\">file</a></p>",
-        "points_value": 20,
-        "difficulty": 2,
-        "category": "",
-        "answer": ""
-    },
+  {
+    "name": "Rotationlly Challenged",
+    "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p>Your boss has given you a grid of numbers, and has asked you to follow the instructions to solve it.<a href=\"context/files.zip\">file</a></p>",
+    "point_value": 20,
+    "difficulty": 2,
+    "category": "Cryptography",
+    "answer": "AHSINV{matrixmultiplication}"
+  },
 
-    {
-        "name": "Suspicious Duck",
-        "description": "<h1>Suspicious Duck</h1><h3>Cryptography</h3><p>You were slid a nice <a href=\"link\">photo of a duck</a> ... but wait... what's that on its tail?</p>",
-        "points_value": 30,
-        "difficulty": 2,
-        "category": "Cryptography",
-        "answer": "AHSINV{d83638633b691b9352f36d9a475456d4}"
-    },
+  {
+    "name": "Suspicious Duck",
+    "description": "<h1>Suspicious Duck</h1><h3>Cryptography</h3><p>You were slid a nice <a href=\"context/TheDuckinator.jpg\">photo of a duck</a> ... but wait... what's that on its tail?</p>",
+    "point_value": 30,
+    "difficulty": 2,
+    "category": "Cryptography",
+    "answer": "AHSINV{d83638633b691b9352f36d9a475456d4}"
+  },
 
-    {
-        "name": "Scrambled",
-        "description": "<h1>Scrambled</h1><h3>Cryptography</h3><p>Given 3 images, extract the <a href=\"link\">Flag</a> from them.</p>",
-        "points_value": 25,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{39ce8272982dbd69c69a023b3721ce96}"
-    },
+  {
+    "name": "Scrambled",
+    "description": "<h1>Scrambled</h1><h3>Cryptography</h3><p>Given 3 images, extract the <a href=\"link\">Flag</a> from them.</p>",
+    "point_value": 25,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV{39ce8272982dbd69c69a023b3721ce96}"
+  },
 
-    {
-        "name": "TheMask",
-        "description": "<h1>TheMask</h1><h3>Cryptography</h3><p>Given a movie poster, find the <a href=\"link\">Flag</a> that is embedded in the file somewhere.</p>",
-        "points_value": 15,
-        "difficulty": 1,
-        "category": "Cryptography",
-        "answer": "AHSINV{b096447dd764e883f7ca20161881ce49}"
-    },
+  {
+    "name": "TheMask",
+    "description": "<h1>TheMask</h1><h3>Cryptography</h3><p>Given a movie poster, find the <a href=\"context/TheMASK.jpg\">Flag</a> that is embedded in the file somewhere.</p>",
+    "point_value": 15,
+    "difficulty": 1,
+    "category": "Cryptography",
+    "answer": "AHSINV{b096447dd764e883f7ca20161881ce49}"
+  },
 
-    {
-        "name": "Which Photo",
-        "description": "<h1>Which Photo</h1><h3>Cryptography</h3><p>You are in the case of an infamous art thief. They were sloppy this time, and left a breadcrumb trail. Track them down and report back the flag.<a href=\"link\">Start Here!</a></p>",
-        "points_value": 50,
-        "difficulty": 3,
-        "category": "Cryptography",
-        "answer": "AHSINV{8f2155f8f42f17a10ce14145d722de45}"
-    },
+  {
+    "name": "Which Photo",
+    "description": "<h1>Which Photo</h1><h3>Cryptography</h3><p>You are in the case of an infamous art thief. They were sloppy this time, and left a breadcrumb trail. Track them down and report back the flag.<a href=\"context/whichPhoto.zip\">Start Here!</a></p>",
+    "point_value": 50,
+    "difficulty": 3,
+    "category": "Cryptography",
+    "answer": "AHSINV{8f2155f8f42f17a10ce14145d722de45}"
+  },
 
-    {
-        "name": "GetTheW",
-        "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"link\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
-        "points_value": 5,
-        "difficulty": 0,
-        "category": "BashBasics",
-        "answer": "AHSINV{0b974ec3cc1b8cad08a2d7b2b9a34b4c}"
-    },
+  {
+    "name": "GetTheW",
+    "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"context/Flag.html\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
+    "point_value": 5,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{0b974ec3cc1b8cad08a2d7b2b9a34b4c}"
+  },
 
-    {
-        "name": "Autofill",
-        "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"link\">open it?</a></p>",
-        "points_value": 10,
-        "difficulty": 0,
-        "category": "BashBasics",
-        "answer": "AHSINV{62e0f103e7717b4a112b825b95b88bfb}"
-    }
+  {
+    "name": "Autofill",
+    "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"context/GrAMM3r  C0nv3nti0nS aRe h4rD,,. 0#@\">open it?</a></p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{62e0f103e7717b4a112b825b95b88bfb}"
+  },
+
+  {
+    "name": "It's rude to interrupt!",
+    "description": "<h1>It's rude to interrupt!</h1><h3>Bash Basics</h3><p>I'm waiting for this<a href=\"context/interrupted.zip\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{b944c6b22abbd13bdc8f17c816bffdb7}"
+  },
+
+  {
+    "name": "Invisible",
+    "description": "<h1>Invisible</h1><h3>BashBasics</h3><p>The file in this<a href=\"context/.flag\">directory</a>looks suspicious. Seems like there is more than meets the eye.</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{d001eb85d4f024ab2e2d2b6a5df955fc}"
+  },
+
+  {
+    "name": "GrepGrepGrep",
+    "description": "<h1>GrepGrepGrep</h1><h3>BashBasics</h3><p>Your boss has given you the script for the world famous play Romeo and Juliet. Find the embedded message<a href=\"context/Romeo.txt\">(Flag)</a>.</p>",
+    "point_value": 15,
+    "difficulty": 1,
+    "category": "BashBasics",
+    "answer": "AHSINV{Juliet}"
+  },
+
+  {
+    "name": "PathOfThePuzzled",
+    "description": "<h1>PathOfThePuzzled</h1><h3>BashBasics</h3><p>Your boss wants you to find the right file inside this big <a href=\"link\">file</a>tree</p>",
+    "point_value": 15,
+    "difficulty": 1,
+    "category": "BashBasics",
+    "answer": "AHSINV{244abf05f9f9eade2dd0b521512d9631}"
+  },
+  {
+    "name": "PSIHaveASecret",
+    "description": "<h1>PSIHaveASecret</h1><h3>BashBasics</h3><p>Your boss has told you to find the file that matches your shell environment.<a href=\"context/PSSSS.zip\">file</a></p>",
+    "point_value": 5,
+    "difficulty": 1,
+    "category": "BashBasics",
+    "answer": "AHSINV{f27a3286c4741944c2c6f7cd00f330b9}"
+  },
+  {
+    "name": "Zip Zap",
+    "description": "<h1>Zip Zap</h1><h3>BashBasics</h3><p>My boss gave me this zipped folder containing a lot of files. Can you retrieve the contents of the file named <a href=\"context/file_cabinet.zip\">Idiosyncratic.txt</a>?</p>",
+    "point_value": 10,
+    "difficulty": 1,
+    "category": "BashBasics",
+    "answer": "AHSINV{6cadd48f24087c9e13e7b42e5ae9c38b}"
+  },
+  {
+    "name": "Greptastic",
+    "description": "<h1>Greptastic</h1><h3>Greptastic</h3><p>It’s like a traffic jam up in here. If only there was a way to clear the mess, or at least find the <a href=\"context/Greptastic.zip\">flag…</a></p>",
+    "point_value": 20,
+    "difficulty": 2,
+    "category": "BashBasics",
+    "answer": "AHSINV{0aa129841f2226ecd53dee66d2dbb9eb}"
+  },
+  {
+    "name": "It's rude to interrupt!",
+    "description": "<h1>It's rude to interrupt!</h1><h3>BashBasics</h3><p>I’m waiting for this file to finish running, but it’s taking forever! I wish I could just walk away…<a href=\"context/process.py\">file</a></p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "BashBasics",
+    "answer": "AHSINV{b944c6b22abbd13bdc8f17c816bffdb7}"
+  },
+  {
+    "name": "Disassemble The Stack",
+    "description": "<h1>Disassemble The Stack</h1><h3>Exploitation</h3><p>How does a program store information? It would be a real shame if the data could just be pulled out from the program. Sounds like that would cause a lot of problems.<a href=\"context/\">file</a></p>",
+    "point_value": 40,
+    "difficulty": 3,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{2c2b3b45330a04cfaea9bd96ace28615}"
+  },
+  {
+    "name": "Out In The Open",
+    "description": "<h1>Out In The Open</h1><h3></h3><p>There are many parts of a file, and one of them identifies the file. What is the identification for this file?<a href=\"context/out.zip\">file</a></p>",
+    "point_value": 5,
+    "difficulty": 0,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{ea32e97cbb994bf7862c8981d7b9d49c}"
+  },
+  {
+    "name": "1-100000",
+    "description": "<h1>1-100000</h1><h3>Exploitation</h3><p><a href=\"context/main.cpython-312.opt-2.pyc\">file</a></p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{e86597c1c6891d84afa86b2d049072d6}"
+  },
+  {
+    "name": "John II",
+    "description": "<h1>John II</h1><h3>Exploitation</h3><p>Your boss wants you to crack this zip <a href=\"context/archive.zip\">file</a>. Use this public <a href =\"https://codermerlin.academy/users/nathan-koch/Digital%20Portfolio/index.html\">website</a> to build a word list of the target. Good luck special agent!(No spaces)</p>",
+    "point_value": 30,
+    "difficulty": 2,
+    "category": "Binary Exploit",
+    "answer": "AHSINV{06271d19d45e3ba01c76802484abf184}"
+  }
 ]
