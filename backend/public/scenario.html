@@ -29,7 +29,7 @@
         filter: none;
       }
       50% {
-        filter: hsl(0, 100%, 50%);
+        filter: invert(31%) sepia(95%) saturate(7478%) hue-rotate(357deg) brightness(105%) contrast(125%);
       }
     }
 
@@ -51,19 +51,20 @@
     }
 
     .status-solar-panel {
-      background-image: url("img/scenario/International_Space_Station_0000_Solar-Panels.png");
+      background-image: url("img/scenario/Solar-Panels.png");
+      image-rendering: pixelated;
     }
     .status-truss {
-      background-image: url("img/scenario/International_Space_Station_0001_Truss.png");
+      background-image: url("img/scenario/Truss.png");
     }
     .status-docking {
-      background-image: url("img/scenario/International_Space_Station_0002_Docking.png");
+      background-image: url("img/scenario/Docking.png");
     }
     .status-life-support {
-      background-image: url("img/scenario/International_Space_Station_0003_Life-Support.png");
+      background-image: url("img/scenario/Life-Support.png");
     }
     .status-communications {
-      background-image: url("img/scenario/International_Space_Station_0004_comms.png");
+      background-image: url("img/scenario/Comms.png");
     }
 
     .center-absolute {
@@ -142,11 +143,11 @@
     <div class="text-light p-3 position-absolute" style="width: fit-content">
       <div class="bg-dark px-3 py-2 rounded">
         <div class="text-decoration-underline">Status:</div>
-        <div>Solar Panels: <span class="text-success">Operational +5</span></div>
-        <div>Truss Integrity: <span class="text-danger">System Down +0</span></div>
-        <div>Docking Port: <span class="text-success">Operational +5</span></div>
-        <div>Life Support: <span class="text-success">Operational +5</span></div>
-        <div>Communications: <span class="text-success">Operational +5</span></div>
+        <div id="solar_panels_label">Solar Panels: <span class="text-success">Operational +5</span></div>
+        <div id="truss_integrity_label">Truss Integrity: <span class="text-danger">System Down +0</span></div>
+        <div id="docking_port_label">Docking Port: <span class="text-success">Operational +5</span></div>
+        <div id="life_support_label">Life Support: <span class="text-success">Operational +5</span></div>
+        <div id="communications_label">Communications: <span class="text-success">Operational +5</span></div>
       </div>
     </div>
 
@@ -167,11 +168,11 @@
 
     <!-- ISS -->
     <div class="center-absolute w-75 h-75" style="z-index: -1">
-      <div class="iss-component position-absolute status-solar-panel w-100 h-100"></div>
-      <div class="iss-component position-absolute status-truss w-100 h-100"></div>
-      <div class="blink-danger iss-component position-absolute status-docking w-100 h-100"></div>
-      <div class="iss-component position-absolute status-life-support w-100 h-100"></div>
-      <div class="blink-danger iss-component position-absolute status-communications w-100 h-100"></div>
+      <div id="solar_panels_visual" class="iss-component position-absolute status-solar-panel w-100 h-100"></div>
+      <div id="truss_integrity_visual" class="iss-component position-absolute status-truss w-100 h-100"></div>
+      <div id="docking_port_visual" class="iss-component position-absolute status-docking w-100 h-100"></div>
+      <div id="life_support_visual" class="iss-component position-absolute status-life-support w-100 h-100"></div>
+      <div id="communications_visual" class="iss-component position-absolute status-communications w-100 h-100"></div>
     </div>
 
     <!-- Earth -->

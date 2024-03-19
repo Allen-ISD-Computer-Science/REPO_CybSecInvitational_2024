@@ -115,6 +115,15 @@ export function fetchLoginToken(id: string): Token | null {
 // * Routes
 export const router: Router = express.Router();
 
+router.post("/checkLogin", async (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req);
+  if (!token) {
+    res.status(403).send("Invalid Token");
+    return;
+  }
+  res.sendStatus(200);
+});
+
 router.post("/login", async (req: Request, res: Response) => {
   console.log("attempting login");
   const username: string | undefined = req.body.username;

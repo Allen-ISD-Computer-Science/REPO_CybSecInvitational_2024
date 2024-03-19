@@ -35,11 +35,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyScenarioRound = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.SolarPanelService = exports.PanelSection = exports.applyEnvelopeFloat = exports.applyEnvelope = exports.ScenarioRoundUser = exports.ScenarioRoundGroup = void 0;
+exports.verifyScenarioRound = exports.verifyScenarioRoundMiddleware = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.UserService = exports.SolarPanelService = exports.PanelSection = exports.applyEnvelopeFloat = exports.applyEnvelope = exports.ScenarioRoundUser = exports.ScenarioRoundGroup = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 const roundApi_1 = require("./roundApi");
 const mongoApi_1 = require("./mongoApi");
+const loginApi_1 = require("./loginApi");
 const config = require("../config.json");
 class ScenarioRoundGroup {
     constructor(name, priority = 0, permissions = "") {
@@ -203,6 +204,13 @@ class SolarPanelService extends Service {
     }
 }
 exports.SolarPanelService = SolarPanelService;
+class UserService extends Service {
+    static updateService() { }
+    constructor() {
+        super(UserService.updateService);
+    }
+}
+exports.UserService = UserService;
 class ScenarioRoundState {
     update() {
         for (let name in this.services) {
@@ -260,7 +268,7 @@ class ScenarioRound extends roundApi_1.Round {
             }
             scoreboard.forEach((member) => {
                 this.state[member.username] = new ScenarioRoundState(member.username);
-                console.log(JSON.stringify(this.state[member.username], null, 2));
+                // console.log(JSON.stringify(this.state[member.username], null, 2));
             });
             return true;
         });
@@ -280,13 +288,34 @@ exports.startScenarioRound = startScenarioRound;
 // * Routes
 exports.router = express_1.default.Router();
 // router middleware
-function verifyScenarioRound(req, res, next) {
+function verifyScenarioRoundMiddleware(req, res, next) {
     if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
         res.redirect("home");
+        return;
+    }
+    next();
+}
+exports.verifyScenarioRoundMiddleware = verifyScenarioRoundMiddleware;
+// sends status instead of redirecting
+function verifyScenarioRound(req, res, next) {
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
+        res.status(403).send("Scenario Round Not Started");
+        return;
     }
     next();
 }
 exports.verifyScenarioRound = verifyScenarioRound;
-exports.router.get("/scenario", verifyScenarioRound, (req, res) => {
+exports.router.get("/scenario", loginApi_1.validateLoginToken, verifyScenarioRoundMiddleware, (req, res) => {
     res.sendFile(path.join(__dirname, "../public/scenario.html"));
+});
+exports.router.post("/getReport", loginApi_1.validateLoginToken, verifyScenarioRound, (req, res) => {
+    const token = res.locals.token;
+    const round = roundApi_1.currentRound; //validated by middleware
+    const state = round.getUserState(token.data.username);
+    if (!state) {
+        res.status(403).send("Not In Scenario Round");
+        return;
+    }
+    console.log(state);
+    res.status(200).send(state.services.solar_panels.getReport());
 });

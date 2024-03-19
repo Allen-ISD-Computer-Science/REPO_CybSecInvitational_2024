@@ -2,6 +2,7 @@ import * as path from "path";
 import express, { Request, Response, Router } from "express";
 import { Round, currentRound, startRound } from "./roundApi";
 import { fetchScoreboard } from "./mongoApi";
+import { LoginToken, validateLoginToken } from "./loginApi";
 const config = require("../config.json");
 
 export class ScenarioRoundGroup {
@@ -195,6 +196,14 @@ export class SolarPanelService extends Service {
   }
 }
 
+export class UserService extends Service {
+  static updateService(this: UserService) {}
+
+  constructor() {
+    super(UserService.updateService);
+  }
+}
+
 export class ScenarioRoundState {
   readonly username: string; // refers to contestant's username (not part of scenario)
   static readonly default_groups: { [name: string]: boolean } = {
@@ -206,7 +215,7 @@ export class ScenarioRoundState {
     user: new ScenarioRoundGroup("user", 0, "d---"),
   };
 
-  readonly services: { [name: string]: Service } = {
+  readonly services: { [name: string]: Service; ["solar_panels"]: SolarPanelService } = {
     solar_panels: new SolarPanelService(),
   };
 
@@ -263,7 +272,7 @@ export class ScenarioRound extends Round {
 
     scoreboard.forEach((member) => {
       this.state[member.username] = new ScenarioRoundState(member.username);
-      console.log(JSON.stringify(this.state[member.username], null, 2));
+      // console.log(JSON.stringify(this.state[member.username], null, 2));
     });
 
     return true;
@@ -285,14 +294,39 @@ export function startScenarioRound(id: string, divisions: string[], duration: nu
 export const router: Router = express.Router();
 
 // router middleware
-export function verifyScenarioRound(req: Request, res: Response, next: Function) {
+export function verifyScenarioRoundMiddleware(req: Request, res: Response, next: Function) {
   if (currentRound?.type !== "ScenarioRound") {
     res.redirect("home");
+    return;
   }
 
   next();
 }
 
-router.get("/scenario", verifyScenarioRound, (req: Request, res: Response) => {
+// sends status instead of redirecting
+export function verifyScenarioRound(req: Request, res: Response, next: Function) {
+  if (currentRound?.type !== "ScenarioRound") {
+    res.status(403).send("Scenario Round Not Started");
+    return;
+  }
+
+  next();
+}
+
+router.get("/scenario", validateLoginToken, verifyScenarioRoundMiddleware, (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, "../public/scenario.html"));
+});
+
+router.post("/getReport", validateLoginToken, verifyScenarioRound, (req: Request, res: Response) => {
+  const token: LoginToken = res.locals.token;
+  const round: ScenarioRound = currentRound as unknown as ScenarioRound; //validated by middleware
+  const state: ScenarioRoundState | null = round.getUserState(token.data.username);
+
+  if (!state) {
+    res.status(403).send("Not In Scenario Round");
+    return;
+  }
+
+  console.log(state);
+  res.status(200).send(state.services.solar_panels.getReport());
 });

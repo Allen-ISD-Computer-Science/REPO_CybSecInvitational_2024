@@ -6,10 +6,6 @@ import numpy as np
 
 from pprint import pprint
 
-import atexit
-
-from cryptography.fernet import Fernet
-
 import os
 from dotenv import load_dotenv, set_key
 load_dotenv("./client.env")
@@ -21,7 +17,7 @@ env_path = "client.env"
 host = "http://localhost:11278/"
 
 users_path = "./etc/pwd.txt"
-
+request_timeout = 5
 
 session = requests.Session()
 
@@ -41,69 +37,11 @@ def readEnv():
 
 # Commands
 
-## Users
-def encrypt(message: bytes, key: bytes) -> bytes:
-    return Fernet(key).encrypt(message)
-
-def decrypt(token: bytes, key: bytes) -> bytes:
-    return Fernet(key).decrypt(token)
-
-def addUser(username: str, password: str):
-    dateString = str(datetime.datetime.today().timestamp())
-
-    file = open(users_path, "a")
-    file.write(f'{username}:{password}:{dateString}\n')
-
-def findUser(username: str):
-    file = open(users_path, "r")
-    for number, line in enumerate(file):
-        tokens = line.strip().split(":")
-        try:
-            if tokens[0] == username:
-                return number
-        except:
-            pass
-
-def removeUser(username: str):
-    lineNum = findUser(username)
-    if lineNum is None:
-        return
-    file = open(users_path, "rw")
-    for number, line in enumerate(file):
-        if (number != lineNum):
-            file.write(line)
-
-def getUsers():
-    users = []
-    file = open(users_path, "r")
-    for line in file:
-        tokens = line.strip().split(":")
-
-        if tokens[0] == ">>":
-            continue
-
-        print(line.strip())
-
-
-def command_users(tokens):
-    try :
-        match tokens[1]:
-            case "add":
-                addUser(tokens[2], tokens[3])
-            case "get":
-                getUsers()
-            case "remove":
-                removeUser(tokens[2])
-            case _:
-                print("Invalid Flag")
-    except IndexError:
-        users = getUsers()
-
 ## Debug
 def command_test(tokens):
     print("test command ran")
     print(session.cookies.get_dict())
-    pprint(session.post(host + "getPuzzle", data={"name":"templatePuzzleName"}).json())
+    pprint(session.post(host + "getPuzzle", data={"name":"templatePuzzleName"}, timeout=request_timeout).json)
 
 ## Exit
 def command_exit(tokens):
@@ -120,7 +58,17 @@ def checkToken():
     elif float(expires) < time.time():
         return False
     else:
-        return True
+        try:
+            print(token)
+            session.cookies.set("LoginToken", token)
+            result = session.post(host + "checkLogin", timeout=request_timeout)
+            print(result.ok)
+            if result.ok:
+                return True
+            else:
+                return False
+        except:
+            return False
 
 def command_login(tokens):
     if not checkToken():
@@ -146,12 +94,63 @@ def command_help(tokens):
         exit
         login
         clear
+        service
         """
         )
 
 ## Clear Screen
 def command_clear(tokens):
     os.system("cls")
+
+#region Service
+
+#region Solar Panel Service
+
+def command_service_solarpanels_summary(tokens):
+    try:
+        result = session.post(host + "getReport", timeout=request_timeout)
+        if not result.ok:
+            print(result.text)
+            return
+
+        pprint(result.json())
+    except TimeoutError:
+        print("Request Timed Out, Please Try Again")
+
+serviceSolarPanelCommands = {
+    "summary": command_service_solarpanels_summary
+}
+
+def command_service_solarpanels(tokens):
+    try:
+        serviceSolarPanelCommands[tokens[2]](tokens)
+    except IndexError:
+        print("Solar Panel Service Command Not Found")
+#endregion
+
+def command_service_help(tokens):
+    print(
+        """
+        help
+        solarpanels
+        """
+        )
+
+serviceCommands = {
+    "help": command_service_help,
+    "solarpanels": command_service_solarpanels
+}
+
+def command_service(tokens):
+    try:
+        try:
+            serviceCommands[tokens[1]](tokens)
+        except IndexError:
+            print("Service Command Not Found")
+
+    except IndexError:
+        print("Missing Arguments")
+#endregion
 
 commands = {
     "help": command_help,
@@ -160,7 +159,7 @@ commands = {
     "exit": command_exit,
     "login": command_login,
     "clear": command_clear,
-    "users": command_users
+    "service": command_service
 }
 
 def parseCommand():
@@ -184,7 +183,7 @@ def attemptLogin():
     password = input()
 
     print("Attempting Login...")
-    response = session.post(host + "login", data={"username": username, "password": password})
+    response = session.post(host + "login", data={"username": username, "password": password}, timeout=request_timeout)
 
     if (response.ok):
         print("Logged in successfully!")
