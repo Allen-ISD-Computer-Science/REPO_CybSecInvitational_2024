@@ -1,7 +1,7 @@
-async function fetchPuzzle(id) {
+async function fetchPuzzle(name) {
   const response = await fetch("getPuzzle", {
     method: "POST",
-    body: JSON.stringify({ id: id }),
+    body: JSON.stringify({ name: name }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
@@ -30,10 +30,10 @@ async function fetchAllPuzzles() {
   }
 }
 
-async function submitPuzzle(id, answer) {
+async function submitPuzzle(name, answer) {
   const response = await fetch("submitPuzzle", {
     method: "POST",
-    body: JSON.stringify({ id: id, answer: answer }),
+    body: JSON.stringify({ name: name, answer: answer }),
     headers: {
       "Content-type": "application/json; charset=UTF-8",
     },
@@ -252,6 +252,8 @@ async function generatePuzzleModal(id) {
 
   const puzzle = await fetchPuzzle(id);
 
+  console.log(puzzle);
+
   puzzleModalHeader.innerHTML = puzzle.name;
   puzzleModalBody.innerHTML = puzzle.description;
 }
@@ -284,6 +286,9 @@ puzzleSubmitButton.onclick = async function (evt) {
   const data = await result.json();
   if (data.correct) {
     puzzleAlert.innerHTML = `<p class="text-success mb-0 align-self-center">Success!</p>`;
+    const card = document.querySelectorAll(`[data-puzzlename=${puzzleModalHeader.textContent}]`)[0];
+    if (card) card.style = "background-color: #eaecf4 !important";
+
     return;
   } else if (data.alreadyCompleted) {
     puzzleAlert.innerHTML = `<p class="text-warning mb-0 align-self-center">Already Completed</p>`;

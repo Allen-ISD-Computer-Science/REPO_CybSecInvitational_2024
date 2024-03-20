@@ -14,20 +14,20 @@
 |Number    |Puzzle Name                            |Implementation     |Writeup    |JSON   |
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |Back to Basics 64                      |Done               |Done       |Done   |
-|2         |Long Way Home                          |Done               |Done       |       |
-|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |       |
-|4         |Stego                                  |Done               |Done       |       |
-|5         |Rotation                               |Done               |Done       |       |
-|6         |Dots and Lines                         |Done               |Done       |       |
-|7         |Rotationally Challenged                |Done               |Done       |       |
-|8         |Rail Fence                             |Done               |Done       |       |
-|9         |RSA Basics                             |Done               |Done       |       |
-|10        |Suspicious Zuck                        |Done               |Done       |       |
-|11        |WHAT DO THEY MEAN MASON                |Done               |Done       |       |
-|12        |Step by Step                           |Done               |Done       |       |
+|2         |Long Way Home                          |Done               |Done       |Done   |
+|3         |One Fish Two Fish Red Fish Blue Fish   |Done               |Done       |Done   |
+|4         |Stego                                  |Done               |Done       |Done   |
+|5         |Rotation                               |Done               |Done       |Done   |
+|6         |Dots and Lines                         |Done               |Done       |Done   |
+|7         |Rotationally Challenged                |Done               |Done       |Done   |
+|8         |Rail Fence                             |Done               |Done       |Done   |
+|9         |RSA Basics                             |                   |           |       |
+|10        |Suspicious Duck                        |Done               |Done       |Done   |
+|11        |WHAT DO THEY MEAN MASON                |Done               |Done       |Done   |
+|12        |Step by Step                           |Done               |Done       |Done   |
 |13        |Julius Caesar                          |Done               |Done       |Done   |
 |14        |Lost Your Keys                         |                   |           |       |
-|15        |Listen Carefully                       |Done               |Done       |       |
+|15        |Listen Carefully                       |Done               |Done       |Done   |
 |16        |Sending a Message                      |                   |           |       |
 |17        |Swapping                               |                   |           |       |
 |18        |Database Fun                           |                   |           |       |
@@ -35,12 +35,12 @@
 |20        |Mix and Match                          |                   |           |       |
 |21        |Packing Digits                         |                   |           |       |
 |22        |Cryptographic Asylum                   |                   |           |       |
-|23        |Two Hops This Time                     |Done               |Done       |       |
+|23        |Two Hops This Time                     |Done               |Done       |Done   |
 |24        |Network Nuisance                       |Done               |           |       |
-|25        |The Mask                               |Done               |Done       |       |
-|26        |Scrambled                              |Done               |Done       |       |
+|25        |The Mask                               |Done               |Done       |Done   |
+|26        |Scrambled                              |Done               |Done       |Done   |
 |27        |New phone who dis                      |Done               |           |       |
-|28        |Which Photo                            |Done               |Done       |       |
+|28        |Which Photo                            |Done               |Done       |Done   |
 
 
 ## BashBasics
@@ -50,12 +50,12 @@
 |----------|---------------------------------------|-------------------|-----------|-------|
 |1         |9 Lives                                |Done               |Done       |Done   |
 |2         |C Deez Flags                           |Done               |Done       |Done   |
-|3         |PS I Have A Secret                     |Done               |Done       |       |
+|3         |PS I Have A Secret                     |Done               |Done       |Done   |
 |4         |Internet Cat                           |                   |           |       |
-|5         |Grep Grep Grep!                        |Done               |Done       |       |
-|6         |Get That W                             |Done               |Done       |       |
-|7         |Zip Zap                                |Done               |Done       |       |
-|8         |Maybe we should call Mario             |Done               |           |       |
+|5         |Grep Grep Grep!                        |Done               |Done       |Done   |
+|6         |Get That W                             |Done               |Done       |Done   |
+|7         |Zip Zap                                |Done               |Done       |Done   |
+|8         |Maybe we should call Mario             |                   |           |       |
 |9         |Locked Doors 1                         |Done               |           |       |
 |10        |Locked Doors 2                         |Done               |           |       |
 |11        |Locked Doors 3                         |                   |           |       |
@@ -70,14 +70,14 @@
 |20        |Dark Web of Encryption                 |                   |           |       |
 |21        |Code Injection Challenge               |                   |           |       |
 |22        |Unraveling Secrets                     |                   |           |       |
-|23        |Hidden Within The Noise                |                   |           |       |
+|23        |Hidden Within The Noise                |Done               |Done       |       |
 |24        |Elaborate Script Obfuscation           |                   |           |       |
 |25        |Cryptic Bash Script                    |                   |           |       |
 |26        |Recursive Challenge (Advanced)         |                   |           |       |
-|27        |Greptastic                             |Done               |           |       |
-|28        |It's rude to interrupt!                |Done               |Done       |       |
-|29        |Autofill                               |Done               |Done       |       |
-|30        |Invisible                              |Done               |Done       |       |
+|27        |Greptastic                             |Done               |Done       |Done   |
+|28        |It's rude to interrupt!                |Done               |Done       |Done   |
+|29        |Autofill                               |Done               |Done       |Done   |
+|30        |Invisible                              |Done               |Done       |Done   |
 
 
 ## Exploitation
@@ -98,7 +98,7 @@
 |11        |Breakdown!                             |                   |           |       |
 |12        |Never Back Down Never What?            |                   |           |       |
 |13        |Scrambled Binary                       |                   |           |       |
-|14        |Out In The Open                        |Done               |Done       |       |
+|14        |Out In The Open                        |Done               |Done       |Done   |
 |15        |Minor Hacking                          |                   |           |       |
 |16        |Packets                                |                   |           |       |
 |17        |Tampered Packets                       |                   |           |       |
@@ -115,8 +115,8 @@
 |28        |Brain Surgery                          |                   |           |       |
 |29        |Binary Enigma                          |                   |           |       |
 |30        |Cryptic Network Traversal              |                   |           |       |
-|31        |1-100000                               |Done               |           |       |
-|32        |JohnII                                 |Done               |           |       |
+|31        |1-100000                               |Done               |Done       |Done   |
+|32        |JohnII                                 |Done               |Done       |Done   |
 |33        |Hash Your Mind Away                    |Done               |           |       |
 |34        |JohnI                                  |Done               |           |       |
 

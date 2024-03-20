@@ -8,18 +8,29 @@ const check = document.getElementById("submit_check");
 const problemAlert = document.getElementById("problem_alert");
 
 var sent = false;
-const submitButton = document.getElementById("formSubmit");
-submitButton.onclick = async (evt) => {
+const form = document.getElementById("formSubmit");
+form.addEventListener("submit", async function (event) {
+  event.preventDefault();
+
   if (sent) return; //debounce
   problemAlert.style.display = "none";
 
-  evt.preventDefault();
   const email = inputEmail.value;
   const code = inputCode.value;
 
   if (!email || !code) {
     return;
   }
+
+  if (!Number(code)) {
+    problemAlert.style.display = "block";
+    problemAlert.textContent = "Code Should Be A Number";
+    spinner.style.display = "none";
+    label.style.display = "block";
+    check.style.display = "none";
+    return;
+  }
+
   label.style.display = "none";
   check.style.display = "none";
   spinner.style.display = "inline-block";
@@ -47,9 +58,9 @@ submitButton.onclick = async (evt) => {
     window.location.href = "login";
   } else if (!response.ok) {
     problemAlert.style.display = "block";
-    problemAlert.textContent = "Failed :(";
+    problemAlert.textContent = await response.text();
     spinner.style.display = "none";
     label.style.display = "block";
     check.style.display = "none";
   }
-};
+});
