@@ -153,6 +153,7 @@ export interface BattleRoundUserStatus {
   acknowledged: boolean;
   alreadyJoined: boolean;
   minBid: number;
+  endTime: number;
 }
 
 router.post("/getStatus", validateLoginToken, verifyBattleRound, (req: Request, res: Response) => {
@@ -164,12 +165,12 @@ router.post("/getStatus", validateLoginToken, verifyBattleRound, (req: Request, 
 
   const round = currentRound as unknown as BattleRound;
   if (round.contestants[token.data.username]) {
-    const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid };
+    const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid, endTime: round.endTime };
     res.json(status);
     return;
   }
 
-  const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: false, minBid: round.min_bid };
+  const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: false, minBid: round.min_bid, endTime: round.endTime };
   res.json(status);
 });
 
@@ -188,7 +189,7 @@ router.post("/join", validateLoginToken, verifyBattleRound, async (req: Request,
 
   const round = currentRound as unknown as BattleRound;
   if (round.contestants[token.data.username]) {
-    const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid };
+    const status: BattleRoundUserStatus = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid, endTime: round.endTime };
     res.json(status);
     return;
   }

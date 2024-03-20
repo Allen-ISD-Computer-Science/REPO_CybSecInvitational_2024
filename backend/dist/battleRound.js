@@ -164,11 +164,11 @@ exports.router.post("/getStatus", loginApi_1.validateLoginToken, verifyBattleRou
     }
     const round = roundApi_1.currentRound;
     if (round.contestants[token.data.username]) {
-        const status = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid };
+        const status = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid, endTime: round.endTime };
         res.json(status);
         return;
     }
-    const status = { acknowledged: true, alreadyJoined: false, minBid: round.min_bid };
+    const status = { acknowledged: true, alreadyJoined: false, minBid: round.min_bid, endTime: round.endTime };
     res.json(status);
 });
 exports.router.post("/join", loginApi_1.validateLoginToken, verifyBattleRound, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -184,7 +184,7 @@ exports.router.post("/join", loginApi_1.validateLoginToken, verifyBattleRound, (
     }
     const round = roundApi_1.currentRound;
     if (round.contestants[token.data.username]) {
-        const status = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid };
+        const status = { acknowledged: true, alreadyJoined: true, minBid: round.min_bid, endTime: round.endTime };
         res.json(status);
         return;
     }

@@ -376,8 +376,8 @@ const solarPanelActions = {
             res.status(400).send("Panel Not Found");
             return;
         }
-        state.services.solar_panels.getStatus(groupName, id);
-        res.sendStatus(200);
+        const status = state.services.solar_panels.getStatus(groupName, id);
+        res.json({ status: status });
     },
     report: (res, state) => {
         res.json(state.services.solar_panels.getReport());
