@@ -305,7 +305,7 @@
   },
   { 
     "name": "Stupid Simple Digital Portfolio",
-    "description": "<h1>Stupid Simple Digital Portfolio</h1><h3>Web Exploitation</h3><p>Your boss has asked you to look into “John Doe's” <a href=\"link\">digital portfolio</a>(Read between the lines).</p>",
+    "description": "<h1>Stupid Simple Digital Portfolio</h1><h3>Web Exploitation</h3><p>Your boss has asked you to look into “John Doe's” <a href=\"context/StupidSimpleDigitalPortfolio/index.html\">digital portfolio</a>(Read between the lines).</p>",
     "point_value": 15,
     "difficulty": 0,
     "category": "Web Exploitation",
@@ -313,7 +313,7 @@
   },
   {
     "name": "Dumb Default Creds",
-    "description": "<h1>Dumb Default Creds</h1><h3>Web Exploitation</h3><p>You are given a tp link login screen to break into. Go and try <a href=\"link\">Here</a>!</p>",
+    "description": "<h1>Dumb Default Creds</h1><h3>Web Exploitation</h3><p>You are given a tp link login screen to break into. Go and try <a href=\"context/DefaultCred/index.html\">Here</a>!</p>",
     "point_value": 15,
     "difficulty": 0,
     "category": "Web Exploitation",
