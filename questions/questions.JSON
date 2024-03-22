@@ -302,5 +302,21 @@
     "difficulty": 2,
     "category": "Binary Exploit",
     "answer": "AHSINV{06271d19d45e3ba01c76802484abf184}"
+  },
+  { 
+    "name": "Stupid Simple Digital Portfolio",
+    "description": "<h1>Stupid Simple Digital Portfolio</h1><h3>Web Exploitation</h3><p>Your boss has asked you to look into “John Doe's” <a href=\"link\">digital portfolio</a>(Read between the lines).</p>",
+    "point_value": 15,
+    "difficulty": 0,
+    "category": "Web Exploitation",
+    "answer": "AHSINV{ee30cd5412956216f10090590dc48cb2}"
+  },
+  {
+    "name": "Dumb Default Creds",
+    "description": "<h1>Dumb Default Creds</h1><h3>Web Exploitation</h3><p>You are given a tp link login screen to break into. Go and try <a href=\"link\">Here</a>!</p>",
+    "point_value": 15,
+    "difficulty": 0,
+    "category": "Web Exploitation",
+    "answer": "AHSINV{e86597c1c6891d84afa86b2d049072d6}"
   }
 ]
