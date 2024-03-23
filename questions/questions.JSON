@@ -142,7 +142,7 @@
   },
 
   {
-    "name": "Rotationlly Challenged",
+    "name": "Rotationally Challenged",
     "description": "<h1>Rotationlly Challenged</h1><h3>Cryptography</h3><p>Your boss has given you a grid of numbers, and has asked you to follow the instructions to solve it.<a href=\"context/files.zip\">file</a></p>",
     "point_value": 20,
     "difficulty": 2,
@@ -320,3 +320,11 @@
     "answer": "AHSINV{e86597c1c6891d84afa86b2d049072d6}"
   }
 ]
+// {
+//     "name": "",
+//     "description": "<h1></h1><h3></h3><p> <a href=\"context/"></a></p>",
+//     "point_value": #,
+//     "difficulty": 0,
+//     "category": "",
+//     "answer": ""
+//   }
