@@ -1,0 +1,124 @@
+
+[
+    {
+        "name": "CD",
+        "description": "<h1>CD</h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": ""
+    },
+    {
+        "name": "Grep",
+        "description": "<h1>Grep</h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": ""
+    },
+    {
+        "name": "Check Sumthing",
+        "description": "<h1>check Sumthing </h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": "AHSINV{059acbf5c248e9c9fcfff6abe54fbf97}"
+    },
+    {
+        "name": "q4",
+        "description": "<h1></h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": ""
+    },
+    {
+        "name": "Substitution",
+        "description": "<h1></h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "BashBasics",
+        "answer": ""
+    },
+    {
+        "name": "SomeHereOneIsNotReal",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "Q4",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    },
+    {
+        "name": "",
+        "description": "<h1></h1><h3></h3><p> <a href=\"context/\"></a></p>",
+        "point_value": #,
+        "difficulty": 0,
+        "category": "",
+        "answer": ""
+    }
+]

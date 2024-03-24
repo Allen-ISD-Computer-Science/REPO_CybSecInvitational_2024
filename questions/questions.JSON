@@ -1,7 +1,7 @@
 [
   {
     "name": "9 Lives",
-    "description": "<h1>Cats Have Nine Lives!?!</h1><h3>Bash Basics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"context/cat.txt\">Use Me!</a>",
+    "description": "<h1>Cats Have Nine Lives!?!</h1><h3>BashBasics</h3><p>It is your first day on the job, your boss has asked you to read this file.</p><p>Use this link to get access to the code</p><a href=\"context/cat.txt\">Use Me!</a>",
     "point_value": 5,
     "difficulty": 0,
     "category": "BashBasics",
@@ -10,7 +10,7 @@
 
   {
     "name": "C Deez Flags",
-    "description": "<h1>How do I move around?</h1><h3>Bash Basics</h3><p>The flag is located inside this <a href=\"context/checkThisOut.zip\">directory</a>, but how do I get to it?</p>",
+    "description": "<h1>How do I move around?</h1><h3>BashBasics</h3><p>The flag is located inside this <a href=\"context/checkThisOut.zip\">directory</a>, but how do I get to it?</p>",
     "point_value": 5,
     "difficulty": 0,
     "category": "BashBasics",
@@ -188,7 +188,7 @@
 
   {
     "name": "GetTheW",
-    "description": "<h1>GetTheW</h1><h3>Bash Basics</h3><p>Your boss has given you a <a href=\"context/Flag.html\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
+    "description": "<h1>GetTheW</h1><h3>BashBasics</h3><p>Your boss has given you a <a href=\"context/Flag.html\">link</a> that you need to pull from. The contents should be what you are looking for.</p>",
     "point_value": 5,
     "difficulty": 0,
     "category": "BashBasics",
@@ -197,7 +197,7 @@
 
   {
     "name": "Autofill",
-    "description": "<h1>Autofill</h1><h3>Bash Basics</h3><p>What are these naming conventions!? How do I even <a href=\"context/GrAMM3r  C0nv3nti0nS aRe h4rD,,. 0#@\">open it?</a></p>",
+    "description": "<h1>Autofill</h1><h3>BashBasics</h3><p>What are these naming conventions!? How do I even <a href=\"context/GrAMM3r  C0nv3nti0nS aRe h4rD,,. 0#@\">open it?</a></p>",
     "point_value": 10,
     "difficulty": 0,
     "category": "BashBasics",
@@ -206,7 +206,7 @@
 
   {
     "name": "It's rude to interrupt!",
-    "description": "<h1>It's rude to interrupt!</h1><h3>Bash Basics</h3><p>I'm waiting for this<a href=\"context/interrupted.zip\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
+    "description": "<h1>It's rude to interrupt!</h1><h3>BashBasics</h3><p>I'm waiting for this<a href=\"context/interrupted.zip\">file</a>to finish running, but it's taking forever! I wish I could just walk away…</p>",
     "point_value": 10,
     "difficulty": 0,
     "category": "BashBasics",
