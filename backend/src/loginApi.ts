@@ -108,7 +108,7 @@ export async function validateLoginToken(req: Request, res: Response, next: Func
 export async function validateLoginTokenPost(req: Request, res: Response, next: Function) {
   const loginTokenId = req.cookies["LoginToken"];
   if (!loginTokenId) {
-    res.redirect("login");
+    res.status(400).send("Missing Token Id");
     return;
   }
   const token = loginTokenGroup.findTokenOfId(loginTokenId);

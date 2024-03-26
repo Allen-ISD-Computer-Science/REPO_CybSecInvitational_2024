@@ -2,48 +2,18 @@ import * as path from "path";
 import express, { Request, Response, Router } from "express";
 import { Round, currentRound, startRound } from "./roundApi";
 import { fetchScoreboard } from "./mongoApi";
-import { LoginToken, validateLoginToken, validateLoginTokenPost } from "./loginApi";
+import { LoginToken, fetchLoginTokenFromRequest, validateLoginToken, validateLoginTokenPost } from "./loginApi";
 const config = require("../config.json");
 
-export class ScenarioRoundGroup {
-  name: string;
-  priority: number;
-  permissions: string;
-  readonly default: boolean;
-
-  constructor(name: string, priority: number = 0, permissions: string = "") {
-    // default groups cannot be removed
-    if (ScenarioRoundState.default_groups[name]) {
-      this.default = true;
-    } else {
-      this.default = false;
-    }
-
-    this.name = name;
-    this.priority = priority;
-    this.permissions = permissions;
-  }
-}
-
-export class ScenarioRoundUser {
-  username: string;
-  password: string;
-  groups: { [name: string]: ScenarioRoundGroup };
-
-  constructor(state: ScenarioRoundState, username: string, password: string) {
-    this.username = username;
-    this.password = password;
-    this.groups = { user: state.groups.user };
-  }
-}
-
 class Service {
+  state: ScenarioRoundState;
   active: boolean;
   _onUpdate: Function;
 
-  constructor(onUpdate: Function) {
+  constructor(state: ScenarioRoundState, onUpdate: Function) {
     this._onUpdate = onUpdate;
     this.active = true;
+    this.state = state;
 
     this.updateService();
   }
@@ -56,6 +26,115 @@ class Service {
 export const applyEnvelope = (a: number, e: number) => a + Math.floor(Math.random() - 0.5) * e;
 export const applyEnvelopeFloat = (a: number, e: number) => a + (Math.random() - 0.5) * e;
 
+export class ScenarioRoundState {
+  readonly energy: number = 100;
+  readonly supply: number = 100;
+
+  readonly maxEnergy: number = 500;
+
+  readonly services: {
+    [name: string]: Service;
+    ["solarpanels"]: SolarPanelService;
+    ["repair"]: RepairService;
+  };
+
+  update() {
+    for (let name in this.services) {
+      let service = this.services[name];
+      service._onUpdate();
+    }
+  }
+
+  constructor() {
+    this.services = {
+      solarpanels: new SolarPanelService(this),
+      repair: new RepairService(this),
+    };
+  }
+}
+
+export class ScenarioRound extends Round {
+  type: "ScenarioRound";
+
+  state: { [username: string]: ScenarioRoundState } = {};
+  updateInterval: NodeJS.Timeout = setInterval(() => {
+    for (let username in this.state) {
+      let userState = this.state[username];
+      userState.update();
+    }
+  }, 5000);
+
+  private static _onEnd() {
+    if (!currentRound || currentRound?.type != "BattleRound") return;
+    let round = currentRound as ScenarioRound;
+    clearInterval(round.updateInterval);
+    console.log("Puzzle Round Ended");
+  }
+
+  constructor(duration: number, id: string, divisions: string[]) {
+    let divisionsObj: { [division: string]: boolean } = {};
+    divisions.forEach((val) => {
+      divisionsObj[val] = true;
+    });
+
+    super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
+    this.type = "ScenarioRound"; // ensure the type of round
+  }
+
+  async init(): Promise<boolean> {
+    const scoreboard = await fetchScoreboard();
+    if (!scoreboard) {
+      return false;
+    }
+
+    scoreboard.forEach((member) => {
+      this.state[member.username] = new ScenarioRoundState();
+      // console.log(JSON.stringify(this.state[member.username], null, 2));
+    });
+
+    return true;
+  }
+
+  getUserState(username: string): ScenarioRoundState | null {
+    return this.state[username];
+  }
+}
+
+// * Methods
+export function startScenarioRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
+  let round = new ScenarioRound(duration, id, divisions);
+  round.init();
+  return startRound(round);
+}
+
+// * Routes
+export const router: Router = express.Router();
+
+// router middleware
+export function verifyScenarioRoundMiddleware(req: Request, res: Response, next: Function) {
+  if (currentRound?.type !== "ScenarioRound") {
+    res.redirect("home");
+    return;
+  }
+
+  next();
+}
+
+// sends status instead of redirecting
+export function verifyScenarioRound(req: Request, res: Response, next: Function) {
+  if (currentRound?.type !== "ScenarioRound") {
+    res.status(403).send("Scenario Round Not Started");
+    return;
+  }
+
+  next();
+}
+
+router.get("/scenario", validateLoginToken, verifyScenarioRoundMiddleware, (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname, "../public/scenario.html"));
+});
+
+//#region solarPanelService
 export class PanelSection {
   static readonly defaultRepairTime = 15000;
   static readonly repairTimeEnvelope = 4000;
@@ -168,8 +247,8 @@ export class SolarPanelService extends Service {
     return report;
   }
 
-  constructor() {
-    super(SolarPanelService.updateService);
+  constructor(state: ScenarioRoundState) {
+    super(state, SolarPanelService.updateService);
     this.groups = {
       a: {
         1: new PanelSection(1),
@@ -196,205 +275,248 @@ export class SolarPanelService extends Service {
   }
 }
 
-export class UserService extends Service {
-  static updateService(this: UserService) {}
+const solarpanelsServiceRouter = express.Router();
 
-  constructor() {
-    super(UserService.updateService);
+solarpanelsServiceRouter.post("/reboot", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupName = req.body.groupName;
+  const panelId = req.body.panelId;
+
+  if (!groupName || !panelId) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.solarpanels.rebootPanel(groupName, panelId);
+  res.json({ success: result });
+});
+
+solarpanelsServiceRouter.post("/repair", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupName = req.body.groupName;
+  const panelId = req.body.panelId;
+
+  if (!groupName || !panelId) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.solarpanels.repairPanel(groupName, panelId);
+  res.json({ success: result });
+});
+
+solarpanelsServiceRouter.post("/status", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupName = req.body.groupName;
+  const panelId = req.body.panelId;
+
+  if (!groupName || !panelId) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.solarpanels.getStatus(groupName, panelId);
+  res.json({ status: result });
+});
+
+solarpanelsServiceRouter.post("/report", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const result = state.services.solarpanels.getReport();
+  res.json(result);
+});
+
+router.use("/scenario/service/solarpanels", validateLoginTokenPost, verifyScenarioRound, solarpanelsServiceRouter);
+//#endregion
+
+//#region RepairService
+
+class Queue<T> {
+  readonly line: (T | null)[];
+  readonly length: number;
+
+  constructor(length: number) {
+    this.length = length;
+    this.line = new Array<T | null>(length).fill(null);
+  }
+
+  swap(a: number, b: number) {
+    const clampA = Math.min(Math.max(a, 0), this.line.length - 1);
+    const clampB = Math.min(Math.max(a, 0), this.line.length - 1);
+    const temp = this.line[a];
+    this.line[a] = this.line[b];
+    this.line[b] = temp;
+  }
+
+  push(item: T): boolean {
+    for (let i in this.line) {
+      const value = this.line[i];
+      if (!value) {
+        this.line[i] = item;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  pop(): T | null {
+    const value = this.line[0];
+    for (let i = 1; i < this.line.length; i++) {
+      this.line[i - 1] = this.line[i];
+    }
+    this.line[this.line.length - 1] = null;
+    return value;
   }
 }
 
-export class ScenarioRoundState {
-  readonly username: string; // refers to contestant's username (not part of scenario)
-  static readonly default_groups: { [name: string]: boolean } = {
-    user: true,
-    admin: true,
-  };
-
-  readonly groups: { [name: string]: ScenarioRoundGroup } = {
-    user: new ScenarioRoundGroup("user", 0, "d---"),
-  };
-
-  readonly services: { [name: string]: Service; ["solar_panels"]: SolarPanelService } = {
-    solar_panels: new SolarPanelService(),
-  };
-
-  // default state on round start
-  readonly users: { [username: string]: ScenarioRoundUser } = {
-    ryan: new ScenarioRoundUser(this, "ryan", "123456790"),
-  };
-
-  update() {
-    for (let name in this.services) {
-      let service = this.services[name];
-      service._onUpdate();
-    }
+class RepairOperation {
+  started: boolean = false;
+  closed: boolean = false;
+  _timeout: NodeJS.Timeout | null = null;
+  duration: number;
+  onStart: Function;
+  onSuccess: Function;
+  onCancel: Function;
+  startTime: number;
+  constructor(duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}) {
+    this.duration = duration;
+    this.onStart = onStart;
+    this.onSuccess = onSuccess;
+    this.onCancel = onCancel;
+    this.startTime = Date.now();
   }
 
-  constructor(username: string) {
-    this.username = username;
+  start() {
+    this.started = true;
+    this.onStart();
+    this._timeout = setTimeout(() => {
+      this.onSuccess();
+      this.closed = true;
+    }, this.duration);
+  }
+
+  cancel() {
+    this.started = false;
+    if (this._timeout) {
+      clearTimeout(this._timeout);
+    }
+    this.onCancel();
   }
 }
 
-export class ScenarioRound extends Round {
-  type: "ScenarioRound";
+class RepairService extends Service {
+  static readonly default_queue_count: number = 3;
+  static readonly default_queue_limit: number = 5;
 
-  state: { [username: string]: ScenarioRoundState } = {};
-  updateInterval: NodeJS.Timeout = setInterval(() => {
-    for (let username in this.state) {
-      let userState = this.state[username];
-      userState.update();
+  // active when at least one repair operation is in any queue
+  static updateService(this: RepairService) {
+    this.active = false;
+
+    for (let i in this.queues) {
+      const queue = this.queues[i];
+      const firstOperation = queue.line[0];
+      if (firstOperation) {
+        this.active = true;
+
+        if (!firstOperation.started) {
+          firstOperation.start();
+        }
+      }
     }
-  }, 5000);
-
-  private static _onEnd() {
-    if (!currentRound || currentRound?.type != "BattleRound") return;
-    let round = currentRound as ScenarioRound;
-    clearInterval(round.updateInterval);
-    console.log("Puzzle Round Ended");
   }
 
-  constructor(duration: number, id: string, divisions: string[]) {
-    let divisionsObj: { [division: string]: boolean } = {};
-    divisions.forEach((val) => {
-      divisionsObj[val] = true;
-    });
+  queues: { [id: string]: Queue<RepairOperation> };
 
-    super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
-    this.type = "ScenarioRound"; // ensure the type of round
+  constructor(state: ScenarioRoundState) {
+    super(state, RepairService.updateService);
+    this.queues = {};
+    for (let i = 0; i < RepairService.default_queue_count; i++) {
+      this.queues[i.toString()] = new Queue(RepairService.default_queue_limit);
+    }
   }
 
-  async init(): Promise<boolean> {
-    const scoreboard = await fetchScoreboard();
-    if (!scoreboard) {
+  addOperation(id: string, duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}): boolean {
+    const queue = this.queues[id];
+    if (!queue) {
       return false;
     }
 
-    scoreboard.forEach((member) => {
-      this.state[member.username] = new ScenarioRoundState(member.username);
-      // console.log(JSON.stringify(this.state[member.username], null, 2));
-    });
-
-    return true;
+    const operation = new RepairOperation(
+      duration,
+      onStart,
+      () => {
+        queue.pop();
+        onSuccess();
+        this.updateService();
+      },
+      onCancel
+    );
+    const result = queue.push(operation);
+    this.updateService();
+    return result;
   }
 
-  getUserState(username: string): ScenarioRoundState | null {
-    return this.state[username];
+  cancelOperation(id: string) {
+    console.log("cancelling operation");
+    const queue = this.queues[id];
+    if (!queue) {
+      return;
+    }
+
+    const operation: RepairOperation | null = queue.pop();
+    if (!operation) {
+      return;
+    }
+
+    operation.cancel();
+    this.updateService();
   }
 }
-
-// * Methods
-export function startScenarioRound(id: string, divisions: string[], duration: number = config.puzzle_round_duration): boolean {
-  let round = new ScenarioRound(duration, id, divisions);
-  round.init();
-  return startRound(round);
-}
-
-// * Routes
-export const router: Router = express.Router();
-
-// router middleware
-export function verifyScenarioRoundMiddleware(req: Request, res: Response, next: Function) {
-  if (currentRound?.type !== "ScenarioRound") {
-    res.redirect("home");
-    return;
-  }
-
-  next();
-}
-
-// sends status instead of redirecting
-export function verifyScenarioRound(req: Request, res: Response, next: Function) {
-  if (currentRound?.type !== "ScenarioRound") {
-    res.status(403).send("Scenario Round Not Started");
-    return;
-  }
-
-  next();
-}
-
-router.get("/scenario", validateLoginToken, verifyScenarioRoundMiddleware, (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, "../public/scenario.html"));
-});
-
-router.post("/service", validateLoginTokenPost, verifyScenarioRoundMiddleware, (req: Request, res: Response) => {
-  const name: string = req.body.name;
-  const actionName: string = req.body.action;
-  let args: any[] = req.body.args;
-
-  // allows request to exclude args if not needed
-  if (!args) {
-    args = [];
-  }
-
-  if (!name || !actionName) {
-    res.status(400).send("Missing Arguments");
-    return;
-  }
-
-  const token: LoginToken = res.locals.token;
-  const round: ScenarioRound = currentRound as unknown as ScenarioRound; //validated by middleware
-  const state: ScenarioRoundState | null = round.getUserState(token.data.username);
-
-  if (!state) {
-    res.status(403).send("Not In Scenario Round");
-    return;
-  }
-
-  if (name == "solarpanels") {
-    const action = solarPanelActions[actionName];
-    if (!action) {
-      res.status(400).send("Action Not Found");
-      return;
-    }
-
-    action(res, state, ...args);
-  } else {
-    res.status(400).send("Service Not Found");
-  }
-});
-
-const solarPanelActions: { [action: string]: (res: Response, state: ScenarioRoundState, ...args: any[]) => any } = {
-  reboot: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
-    if (!groupName || !id) {
-      res.status(400).send("Missing Arguments");
-      return;
-    }
-    const panel = state.services.solar_panels.fetchPanel(groupName, id);
-    if (!panel) {
-      res.status(400).send("Panel Not Found");
-      return;
-    }
-    state.services.solar_panels.rebootPanel(groupName, id);
-    res.sendStatus(200);
-  },
-  repair: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
-    if (!groupName || !id) {
-      res.status(400).send("Missing Arguments");
-      return;
-    }
-    const panel = state.services.solar_panels.fetchPanel(groupName, id);
-    if (!panel) {
-      res.status(400).send("Panel Not Found");
-      return;
-    }
-    state.services.solar_panels.repairPanel(groupName, id);
-    res.sendStatus(200);
-  },
-  status: (res: Response, state: ScenarioRoundState, groupName: string, id: string) => {
-    if (!groupName || !id) {
-      res.status(400).send("Missing Arguments");
-      return;
-    }
-    const panel = state.services.solar_panels.fetchPanel(groupName, id);
-    if (!panel) {
-      res.status(400).send("Panel Not Found");
-      return;
-    }
-    const status = state.services.solar_panels.getStatus(groupName, id);
-    res.json({ status: status });
-  },
-  report: (res: Response, state: ScenarioRoundState) => {
-    res.json(state.services.solar_panels.getReport());
-  },
-};
+//#endregion

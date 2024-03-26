@@ -116,7 +116,7 @@ function validateLoginTokenPost(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         const loginTokenId = req.cookies["LoginToken"];
         if (!loginTokenId) {
-            res.redirect("login");
+            res.status(400).send("Missing Token Id");
             return;
         }
         const token = exports.loginTokenGroup.findTokenOfId(loginTokenId);
@@ -162,6 +162,7 @@ exports.router.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
     if (user.password !== password) {
         res.status(400).send("Incorrect Credentials!");
+        return;
     }
     const id = exports.loginTokenGroup.createNewToken(user);
     res.cookie("LoginToken", id, { secure: true, maxAge: exports.loginTokenGroup.duration, httpOnly: true }).sendStatus(200);
