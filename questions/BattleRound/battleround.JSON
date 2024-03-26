@@ -2,27 +2,27 @@
 [
     {
         "name": "CD",
-        "description": "<h1>CD</h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
-        "point_value": #,
-        "difficulty": 0,
+        "description": "<h1>CD</h1><h3>BashBasics</h3><p>Check out this directory<a href=\"context/\"></a></p>",
+        "point_value": 20,
+        "difficulty": 2,
         "category": "BashBasics",
-        "answer": ""
+        "answer": "AHSINV{55268b4f436188dcbb8818577a8a91fb}"
     },
     {
         "name": "Grep",
         "description": "<h1>Grep</h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
-        "point_value": #,
-        "difficulty": 0,
+        "point_value": 40,
+        "difficulty": 2,
         "category": "BashBasics",
         "answer": ""
     },
     {
         "name": "Check Sumthing",
-        "description": "<h1>check Sumthing </h1><h3>BashBasics</h3><p> <a href=\"context/\"></a></p>",
-        "point_value": #,
-        "difficulty": 0,
+        "description": "<h1>check Sumthing </h1><h3>BashBasics</h3><p> Given a <a href=\"context/\">File</a> find the the flag. (YES PUN INTENDED)</p>",
+        "point_value": 40,
+        "difficulty": 1,
         "category": "BashBasics",
-        "answer": "AHSINV{059acbf5c248e9c9fcfff6abe54fbf97}"
+        "answer": "AHSINV{32f787f3ae778b1d695b3194936ffc46}"
     },
     {
         "name": "q4",
