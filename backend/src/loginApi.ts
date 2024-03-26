@@ -159,6 +159,7 @@ router.post("/login", async (req: Request, res: Response) => {
 
   if (user.password !== password) {
     res.status(400).send("Incorrect Credentials!");
+    return;
   }
 
   const id = loginTokenGroup.createNewToken(user);
