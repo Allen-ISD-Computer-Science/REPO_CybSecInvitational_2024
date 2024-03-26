@@ -35,7 +35,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SolarPanelService = exports.PanelSection = exports.verifyScenarioRound = exports.verifyScenarioRoundMiddleware = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.UserService = exports.applyEnvelopeFloat = exports.applyEnvelope = void 0;
+exports.SolarPanelService = exports.PanelSection = exports.verifyScenarioRound = exports.verifyScenarioRoundMiddleware = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.applyEnvelopeFloat = exports.applyEnvelope = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 const roundApi_1 = require("./roundApi");
@@ -43,9 +43,10 @@ const mongoApi_1 = require("./mongoApi");
 const loginApi_1 = require("./loginApi");
 const config = require("../config.json");
 class Service {
-    constructor(onUpdate) {
+    constructor(state, onUpdate) {
         this._onUpdate = onUpdate;
         this.active = true;
+        this._state = state;
         this.updateService();
     }
     updateService() {
@@ -56,13 +57,6 @@ const applyEnvelope = (a, e) => a + Math.floor(Math.random() - 0.5) * e;
 exports.applyEnvelope = applyEnvelope;
 const applyEnvelopeFloat = (a, e) => a + (Math.random() - 0.5) * e;
 exports.applyEnvelopeFloat = applyEnvelopeFloat;
-class UserService extends Service {
-    static updateService() { }
-    constructor() {
-        super(UserService.updateService);
-    }
-}
-exports.UserService = UserService;
 class ScenarioRoundState {
     update() {
         for (let name in this.services) {
@@ -75,7 +69,8 @@ class ScenarioRoundState {
         this.supply = 100;
         this.maxEnergy = 500;
         this.services = {
-            solar_panels: new SolarPanelService(),
+            solarpanels: new SolarPanelService(this),
+            repair: new RepairService(this),
         };
     }
 }
@@ -153,7 +148,9 @@ exports.router.get("/scenario", loginApi_1.validateLoginToken, verifyScenarioRou
 });
 //#region solarPanelService
 class PanelSection {
-    constructor(status = 0) {
+    constructor(state, status = 0) {
+        this._inQueue = false;
+        this._state = state;
         this.status = status;
         if (status == 1) {
             this.active = true;
@@ -185,12 +182,21 @@ class PanelSection {
     repair() {
         if (this.status == 3 || this.status == 4)
             return false;
-        if (this.status == 2) {
-            this.changeStatus(3);
-            setTimeout(() => {
+        if (this.status == 2 && !this._inQueue) {
+            const result = this._state.services.repair.addOperation("0", "PanelSection", 30000, () => {
+                this._inQueue = false;
+                this.changeStatus(3);
+            }, () => {
+                this._inQueue = false;
                 this.changeStatus(0);
-            }, (0, exports.applyEnvelopeFloat)(PanelSection.defaultRepairTime, PanelSection.repairTimeEnvelope));
-            return true;
+            }, () => {
+                this._inQueue = false;
+                this.changeStatus(2);
+            });
+            if (result) {
+                this._inQueue = true;
+            }
+            return result;
         }
         else {
             return false;
@@ -217,7 +223,15 @@ class SolarPanelService extends Service {
         }
     }
     fetchPanel(groupName, id) {
-        return this.groups[groupName][id];
+        const group = this.groups[groupName];
+        if (!group) {
+            return null;
+        }
+        const panel = group[id];
+        if (!panel) {
+            return null;
+        }
+        return panel;
     }
     rebootPanel(groupName, id) {
         let panel = this.fetchPanel(groupName, id);
@@ -249,29 +263,29 @@ class SolarPanelService extends Service {
         }
         return report;
     }
-    constructor() {
-        super(SolarPanelService.updateService);
+    constructor(state) {
+        super(state, SolarPanelService.updateService);
         this.groups = {
             a: {
-                1: new PanelSection(1),
-                2: new PanelSection(1),
-                3: new PanelSection(1),
-                4: new PanelSection(1),
-                5: new PanelSection(1),
+                1: new PanelSection(this._state, 1),
+                2: new PanelSection(this._state, 1),
+                3: new PanelSection(this._state, 1),
+                4: new PanelSection(this._state, 1),
+                5: new PanelSection(this._state, 1),
             },
             b: {
-                1: new PanelSection(0),
-                2: new PanelSection(0),
-                3: new PanelSection(0),
-                4: new PanelSection(0),
-                5: new PanelSection(0),
+                1: new PanelSection(this._state, 0),
+                2: new PanelSection(this._state, 0),
+                3: new PanelSection(this._state, 0),
+                4: new PanelSection(this._state, 0),
+                5: new PanelSection(this._state, 0),
             },
             c: {
-                1: new PanelSection(1),
-                2: new PanelSection(1),
-                3: new PanelSection(2),
-                4: new PanelSection(2),
-                5: new PanelSection(1),
+                1: new PanelSection(this._state, 1),
+                2: new PanelSection(this._state, 1),
+                3: new PanelSection(this._state, 2),
+                4: new PanelSection(this._state, 2),
+                5: new PanelSection(this._state, 1),
             },
         };
     }
@@ -296,7 +310,7 @@ solarpanelsServiceRouter.post("/reboot", (req, res) => {
         res.status(400).send("Missing Parameters");
         return;
     }
-    const result = state.services.solar_panels.rebootPanel(groupName, panelId);
+    const result = state.services.solarpanels.rebootPanel(groupName, panelId);
     res.json({ success: result });
 });
 solarpanelsServiceRouter.post("/repair", (req, res) => {
@@ -317,7 +331,7 @@ solarpanelsServiceRouter.post("/repair", (req, res) => {
         res.status(400).send("Missing Parameters");
         return;
     }
-    const result = state.services.solar_panels.repairPanel(groupName, panelId);
+    const result = state.services.solarpanels.repairPanel(groupName, panelId);
     res.json({ success: result });
 });
 solarpanelsServiceRouter.post("/status", (req, res) => {
@@ -338,7 +352,7 @@ solarpanelsServiceRouter.post("/status", (req, res) => {
         res.status(400).send("Missing Parameters");
         return;
     }
-    const result = state.services.solar_panels.getStatus(groupName, panelId);
+    const result = state.services.solarpanels.getStatus(groupName, panelId);
     res.json({ status: result });
 });
 solarpanelsServiceRouter.post("/report", (req, res) => {
@@ -353,7 +367,7 @@ solarpanelsServiceRouter.post("/report", (req, res) => {
         res.status(403).send("Not Part Of Scenario Round");
         return;
     }
-    const result = state.services.solar_panels.getReport();
+    const result = state.services.solarpanels.getReport();
     res.json(result);
 });
 exports.router.use("/scenario/service/solarpanels", loginApi_1.validateLoginTokenPost, verifyScenarioRound, solarpanelsServiceRouter);
@@ -391,19 +405,21 @@ class Queue {
     }
 }
 class RepairOperation {
-    constructor(duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
+    constructor(label, duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
         this.started = false;
         this.closed = false;
         this._timeout = null;
+        this.label = label;
         this.duration = duration;
         this.onStart = onStart;
         this.onSuccess = onSuccess;
         this.onCancel = onCancel;
-        this.startTime = Date.now();
+        this.startTime = null;
     }
     start() {
         this.started = true;
         this.onStart();
+        this.startTime = Date.now();
         this._timeout = setTimeout(() => {
             this.onSuccess();
             this.closed = true;
@@ -416,30 +432,43 @@ class RepairOperation {
         }
         this.onCancel();
     }
+    report() {
+        return {
+            label: this.label,
+            startTime: this.startTime,
+            duration: this.duration,
+            started: this.started,
+        };
+    }
 }
 class RepairService extends Service {
+    // active when at least one repair operation is in any queue
     static updateService() {
+        this.active = false;
         for (let i in this.queues) {
             const queue = this.queues[i];
             const firstOperation = queue.line[0];
-            if (firstOperation && !firstOperation.started) {
-                firstOperation.start();
+            if (firstOperation) {
+                this.active = true;
+                if (!firstOperation.started) {
+                    firstOperation.start();
+                }
             }
         }
     }
-    constructor() {
-        super(RepairService.updateService);
+    constructor(state) {
+        super(state, RepairService.updateService);
         this.queues = {};
         for (let i = 0; i < RepairService.default_queue_count; i++) {
             this.queues[i.toString()] = new Queue(RepairService.default_queue_limit);
         }
     }
-    addOperation(id, duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
+    addOperation(id, label, duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
         const queue = this.queues[id];
         if (!queue) {
             return false;
         }
-        const operation = new RepairOperation(duration, onStart, () => {
+        const operation = new RepairOperation(label, duration, onStart, () => {
             queue.pop();
             onSuccess();
             this.updateService();
@@ -461,41 +490,38 @@ class RepairService extends Service {
         operation.cancel();
         this.updateService();
     }
+    report() {
+        let report = {};
+        for (let i in this.queues) {
+            const queue = this.queues[i];
+            const queueReport = [];
+            for (let k in queue.line) {
+                const value = queue.line[k];
+                queueReport.push(value === null || value === void 0 ? void 0 : value.report());
+            }
+            report[i] = queueReport;
+        }
+        return report;
+    }
 }
 RepairService.default_queue_count = 3;
 RepairService.default_queue_limit = 5;
-const a = new RepairService();
-a.addOperation("0", 10000, () => {
-    console.log("starting operation");
-}, () => {
-    console.log("operation succeeded");
-}, () => {
-    console.log("canceling operation");
+const repairServiceRouter = express_1.default.Router();
+repairServiceRouter.post("/report", (req, res) => {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    const round = roundApi_1.currentRound;
+    if (!token || !round) {
+        res.sendStatus(500);
+        return;
+    }
+    const state = round.getUserState(token.data.username);
+    if (!state) {
+        res.status(403).send("Not Part Of Scenario Round");
+        return;
+    }
+    const result = state.services.repair.report();
+    console.log(result);
+    res.json(result);
 });
-a.addOperation("0", 10000, () => {
-    console.log("starting operation");
-}, () => {
-    console.log("operation succeeded");
-}, () => {
-    console.log("canceling operation");
-});
-a.addOperation("0", 10000, () => {
-    console.log("starting operation");
-}, () => {
-    console.log("operation succeeded");
-}, () => {
-    console.log("canceling operation");
-});
-setInterval(() => {
-    console.log(a.queues["0"]);
-}, 1000);
-setTimeout(() => {
-    a.cancelOperation("0");
-}, 3000);
-setTimeout(() => {
-    a.cancelOperation("0");
-}, 2000);
-setTimeout(() => {
-    a.cancelOperation("0");
-}, 1000);
+exports.router.use("/scenario/service/repair", loginApi_1.validateLoginTokenPost, verifyScenarioRound, repairServiceRouter);
 //#endregion
