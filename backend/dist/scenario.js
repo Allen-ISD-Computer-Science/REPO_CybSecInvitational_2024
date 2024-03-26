@@ -35,36 +35,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyScenarioRound = exports.verifyScenarioRoundMiddleware = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.UserService = exports.SolarPanelService = exports.PanelSection = exports.applyEnvelopeFloat = exports.applyEnvelope = exports.ScenarioRoundUser = exports.ScenarioRoundGroup = void 0;
+exports.SolarPanelService = exports.PanelSection = exports.verifyScenarioRound = exports.verifyScenarioRoundMiddleware = exports.router = exports.startScenarioRound = exports.ScenarioRound = exports.ScenarioRoundState = exports.UserService = exports.applyEnvelopeFloat = exports.applyEnvelope = void 0;
 const path = __importStar(require("path"));
 const express_1 = __importDefault(require("express"));
 const roundApi_1 = require("./roundApi");
 const mongoApi_1 = require("./mongoApi");
 const loginApi_1 = require("./loginApi");
 const config = require("../config.json");
-class ScenarioRoundGroup {
-    constructor(name, priority = 0, permissions = "") {
-        // default groups cannot be removed
-        if (ScenarioRoundState.default_groups[name]) {
-            this.default = true;
-        }
-        else {
-            this.default = false;
-        }
-        this.name = name;
-        this.priority = priority;
-        this.permissions = permissions;
-    }
-}
-exports.ScenarioRoundGroup = ScenarioRoundGroup;
-class ScenarioRoundUser {
-    constructor(state, username, password) {
-        this.username = username;
-        this.password = password;
-        this.groups = { user: state.groups.user };
-    }
-}
-exports.ScenarioRoundUser = ScenarioRoundUser;
 class Service {
     constructor(onUpdate) {
         this._onUpdate = onUpdate;
@@ -79,6 +56,102 @@ const applyEnvelope = (a, e) => a + Math.floor(Math.random() - 0.5) * e;
 exports.applyEnvelope = applyEnvelope;
 const applyEnvelopeFloat = (a, e) => a + (Math.random() - 0.5) * e;
 exports.applyEnvelopeFloat = applyEnvelopeFloat;
+class UserService extends Service {
+    static updateService() { }
+    constructor() {
+        super(UserService.updateService);
+    }
+}
+exports.UserService = UserService;
+class ScenarioRoundState {
+    update() {
+        for (let name in this.services) {
+            let service = this.services[name];
+            service._onUpdate();
+        }
+    }
+    constructor() {
+        this.energy = 100;
+        this.supply = 100;
+        this.maxEnergy = 500;
+        this.services = {
+            solar_panels: new SolarPanelService(),
+        };
+    }
+}
+exports.ScenarioRoundState = ScenarioRoundState;
+class ScenarioRound extends roundApi_1.Round {
+    static _onEnd() {
+        if (!roundApi_1.currentRound || (roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) != "BattleRound")
+            return;
+        let round = roundApi_1.currentRound;
+        clearInterval(round.updateInterval);
+        console.log("Puzzle Round Ended");
+    }
+    constructor(duration, id, divisions) {
+        let divisionsObj = {};
+        divisions.forEach((val) => {
+            divisionsObj[val] = true;
+        });
+        super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
+        this.state = {};
+        this.updateInterval = setInterval(() => {
+            for (let username in this.state) {
+                let userState = this.state[username];
+                userState.update();
+            }
+        }, 5000);
+        this.type = "ScenarioRound"; // ensure the type of round
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
+            if (!scoreboard) {
+                return false;
+            }
+            scoreboard.forEach((member) => {
+                this.state[member.username] = new ScenarioRoundState();
+                // console.log(JSON.stringify(this.state[member.username], null, 2));
+            });
+            return true;
+        });
+    }
+    getUserState(username) {
+        return this.state[username];
+    }
+}
+exports.ScenarioRound = ScenarioRound;
+// * Methods
+function startScenarioRound(id, divisions, duration = config.puzzle_round_duration) {
+    let round = new ScenarioRound(duration, id, divisions);
+    round.init();
+    return (0, roundApi_1.startRound)(round);
+}
+exports.startScenarioRound = startScenarioRound;
+// * Routes
+exports.router = express_1.default.Router();
+// router middleware
+function verifyScenarioRoundMiddleware(req, res, next) {
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
+        res.redirect("home");
+        return;
+    }
+    next();
+}
+exports.verifyScenarioRoundMiddleware = verifyScenarioRoundMiddleware;
+// sends status instead of redirecting
+function verifyScenarioRound(req, res, next) {
+    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
+        res.status(403).send("Scenario Round Not Started");
+        return;
+    }
+    next();
+}
+exports.verifyScenarioRound = verifyScenarioRound;
+exports.router.get("/scenario", loginApi_1.validateLoginToken, verifyScenarioRoundMiddleware, (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/scenario.html"));
+});
+//#region solarPanelService
 class PanelSection {
     constructor(status = 0) {
         this.status = status;
@@ -204,182 +277,225 @@ class SolarPanelService extends Service {
     }
 }
 exports.SolarPanelService = SolarPanelService;
-class UserService extends Service {
-    static updateService() { }
-    constructor() {
-        super(UserService.updateService);
-    }
-}
-exports.UserService = UserService;
-class ScenarioRoundState {
-    update() {
-        for (let name in this.services) {
-            let service = this.services[name];
-            service._onUpdate();
-        }
-    }
-    constructor(username) {
-        this.groups = {
-            user: new ScenarioRoundGroup("user", 0, "d---"),
-        };
-        this.services = {
-            solar_panels: new SolarPanelService(),
-        };
-        // default state on round start
-        this.users = {
-            ryan: new ScenarioRoundUser(this, "ryan", "123456790"),
-        };
-        this.username = username;
-    }
-}
-exports.ScenarioRoundState = ScenarioRoundState;
-ScenarioRoundState.default_groups = {
-    user: true,
-    admin: true,
-};
-class ScenarioRound extends roundApi_1.Round {
-    static _onEnd() {
-        if (!roundApi_1.currentRound || (roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) != "BattleRound")
-            return;
-        let round = roundApi_1.currentRound;
-        clearInterval(round.updateInterval);
-        console.log("Puzzle Round Ended");
-    }
-    constructor(duration, id, divisions) {
-        let divisionsObj = {};
-        divisions.forEach((val) => {
-            divisionsObj[val] = true;
-        });
-        super(duration, "ScenarioRound", id, divisionsObj, ScenarioRound._onEnd);
-        this.state = {};
-        this.updateInterval = setInterval(() => {
-            for (let username in this.state) {
-                let userState = this.state[username];
-                userState.update();
-            }
-        }, 5000);
-        this.type = "ScenarioRound"; // ensure the type of round
-    }
-    init() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const scoreboard = yield (0, mongoApi_1.fetchScoreboard)();
-            if (!scoreboard) {
-                return false;
-            }
-            scoreboard.forEach((member) => {
-                this.state[member.username] = new ScenarioRoundState(member.username);
-                // console.log(JSON.stringify(this.state[member.username], null, 2));
-            });
-            return true;
-        });
-    }
-    getUserState(username) {
-        return this.state[username];
-    }
-}
-exports.ScenarioRound = ScenarioRound;
-// * Methods
-function startScenarioRound(id, divisions, duration = config.puzzle_round_duration) {
-    let round = new ScenarioRound(duration, id, divisions);
-    round.init();
-    return (0, roundApi_1.startRound)(round);
-}
-exports.startScenarioRound = startScenarioRound;
-// * Routes
-exports.router = express_1.default.Router();
-// router middleware
-function verifyScenarioRoundMiddleware(req, res, next) {
-    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
-        res.redirect("home");
+const solarpanelsServiceRouter = express_1.default.Router();
+solarpanelsServiceRouter.post("/reboot", (req, res) => {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    const round = roundApi_1.currentRound;
+    if (!token || !round) {
+        res.sendStatus(500);
         return;
     }
-    next();
-}
-exports.verifyScenarioRoundMiddleware = verifyScenarioRoundMiddleware;
-// sends status instead of redirecting
-function verifyScenarioRound(req, res, next) {
-    if ((roundApi_1.currentRound === null || roundApi_1.currentRound === void 0 ? void 0 : roundApi_1.currentRound.type) !== "ScenarioRound") {
-        res.status(403).send("Scenario Round Not Started");
-        return;
-    }
-    next();
-}
-exports.verifyScenarioRound = verifyScenarioRound;
-exports.router.get("/scenario", loginApi_1.validateLoginToken, verifyScenarioRoundMiddleware, (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/scenario.html"));
-});
-exports.router.post("/service", loginApi_1.validateLoginTokenPost, verifyScenarioRoundMiddleware, (req, res) => {
-    const name = req.body.name;
-    const actionName = req.body.action;
-    let args = req.body.args;
-    // allows request to exclude args if not needed
-    if (!args) {
-        args = [];
-    }
-    if (!name || !actionName) {
-        res.status(400).send("Missing Arguments");
-        return;
-    }
-    const token = res.locals.token;
-    const round = roundApi_1.currentRound; //validated by middleware
     const state = round.getUserState(token.data.username);
     if (!state) {
-        res.status(403).send("Not In Scenario Round");
+        res.status(403).send("Not Part Of Scenario Round");
         return;
     }
-    if (name == "solarpanels") {
-        const action = solarPanelActions[actionName];
-        if (!action) {
-            res.status(400).send("Action Not Found");
-            return;
-        }
-        action(res, state, ...args);
+    const groupName = req.body.groupName;
+    const panelId = req.body.panelId;
+    if (!groupName || !panelId) {
+        res.status(400).send("Missing Parameters");
+        return;
     }
-    else {
-        res.status(400).send("Service Not Found");
-    }
+    const result = state.services.solar_panels.rebootPanel(groupName, panelId);
+    res.json({ success: result });
 });
-const solarPanelActions = {
-    reboot: (res, state, groupName, id) => {
-        if (!groupName || !id) {
-            res.status(400).send("Missing Arguments");
+solarpanelsServiceRouter.post("/repair", (req, res) => {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    const round = roundApi_1.currentRound;
+    if (!token || !round) {
+        res.sendStatus(500);
+        return;
+    }
+    const state = round.getUserState(token.data.username);
+    if (!state) {
+        res.status(403).send("Not Part Of Scenario Round");
+        return;
+    }
+    const groupName = req.body.groupName;
+    const panelId = req.body.panelId;
+    if (!groupName || !panelId) {
+        res.status(400).send("Missing Parameters");
+        return;
+    }
+    const result = state.services.solar_panels.repairPanel(groupName, panelId);
+    res.json({ success: result });
+});
+solarpanelsServiceRouter.post("/status", (req, res) => {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    const round = roundApi_1.currentRound;
+    if (!token || !round) {
+        res.sendStatus(500);
+        return;
+    }
+    const state = round.getUserState(token.data.username);
+    if (!state) {
+        res.status(403).send("Not Part Of Scenario Round");
+        return;
+    }
+    const groupName = req.body.groupName;
+    const panelId = req.body.panelId;
+    if (!groupName || !panelId) {
+        res.status(400).send("Missing Parameters");
+        return;
+    }
+    const result = state.services.solar_panels.getStatus(groupName, panelId);
+    res.json({ status: result });
+});
+solarpanelsServiceRouter.post("/report", (req, res) => {
+    const token = (0, loginApi_1.fetchLoginTokenFromRequest)(req);
+    const round = roundApi_1.currentRound;
+    if (!token || !round) {
+        res.sendStatus(500);
+        return;
+    }
+    const state = round.getUserState(token.data.username);
+    if (!state) {
+        res.status(403).send("Not Part Of Scenario Round");
+        return;
+    }
+    const result = state.services.solar_panels.getReport();
+    res.json(result);
+});
+exports.router.use("/scenario/service/solarpanels", loginApi_1.validateLoginTokenPost, verifyScenarioRound, solarpanelsServiceRouter);
+//#endregion
+//#region RepairService
+class Queue {
+    constructor(length) {
+        this.length = length;
+        this.line = new Array(length).fill(null);
+    }
+    swap(a, b) {
+        const clampA = Math.min(Math.max(a, 0), this.line.length - 1);
+        const clampB = Math.min(Math.max(a, 0), this.line.length - 1);
+        const temp = this.line[a];
+        this.line[a] = this.line[b];
+        this.line[b] = temp;
+    }
+    push(item) {
+        for (let i in this.line) {
+            const value = this.line[i];
+            if (!value) {
+                this.line[i] = item;
+                return true;
+            }
+        }
+        return false;
+    }
+    pop() {
+        const value = this.line[0];
+        for (let i = 1; i < this.line.length; i++) {
+            this.line[i - 1] = this.line[i];
+        }
+        this.line[this.line.length - 1] = null;
+        return value;
+    }
+}
+class RepairOperation {
+    constructor(duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
+        this.started = false;
+        this.closed = false;
+        this._timeout = null;
+        this.duration = duration;
+        this.onStart = onStart;
+        this.onSuccess = onSuccess;
+        this.onCancel = onCancel;
+        this.startTime = Date.now();
+    }
+    start() {
+        this.started = true;
+        this.onStart();
+        this._timeout = setTimeout(() => {
+            this.onSuccess();
+            this.closed = true;
+        }, this.duration);
+    }
+    cancel() {
+        this.started = false;
+        if (this._timeout) {
+            clearTimeout(this._timeout);
+        }
+        this.onCancel();
+    }
+}
+class RepairService extends Service {
+    static updateService() {
+        for (let i in this.queues) {
+            const queue = this.queues[i];
+            const firstOperation = queue.line[0];
+            if (firstOperation && !firstOperation.started) {
+                firstOperation.start();
+            }
+        }
+    }
+    constructor() {
+        super(RepairService.updateService);
+        this.queues = {};
+        for (let i = 0; i < RepairService.default_queue_count; i++) {
+            this.queues[i.toString()] = new Queue(RepairService.default_queue_limit);
+        }
+    }
+    addOperation(id, duration, onStart = () => { }, onSuccess = () => { }, onCancel = () => { }) {
+        const queue = this.queues[id];
+        if (!queue) {
+            return false;
+        }
+        const operation = new RepairOperation(duration, onStart, () => {
+            queue.pop();
+            onSuccess();
+            this.updateService();
+        }, onCancel);
+        const result = queue.push(operation);
+        this.updateService();
+        return result;
+    }
+    cancelOperation(id) {
+        console.log("cancelling operation");
+        const queue = this.queues[id];
+        if (!queue) {
             return;
         }
-        const panel = state.services.solar_panels.fetchPanel(groupName, id);
-        if (!panel) {
-            res.status(400).send("Panel Not Found");
+        const operation = queue.pop();
+        if (!operation) {
             return;
         }
-        state.services.solar_panels.rebootPanel(groupName, id);
-        res.sendStatus(200);
-    },
-    repair: (res, state, groupName, id) => {
-        if (!groupName || !id) {
-            res.status(400).send("Missing Arguments");
-            return;
-        }
-        const panel = state.services.solar_panels.fetchPanel(groupName, id);
-        if (!panel) {
-            res.status(400).send("Panel Not Found");
-            return;
-        }
-        state.services.solar_panels.repairPanel(groupName, id);
-        res.sendStatus(200);
-    },
-    status: (res, state, groupName, id) => {
-        if (!groupName || !id) {
-            res.status(400).send("Missing Arguments");
-            return;
-        }
-        const panel = state.services.solar_panels.fetchPanel(groupName, id);
-        if (!panel) {
-            res.status(400).send("Panel Not Found");
-            return;
-        }
-        const status = state.services.solar_panels.getStatus(groupName, id);
-        res.json({ status: status });
-    },
-    report: (res, state) => {
-        res.json(state.services.solar_panels.getReport());
-    },
-};
+        operation.cancel();
+        this.updateService();
+    }
+}
+RepairService.default_queue_count = 3;
+RepairService.default_queue_limit = 5;
+const a = new RepairService();
+a.addOperation("0", 10000, () => {
+    console.log("starting operation");
+}, () => {
+    console.log("operation succeeded");
+}, () => {
+    console.log("canceling operation");
+});
+a.addOperation("0", 10000, () => {
+    console.log("starting operation");
+}, () => {
+    console.log("operation succeeded");
+}, () => {
+    console.log("canceling operation");
+});
+a.addOperation("0", 10000, () => {
+    console.log("starting operation");
+}, () => {
+    console.log("operation succeeded");
+}, () => {
+    console.log("canceling operation");
+});
+setInterval(() => {
+    console.log(a.queues["0"]);
+}, 1000);
+setTimeout(() => {
+    a.cancelOperation("0");
+}, 3000);
+setTimeout(() => {
+    a.cancelOperation("0");
+}, 2000);
+setTimeout(() => {
+    a.cancelOperation("0");
+}, 1000);
+//#endregion
