@@ -6,14 +6,14 @@ import { LoginToken, fetchLoginTokenFromRequest, validateLoginToken, validateLog
 const config = require("../config.json");
 
 class Service {
-  state: ScenarioRoundState;
   active: boolean;
   _onUpdate: Function;
+  _state: ScenarioRoundState;
 
   constructor(state: ScenarioRoundState, onUpdate: Function) {
     this._onUpdate = onUpdate;
     this.active = true;
-    this.state = state;
+    this._state = state;
 
     this.updateService();
   }
@@ -27,8 +27,8 @@ export const applyEnvelope = (a: number, e: number) => a + Math.floor(Math.rando
 export const applyEnvelopeFloat = (a: number, e: number) => a + (Math.random() - 0.5) * e;
 
 export class ScenarioRoundState {
-  readonly energy: number = 100;
-  readonly supply: number = 100;
+  energy: number = 100;
+  supply: number = 100;
 
   readonly maxEnergy: number = 500;
 
@@ -142,10 +142,13 @@ export class PanelSection {
   static readonly defaultBootTime = 3000;
   static readonly bootTimeEnvelope = 1000;
 
+  _inQueue: boolean = false;
   private active: boolean;
   private status: 0 | 1 | 2 | 3 | 4; // 0: idle, 1: working, 2: damaged, 3: repairing, 4: booting
+  private _state: ScenarioRoundState;
 
-  constructor(status: 0 | 1 | 2 | 3 = 0) {
+  constructor(state: ScenarioRoundState, status: 0 | 1 | 2 | 3 = 0) {
+    this._state = state;
     this.status = status;
     if (status == 1) {
       this.active = true;
@@ -181,12 +184,28 @@ export class PanelSection {
   repair(): boolean {
     if (this.status == 3 || this.status == 4) return false;
 
-    if (this.status == 2) {
-      this.changeStatus(3);
-      setTimeout(() => {
-        this.changeStatus(0);
-      }, applyEnvelopeFloat(PanelSection.defaultRepairTime, PanelSection.repairTimeEnvelope));
-      return true;
+    if (this.status == 2 && !this._inQueue) {
+      const result = this._state.services.repair.addOperation(
+        "0",
+        "PanelSection",
+        30000,
+        () => {
+          this._inQueue = false;
+          this.changeStatus(3);
+        },
+        () => {
+          this._inQueue = false;
+          this.changeStatus(0);
+        },
+        () => {
+          this._inQueue = false;
+          this.changeStatus(2);
+        }
+      );
+      if (result) {
+        this._inQueue = true;
+      }
+      return result;
     } else {
       return false;
     }
@@ -211,7 +230,15 @@ export class SolarPanelService extends Service {
   }
 
   fetchPanel(groupName: string, id: string): null | PanelSection {
-    return this.groups[groupName][id];
+    const group = this.groups[groupName];
+    if (!group) {
+      return null;
+    }
+    const panel = group[id];
+    if (!panel) {
+      return null;
+    }
+    return panel;
   }
 
   rebootPanel(groupName: string, id: string): boolean {
@@ -251,25 +278,25 @@ export class SolarPanelService extends Service {
     super(state, SolarPanelService.updateService);
     this.groups = {
       a: {
-        1: new PanelSection(1),
-        2: new PanelSection(1),
-        3: new PanelSection(1),
-        4: new PanelSection(1),
-        5: new PanelSection(1),
+        1: new PanelSection(this._state, 1),
+        2: new PanelSection(this._state, 1),
+        3: new PanelSection(this._state, 1),
+        4: new PanelSection(this._state, 1),
+        5: new PanelSection(this._state, 1),
       },
       b: {
-        1: new PanelSection(0),
-        2: new PanelSection(0),
-        3: new PanelSection(0),
-        4: new PanelSection(0),
-        5: new PanelSection(0),
+        1: new PanelSection(this._state, 0),
+        2: new PanelSection(this._state, 0),
+        3: new PanelSection(this._state, 0),
+        4: new PanelSection(this._state, 0),
+        5: new PanelSection(this._state, 0),
       },
       c: {
-        1: new PanelSection(1),
-        2: new PanelSection(1),
-        3: new PanelSection(2),
-        4: new PanelSection(2),
-        5: new PanelSection(1),
+        1: new PanelSection(this._state, 1),
+        2: new PanelSection(this._state, 1),
+        3: new PanelSection(this._state, 2),
+        4: new PanelSection(this._state, 2),
+        5: new PanelSection(this._state, 1),
       },
     };
   }
@@ -417,25 +444,29 @@ class Queue<T> {
 }
 
 class RepairOperation {
+  readonly label: string;
   started: boolean = false;
   closed: boolean = false;
   _timeout: NodeJS.Timeout | null = null;
-  duration: number;
-  onStart: Function;
-  onSuccess: Function;
-  onCancel: Function;
-  startTime: number;
-  constructor(duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}) {
+  readonly duration: number;
+  readonly onStart: Function;
+  readonly onSuccess: Function;
+  readonly onCancel: Function;
+  startTime: number | null;
+
+  constructor(label: string, duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}) {
+    this.label = label;
     this.duration = duration;
     this.onStart = onStart;
     this.onSuccess = onSuccess;
     this.onCancel = onCancel;
-    this.startTime = Date.now();
+    this.startTime = null;
   }
 
   start() {
     this.started = true;
     this.onStart();
+    this.startTime = Date.now();
     this._timeout = setTimeout(() => {
       this.onSuccess();
       this.closed = true;
@@ -448,6 +479,15 @@ class RepairOperation {
       clearTimeout(this._timeout);
     }
     this.onCancel();
+  }
+
+  report() {
+    return {
+      label: this.label,
+      startTime: this.startTime,
+      duration: this.duration,
+      started: this.started,
+    };
   }
 }
 
@@ -482,13 +522,14 @@ class RepairService extends Service {
     }
   }
 
-  addOperation(id: string, duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}): boolean {
+  addOperation(id: string, label: string, duration: number, onStart: Function = () => {}, onSuccess: Function = () => {}, onCancel: Function = () => {}): boolean {
     const queue = this.queues[id];
     if (!queue) {
       return false;
     }
 
     const operation = new RepairOperation(
+      label,
       duration,
       onStart,
       () => {
@@ -518,5 +559,44 @@ class RepairService extends Service {
     operation.cancel();
     this.updateService();
   }
+
+  report() {
+    let report: { [id: string]: Array<any> } = {};
+    for (let i in this.queues) {
+      const queue = this.queues[i];
+      const queueReport = [];
+      for (let k in queue.line) {
+        const value = queue.line[k];
+        queueReport.push(value?.report());
+      }
+      report[i] = queueReport;
+    }
+
+    return report;
+  }
 }
+
+const repairServiceRouter = express.Router();
+
+repairServiceRouter.post("/report", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const result = state.services.repair.report();
+  console.log(result);
+  res.json(result);
+});
+
+router.use("/scenario/service/repair", validateLoginTokenPost, verifyScenarioRound, repairServiceRouter);
+
 //#endregion

@@ -36,12 +36,6 @@ def readEnv():
 
 # Commands
 
-## Debug
-def command_test(tokens):
-    print("test command ran")
-    print(session.cookies.get_dict())
-    pprint(session.post(host + "getPuzzle", data={"name":"templatePuzzleName"}, timeout=request_timeout).json)
-
 ## Exit
 def command_exit(tokens):
     print("Exiting")
@@ -104,9 +98,9 @@ def command_clear(tokens):
 
 #region Solar Panel Service
 
-def command_service_solarpanels_summary(tokens):
+def command_service_solarpanels_report(tokens):
     try:
-        result = session.post(host + "service", {"name": "solarpanels", "action": "report"}, timeout=request_timeout)
+        result = session.post(host + "scenario/service/solarpanels/report", timeout=request_timeout)
 
         if not result.ok:
             print(result.text)
@@ -131,26 +125,39 @@ def command_service_solarpanels_summary(tokens):
     except TimeoutError:
         print("Request Timed Out")
 
-def command_service_solarpanels_test(tokens):
-    try:
-        arg1 = tokens[3]
-        arg2 = tokens[4]
-
-        try:
-            result = session.post(host + "service", {"name": "solarpanels", "action": "test", "args": [arg1, arg2]}, timeout=request_timeout)
-            print(result.text)
-        except TimeoutError:
-            print("Request Timed Out")
-    except IndexError:
-        print("Invalid Arguments")
-
 def command_service_solarpanels_status(tokens):
     try:
         groupName = tokens[3]
         id = tokens[4]
 
         try:
-            result = session.post(host + "service", {"name": "solarpanels", "action": "status", "args": [groupName, id]}, timeout=request_timeout)
+            result = session.post(host + "scenario/service/solarpanels/status", {"groupName": groupName, "panelId": id}, timeout=request_timeout)
+            print(result.text)
+        except TimeoutError:
+            print("Request Timed Out")
+    except IndexError:
+        print("Invalid Arguments")
+
+def command_service_solarpanels_reboot(tokens):
+    try:
+        groupName = tokens[3]
+        id = tokens[4]
+
+        try:
+            result = session.post(host + "scenario/service/solarpanels/reboot", {"groupName": groupName, "panelId": id}, timeout=request_timeout)
+            print(result.text)
+        except TimeoutError:
+            print("Request Timed Out")
+    except IndexError:
+        print("Invalid Arguments")
+
+def command_service_solarpanels_repair(tokens):
+    try:
+        groupName = tokens[3]
+        id = tokens[4]
+
+        try:
+            result = session.post(host + "scenario/service/solarpanels/repair", {"groupName": groupName, "panelId": id}, timeout=request_timeout)
             print(result.text)
         except TimeoutError:
             print("Request Timed Out")
@@ -158,8 +165,10 @@ def command_service_solarpanels_status(tokens):
         print("Invalid Arguments")
 
 serviceSolarPanelCommands = {
-    "report": command_service_solarpanels_summary,
-    "status": command_service_solarpanels_status
+    "report": command_service_solarpanels_report,
+    "status": command_service_solarpanels_status,
+    "reboot": command_service_solarpanels_reboot,
+    "repair": command_service_solarpanels_repair
 }
 
 def command_service_solarpanels(tokens):
@@ -167,6 +176,57 @@ def command_service_solarpanels(tokens):
         serviceSolarPanelCommands[tokens[2]](tokens)
     except IndexError:
         print("Solar Panel Service Command Not Found")
+#endregion
+
+#region repairService
+
+def command_service_repair_report(tokens):
+        try:
+            result = session.post(host + "scenario/service/repair/report", timeout=request_timeout)
+            data = result.json()
+            for key in data:
+                print(key + ":")
+                value = data[key]
+                for operation in value:
+                    if operation is None:
+                        continue
+                    else:
+                        startTime = operation["startTime"]
+                        duration = operation["duration"]
+                        started = operation["started"]
+                        label = operation["label"]
+                        output = ""
+
+                        output += f"Type: {label} "
+                        output += f"Started: {started} "
+                        output += f"Duration: {duration} "
+
+                        if startTime:
+                            now = int(datetime.datetime.now().timestamp() * 1000)
+                            millis = duration - (now - startTime)
+                            seconds=(millis/1000)%60
+                            seconds = int(seconds)
+                            minutes=(millis/(1000*60))%60
+                            minutes = int(minutes)
+                            output += f"Time Till Completion: {minutes}:{seconds} "
+
+                        print(output)
+                print("")
+        except TimeoutError:
+            print("Request Timed Out")
+        except IndexError:
+            print("Returned Data Mismatch")
+
+serviceRepairCommands = {
+    "report": command_service_repair_report
+}
+
+def command_service_repair(tokens):
+    try:
+        serviceRepairCommands[tokens[2]](tokens)
+    except IndexError:
+        print("Repair Service Command Not Found")
+
 #endregion
 
 def command_service_help(tokens):
@@ -179,7 +239,8 @@ def command_service_help(tokens):
 
 serviceCommands = {
     "help": command_service_help,
-    "solarpanels": command_service_solarpanels
+    "solarpanels": command_service_solarpanels,
+    "repair": command_service_repair
 }
 
 def command_service(tokens):
@@ -196,7 +257,6 @@ def command_service(tokens):
 commands = {
     "help": command_help,
     "info": command_info,
-    "test": command_test,
     "exit": command_exit,
     "login": command_login,
     "clear": command_clear,
@@ -206,6 +266,7 @@ commands = {
 def parseCommand():
     command = input(">>> ")
     tokens = command.split(" ")
+    time.sleep(0.5)
     try:
         command = commands[tokens[0]]
         command(tokens)
