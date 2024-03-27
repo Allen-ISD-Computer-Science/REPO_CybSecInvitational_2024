@@ -600,3 +600,75 @@ repairServiceRouter.post("/report", (req: Request, res: Response) => {
 router.use("/scenario/service/repair", validateLoginTokenPost, verifyScenarioRound, repairServiceRouter);
 
 //#endregion
+
+//#region User Service
+
+interface ScenarioUserPermissions {
+  isAdmin: boolean;
+  canRead: boolean;
+  canWrite: boolean;
+  canModServiceSolarPanels: boolean;
+  canModServicePorts: boolean;
+  canModServiceLifeSupport: boolean;
+  canModServiceComms: boolean;
+  canModServiceTruss: boolean;
+  canModServiceUser: boolean;
+  canModServiceRepair: boolean;
+}
+
+class ScenarioUser {
+  username: string;
+  password: string;
+  permissions: ScenarioUserPermissions;
+
+  constructor(
+    username: string,
+    password: string,
+    groups: string[],
+    permissions: ScenarioUserPermissions = {
+      isAdmin: false,
+      canRead: false,
+      canWrite: false,
+      canModServiceSolarPanels: false,
+      canModServicePorts: false,
+      canModServiceLifeSupport: false,
+      canModServiceComms: false,
+      canModServiceTruss: false,
+      canModServiceUser: false,
+      canModServiceRepair: false,
+    }
+  ) {
+    this.username = username;
+    this.password = password;
+    this.permissions = permissions;
+  }
+}
+
+class ScenarioGroup {
+  users: ScenarioUser[];
+  constructor() {
+    this.users = [];
+  }
+
+  addUser(user: ScenarioUser) {
+    this.users.push(user);
+  }
+
+  removeUser(username: string) {
+    this.users.find((user: ScenarioUser, index: number) => {
+      return user.username === username;
+    });
+  }
+}
+
+class UserService extends Service {
+  static updateService(this: UserService) {
+    this.active = true;
+  }
+
+  constructor(state: ScenarioRoundState) {
+    super(state, UserService.updateService);
+  }
+}
+
+//#endregion
