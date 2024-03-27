@@ -1,26 +1,26 @@
 [
-    {
-        "name": "CAT",
-        "description": "<h1>CAT</h1><h3>Bash Basics</h3><p>given this <a href=\"context/flagDEMO1\">file</a> submit the flag!</p>",
-        "point_value": 10,
-        "difficulty": 0,
-        "category": "Bash Basics",
-        "answer": "AHSINV{c955573f745731280c8c29817e9f1090}"
-    },
-    {
-        "name": "CD",
-        "description": "<h1>CD</h1><h3>Bash Basics</h3><p>Given this <a href=\"context/CD.zip\">file</a> submit the flag!</p>",
-        "point_value": 20,
-        "difficulty": 0,
-        "category": "Bash Basics",
-        "answer": "AHSINV{9d241ff4fe3ac733ff883bae0354ecd4}"
-    },
-    {
-        "name": "GREP",
-        "description": "<h1>GREP</h1><h3>Bash Basics</h3><p>Given this <a href=\"context/longText.txt\">file</a> Submit the flag!</p>",
-        "point_value": 30,
-        "difficulty": 0,
-        "category": "Bash Basics",
-        "answer": "AHSINV{a35bd10a3bd45db1c313a43e3d978f64}"
-    }
+  {
+    "name": "CAT",
+    "description": "<h1>CAT</h1><h3>Bash Basics</h3><p>given this <a href=\"context/flagDEMO1\">file</a> submit the flag!</p>",
+    "point_value": 10,
+    "difficulty": 0,
+    "category": "Bash Basics",
+    "answer": "AHSINV{c955573f745731280c8c29817e9f1090}"
+  },
+  {
+    "name": "CD",
+    "description": "<h1>CD</h1><h3>Bash Basics</h3><p>Given this <a href=\"context/CD.zip\">file</a> submit the flag!</p>",
+    "point_value": 20,
+    "difficulty": 0,
+    "category": "Bash Basics",
+    "answer": "AHSINV{9d241ff4fe3ac733ff883bae0354ecd4}"
+  },
+  {
+    "name": "GREP",
+    "description": "<h1>GREP</h1><h3>Bash Basics</h3><p>Given this <a href=\"context/longText.txt\">file</a> Submit the flag!</p>",
+    "point_value": 30,
+    "difficulty": 0,
+    "category": "Bash Basics",
+    "answer": "AHSINV{a35bd10a3bd45db1c313a43e3d978f64}"
+  }
 ]

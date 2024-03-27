@@ -303,7 +303,7 @@
     "category": "Binary Exploit",
     "answer": "AHSINV{06271d19d45e3ba01c76802484abf184}"
   },
-  { 
+  {
     "name": "Stupid Simple Digital Portfolio",
     "description": "<h1>Stupid Simple Digital Portfolio</h1><h3>Web Exploitation</h3><p>Your boss has asked you to look into “John Doe's” <a href=\"context/StupidSimpleDigitalPortfolio/index.html\">digital portfolio</a>(Read between the lines).</p>",
     "point_value": 15,

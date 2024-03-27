@@ -5,6 +5,23 @@ import { fetchScoreboard } from "./mongoApi";
 import { LoginToken, fetchLoginTokenFromRequest, validateLoginToken, validateLoginTokenPost } from "./loginApi";
 const config = require("../config.json");
 
+const passwordValidationRegex: RegExp[] = [
+  /.{8,}/, // min 8 letters,
+  /[0-9]/, // numbers from 0 - 9
+  /[a-z]/, // letters from a - z (lowercase)
+  /[A-Z]/, // letters from A-Z (uppercase),
+  /[^A-Za-z0-9]/, // special characters
+];
+
+function isPasswordSecure(password: string): boolean {
+  for (let i in passwordValidationRegex) {
+    const pattern = passwordValidationRegex[i];
+    const isValid = pattern.test(password);
+    if (!isValid) return false;
+  }
+  return true;
+}
+
 class Service {
   active: boolean;
   _onUpdate: Function;
@@ -604,6 +621,7 @@ router.use("/scenario/service/repair", validateLoginTokenPost, verifyScenarioRou
 //#region User Service
 
 interface ScenarioUserPermissions {
+  [name: string]: any;
   isAdmin: boolean;
   canRead: boolean;
   canWrite: boolean;
@@ -618,13 +636,17 @@ interface ScenarioUserPermissions {
 
 class ScenarioUser {
   username: string;
-  password: string;
+  private password: string;
   permissions: ScenarioUserPermissions;
+
+  // internal properties
+  _unsafe: boolean;
+  _malicious: boolean;
+  _passwordChanged: boolean = false;
 
   constructor(
     username: string,
     password: string,
-    groups: string[],
     permissions: ScenarioUserPermissions = {
       isAdmin: false,
       canRead: false,
@@ -636,38 +658,168 @@ class ScenarioUser {
       canModServiceTruss: false,
       canModServiceUser: false,
       canModServiceRepair: false,
-    }
+    },
+    malicious: boolean = false
   ) {
     this.username = username;
     this.password = password;
     this.permissions = permissions;
+    this._malicious = malicious;
+    this._unsafe = !isPasswordSecure(this.password);
+  }
+
+  getPassword() {
+    return this.password;
+  }
+
+  changePassword(password: string) {
+    this.password = password;
+    this._passwordChanged = true;
+  }
+
+  changePermission(name: string, value: any): boolean {
+    const permission = this.permissions[name];
+    if (!permission) return false;
+    if (typeof permission !== typeof value) return false;
+    this.permissions[name] = value;
+    return true;
+  }
+
+  report() {
+    let report = {
+      username: this.username,
+      password: this.password,
+      permissions: this.permissions,
+    };
+    return report;
   }
 }
 
 class ScenarioGroup {
-  users: ScenarioUser[];
-  constructor() {
-    this.users = [];
-  }
+  name: string;
+  users: { [username: string]: ScenarioUser };
+  permissions: ScenarioUserPermissions;
 
-  addUser(user: ScenarioUser) {
-    this.users.push(user);
-  }
+  // internal properties
+  _protected: boolean;
 
-  removeUser(username: string) {
-    this.users.find((user: ScenarioUser, index: number) => {
-      return user.username === username;
+  constructor(
+    name: string,
+    users: ScenarioUser[] = [],
+    permissions: ScenarioUserPermissions = {
+      isAdmin: false,
+      canRead: false,
+      canWrite: false,
+      canModServiceSolarPanels: false,
+      canModServicePorts: false,
+      canModServiceLifeSupport: false,
+      canModServiceComms: false,
+      canModServiceTruss: false,
+      canModServiceUser: false,
+      canModServiceRepair: false,
+    },
+    isProtected: boolean = false
+  ) {
+    this.name = name;
+    this.users = {};
+    this.permissions = permissions;
+
+    users.forEach((element) => {
+      this.addUser(element);
     });
+    this._protected = isProtected;
+  }
+
+  changePermission(name: string, value: any): boolean {
+    const permission = this.permissions[name];
+    if (!permission) return false;
+    if (typeof permission !== typeof value) return false;
+    this.permissions[name] = value;
+    return true;
+  }
+
+  findUser(username: string): ScenarioUser | undefined {
+    return this.users[username];
+  }
+
+  // returns false if user already exists
+  addUser(user: ScenarioUser): boolean {
+    if (this.findUser(user.username)) {
+      return false;
+    }
+    this.users[user.username] = user;
+    return true;
+  }
+
+  removeUser(username: string): boolean {
+    const user = this.findUser(username);
+    if (!user) return false;
+    delete this.users[user.username];
+    return true;
+  }
+
+  report() {
+    let reportUsers: any[] = [];
+    const report = {
+      name: this.name,
+      users: reportUsers,
+    };
+
+    for (let i in this.users) {
+      const user = this.users[i];
+      reportUsers.push(user.report());
+    }
+    return report;
   }
 }
 
 class UserService extends Service {
   static updateService(this: UserService) {
     this.active = true;
+
+    // check password security
+    for (let i = 0; i < this.users.length; i++) {
+      let user = this.users[i];
+      if (!user._passwordChanged) continue;
+      user._passwordChanged = false;
+      if (isPasswordSecure(user.getPassword())) {
+        user._unsafe = false;
+      } else {
+        user._unsafe = true;
+        this.active = false;
+      }
+    }
   }
+
+  users: ScenarioUser[];
+  groups: { [name: string]: ScenarioGroup };
 
   constructor(state: ScenarioRoundState) {
     super(state, UserService.updateService);
+
+    const user1 = new ScenarioUser("Admin", "1234password");
+    const user2 = new ScenarioUser("Abby", "passphrase");
+    const user3 = new ScenarioUser("Abby", "secret101");
+    const user4 = new ScenarioUser("Abby", "1234password");
+    const user5 = new ScenarioUser("Abby", "1234password");
+    const user6 = new ScenarioUser("Abby", "1234password");
+    const user7 = new ScenarioUser("Abby", "1234password");
+
+    this.users = [user1, user2, user3, user4, user5, user6, user7];
+
+    const adminGroup = new ScenarioGroup("Admin", [user1], undefined, true);
+    const maintenanceGroup = new ScenarioGroup("Maintenance", undefined, undefined, true);
+    const usersGroup = new ScenarioGroup("Users", this.users, undefined, true);
+
+    this.groups = {
+      [adminGroup.name]: adminGroup,
+      [maintenanceGroup.name]: maintenanceGroup,
+      [usersGroup.name]: usersGroup,
+    };
+  }
+
+  findUser(username: string): ScenarioUser | undefined {
+    return this.users.find((user: ScenarioUser) => user.username == username);
   }
 }
 
