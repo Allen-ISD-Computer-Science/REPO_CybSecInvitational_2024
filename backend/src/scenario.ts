@@ -3,6 +3,7 @@ import express, { Request, Response, Router } from "express";
 import { Round, currentRound, startRound } from "./roundApi";
 import { fetchScoreboard } from "./mongoApi";
 import { LoginToken, fetchLoginTokenFromRequest, validateLoginToken, validateLoginTokenPost } from "./loginApi";
+import { io } from "./socketApi";
 const config = require("../config.json");
 
 const passwordValidationRegex: RegExp[] = [
@@ -53,6 +54,7 @@ export class ScenarioRoundState {
     [name: string]: Service;
     ["solarpanels"]: SolarPanelService;
     ["repair"]: RepairService;
+    ["user"]: UserService;
   };
 
   update() {
@@ -66,6 +68,7 @@ export class ScenarioRoundState {
     this.services = {
       solarpanels: new SolarPanelService(this),
       repair: new RepairService(this),
+      user: new UserService(this),
     };
   }
 }
@@ -621,7 +624,7 @@ router.use("/scenario/service/repair", validateLoginTokenPost, verifyScenarioRou
 //#region User Service
 
 interface ScenarioUserPermissions {
-  [name: string]: any;
+  [name: string]: boolean;
   isAdmin: boolean;
   canRead: boolean;
   canWrite: boolean;
@@ -677,10 +680,8 @@ class ScenarioUser {
     this._passwordChanged = true;
   }
 
-  changePermission(name: string, value: any): boolean {
-    const permission = this.permissions[name];
-    if (!permission) return false;
-    if (typeof permission !== typeof value) return false;
+  changePermission(name: string, value: boolean): boolean {
+    if (!(name in this.permissions)) return false;
     this.permissions[name] = value;
     return true;
   }
@@ -697,7 +698,7 @@ class ScenarioUser {
 
 class ScenarioGroup {
   name: string;
-  users: { [username: string]: ScenarioUser };
+  users: { [username: string]: true };
   permissions: ScenarioUserPermissions;
 
   // internal properties
@@ -730,15 +731,13 @@ class ScenarioGroup {
     this._protected = isProtected;
   }
 
-  changePermission(name: string, value: any): boolean {
-    const permission = this.permissions[name];
-    if (!permission) return false;
-    if (typeof permission !== typeof value) return false;
+  changePermission(name: string, value: boolean): boolean {
+    if (!(name in this.permissions)) return false;
     this.permissions[name] = value;
     return true;
   }
 
-  findUser(username: string): ScenarioUser | undefined {
+  findUser(username: string): true | undefined {
     return this.users[username];
   }
 
@@ -747,14 +746,14 @@ class ScenarioGroup {
     if (this.findUser(user.username)) {
       return false;
     }
-    this.users[user.username] = user;
+    this.users[user.username] = true;
     return true;
   }
 
   removeUser(username: string): boolean {
     const user = this.findUser(username);
     if (!user) return false;
-    delete this.users[user.username];
+    delete this.users[username];
     return true;
   }
 
@@ -762,24 +761,53 @@ class ScenarioGroup {
     let reportUsers: any[] = [];
     const report = {
       name: this.name,
-      users: reportUsers,
+      users: Object.keys(this.users),
+      permissions: this.permissions,
     };
-
-    for (let i in this.users) {
-      const user = this.users[i];
-      reportUsers.push(user.report());
-    }
     return report;
   }
 }
+
+//#region UserService Interfaces
+interface AddGroupResult {
+  alreadyExists: boolean;
+  success: boolean;
+}
+
+interface RemoveGroupResult {
+  notFound: boolean;
+  isProtected: boolean;
+  success: boolean;
+}
+
+interface AddUserResult {
+  alreadyExists: boolean;
+  success: boolean;
+}
+
+interface RemoveUserResult {
+  notFound: boolean;
+  success: boolean;
+}
+
+interface ChangePermissionResult {
+  notFound: boolean;
+  success: boolean;
+}
+
+interface UserServiceReport {
+  notFound: boolean;
+  report?: {} | undefined;
+}
+//#endregion
 
 class UserService extends Service {
   static updateService(this: UserService) {
     this.active = true;
 
     // check password security
-    for (let i = 0; i < this.users.length; i++) {
-      let user = this.users[i];
+    for (let i in this.users) {
+      const user = this.users[i];
       if (!user._passwordChanged) continue;
       user._passwordChanged = false;
       if (isPasswordSecure(user.getPassword())) {
@@ -791,7 +819,7 @@ class UserService extends Service {
     }
   }
 
-  users: ScenarioUser[];
+  users: { [username: string]: ScenarioUser };
   groups: { [name: string]: ScenarioGroup };
 
   constructor(state: ScenarioRoundState) {
@@ -799,17 +827,19 @@ class UserService extends Service {
 
     const user1 = new ScenarioUser("Admin", "1234password");
     const user2 = new ScenarioUser("Abby", "passphrase");
-    const user3 = new ScenarioUser("Abby", "secret101");
-    const user4 = new ScenarioUser("Abby", "1234password");
-    const user5 = new ScenarioUser("Abby", "1234password");
-    const user6 = new ScenarioUser("Abby", "1234password");
-    const user7 = new ScenarioUser("Abby", "1234password");
+    const user3 = new ScenarioUser("Bill", "secret101");
+    const user4 = new ScenarioUser("Johnson", "");
 
-    this.users = [user1, user2, user3, user4, user5, user6, user7];
+    this.users = {
+      [user1.username]: user1,
+      [user2.username]: user2,
+      [user3.username]: user3,
+      [user4.username]: user4,
+    };
 
     const adminGroup = new ScenarioGroup("Admin", [user1], undefined, true);
-    const maintenanceGroup = new ScenarioGroup("Maintenance", undefined, undefined, true);
-    const usersGroup = new ScenarioGroup("Users", this.users, undefined, true);
+    const maintenanceGroup = new ScenarioGroup("Maintenance", [user2, user3], undefined, true);
+    const usersGroup = new ScenarioGroup("Users", [user1, user2, user3, user4], undefined, true);
 
     this.groups = {
       [adminGroup.name]: adminGroup,
@@ -818,9 +848,366 @@ class UserService extends Service {
     };
   }
 
-  findUser(username: string): ScenarioUser | undefined {
-    return this.users.find((user: ScenarioUser) => user.username == username);
+  // User Management
+  addUser(username: string, password: string): AddUserResult {
+    if (this.users[username]) return { alreadyExists: true, success: false };
+    this.users[username] = new ScenarioUser(username, password);
+    return { alreadyExists: false, success: true };
+  }
+
+  removeUser(username: string): RemoveUserResult {
+    const user = this.users[username];
+    if (!user) return { notFound: true, success: false };
+    for (let i in this.groups) {
+      const group = this.groups[i];
+      group.removeUser(username);
+    }
+    delete this.users[user.username];
+    console.log(user);
+    return { notFound: false, success: true };
+  }
+
+  changeUserPermission(username: string, permName: string, permValue: boolean): ChangePermissionResult {
+    const user = this.users[username];
+    if (!user) return { notFound: true, success: false };
+    return { notFound: false, success: user.changePermission(permName, permValue) };
+  }
+
+  reportUser(username: string): UserServiceReport {
+    const user = this.users[username];
+    if (!user) return { notFound: true };
+    return { notFound: false, report: user.report() };
+  }
+
+  reportAllUsers(): string[] {
+    return Object.keys(this.users);
+  }
+
+  // Group Management
+  addGroup(name: string): AddGroupResult {
+    if (this.groups[name]) return { alreadyExists: true, success: false };
+    this.groups[name] = new ScenarioGroup(name, undefined, undefined, false);
+    return { alreadyExists: false, success: false };
+  }
+
+  removeGroup(name: string): RemoveGroupResult {
+    const group = this.groups[name];
+    if (!group) return { notFound: true, isProtected: false, success: false };
+    if (group._protected) return { notFound: false, isProtected: true, success: false };
+    delete this.groups[name];
+    return { notFound: false, isProtected: false, success: true };
+  }
+
+  changeGroupPermission(groupname: string, permName: string, permValue: boolean): ChangePermissionResult {
+    const group = this.groups[groupname];
+    if (!group) return { notFound: true, success: false };
+    return { notFound: false, success: group.changePermission(permName, permValue) };
+  }
+
+  reportGroup(name: string): UserServiceReport {
+    const group = this.groups[name];
+    if (!group) return { notFound: true };
+
+    return { notFound: false, report: group.report() };
+  }
+
+  reportAllGroups(): { name: string; users: string[] }[] {
+    const result = [];
+    for (let i in this.groups) {
+      const group = this.groups[i];
+      result.push({
+        name: group.name,
+        users: Object.keys(group.users),
+      });
+    }
+    return result;
   }
 }
+
+const userServiceRouter = express.Router();
+
+userServiceRouter.post("/addUser", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const username = req.body.username;
+  const password = req.body.password;
+  if (!username || !password) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.addUser(username, password);
+  if (result.alreadyExists) {
+    res.status(400).send("User Already Exists");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/removeUser", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const username = req.body.username;
+  if (!username) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.removeUser(username);
+  if (result.notFound) {
+    res.status(400).send("User Not Found");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/changeUserPermission", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const username = req.body.username;
+  const permName = req.body.permName;
+  const value = Boolean(req.body.value);
+  if (!username || !permName || value == undefined) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.changeUserPermission(username, permName, value);
+  if (result.notFound) {
+    res.status(400).send("Permission Not Found");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/groupReportAll", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  res.json(state.services.user.reportAllGroups());
+});
+
+userServiceRouter.post("/groupReport", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupname: string = req.body.username;
+  if (!groupname) {
+    res.status(400).send("Missing Arguments");
+    return;
+  }
+
+  const result = state.services.user.reportGroup(groupname);
+  if (result.notFound) {
+    res.status(400).send("Group Doesn't Exist");
+    return;
+  }
+
+  res.json(result.report);
+});
+
+//
+
+userServiceRouter.post("/addGroup", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupname = req.body.groupname;
+  if (!groupname) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.addGroup(groupname);
+  if (result.alreadyExists) {
+    res.status(400).send("Group Already Exists");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/removeGroup", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupname = req.body.groupname;
+  if (!groupname) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.removeGroup(groupname);
+  if (result.isProtected) {
+    res.status(400).send("Cannot Remove Protected Groups");
+    return;
+  } else if (result.notFound) {
+    res.status(400).send("Group Not Found");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/changeGroupPermission", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const groupname = req.body.groupname;
+  const permName = req.body.permName;
+  const value = Boolean(req.body.value);
+  if (!groupname || !permName || value == undefined) {
+    res.status(400).send("Missing Parameters");
+    return;
+  }
+
+  const result = state.services.user.changeGroupPermission(groupname, permName, value);
+  if (result.notFound) {
+    res.status(400).send("Permission Not Found");
+  } else if (result.success) {
+    res.sendStatus(200);
+  } else {
+    res.status(400).send("Failed Operation");
+  }
+});
+
+userServiceRouter.post("/userReportAll", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  res.json(state.services.user.reportAllUsers());
+});
+
+userServiceRouter.post("/userReport", (req: Request, res: Response) => {
+  const token = fetchLoginTokenFromRequest(req) as unknown as LoginToken;
+  const round = currentRound as unknown as ScenarioRound;
+  if (!token || !round) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const state = round.getUserState(token.data.username);
+  if (!state) {
+    res.status(403).send("Not Part Of Scenario Round");
+    return;
+  }
+
+  const username: string = req.body.username;
+  if (!username) {
+    res.status(400).send("Missing Arguments");
+    return;
+  }
+
+  const result = state.services.user.reportUser(username);
+  if (result.notFound) {
+    res.status(400).send("User Doesn't Exist");
+    return;
+  }
+
+  res.json(result.report);
+});
+
+router.use("/scenario/service/repair", validateLoginTokenPost, verifyScenarioRound, userServiceRouter);
 
 //#endregion
